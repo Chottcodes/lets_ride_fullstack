@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import PasswordInputComponent from "./PasswordInputComponent";
 
 interface InputProps {
     type: string;
@@ -30,45 +31,10 @@ const EmailAndPassword = () => {
         </div>
       </div>
       <div className="w-full h-full">
-        <div className="w-full flex flex-col gap-6">
-          <div className="">
-
+        <div className="w-full flex flex-col gap-7">
             <h2>New Password</h2>
-          </div>
-          <div className="relative w-full border-b-2 pb-3 flex items-center">
-            <img
-              src="/assets/images/padlock (1).png"
-              alt="lock icon"
-              className="absolute h-[20px]"
-            />
-            <input
-              type="text"
-              placeholder="Enter Password"
-              className="w-full pl-6 focus:outline-none"
-            />
-            <img
-              src="/assets/images/hide.png"
-              alt="eyeglass icon"
-              className="h-[20px] absolute left-[90%]"
-            />
-          </div>
-          <div className="relative w-full border-b-2 pb-3 flex items-center">
-            <img
-              src="/assets/images/padlock (1).png"
-              alt="lock icon"
-              className="absolute h-[20px]"
-            />
-            <input
-              type="text"
-              placeholder="Confirm Password"
-              className="w-full pl-6 focus:outline-none"
-            />
-            <img
-              src="/assets/images/hide.png"
-              alt="eyeglass icon"
-              className="h-[20px] absolute left-[90%]"
-            />
-          </div>
+            <PasswordInputComponent/>
+            <PasswordInputComponent/>
         </div>
       </div>
     </div>
