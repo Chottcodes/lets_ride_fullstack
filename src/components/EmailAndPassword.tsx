@@ -11,7 +11,7 @@ interface InputProps {
 
 const EmailAndPassword = () => {
   return (
-    <div className="w-[80%] h-full text-white flex flex-col gap-7 ">
+    <div className="w-full h-full text-white flex flex-col gap-7 ">
       <div className="w-full flex flex-col gap-5">
         <div className="">
           <h2>Enter Email</h2>
@@ -29,8 +29,8 @@ const EmailAndPassword = () => {
           />
         </div>
       </div>
-      <div className="w-full h-[70%]">
-        <div className="w-full flex flex-col gap-5">
+      <div className="w-full h-full">
+        <div className="w-full flex flex-col gap-6">
           <div className="">
 
             <h2>New Password</h2>

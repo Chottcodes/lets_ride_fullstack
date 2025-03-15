@@ -10,7 +10,7 @@ const page = () => {
     console.log("hello");
   };
   return (
-    <div className="w-full h-screen ">
+    <div className="w-full h-screen fixed">
       <div className="h-[5%] w-full mt-6 pl-4">
         <BackButtonComponent onClick={handleOnClick} />
       </div>
@@ -20,11 +20,15 @@ const page = () => {
         </h1>
         <h5>Reset Password</h5>
       </div>
-      <div className="w-full  h-[40%] flex justify-center">
-        <EmailAndPassword />
+      <div className="w-full flex flex-col justify-center items-center">
+        <div className="w-[90%] h-[40%] flex justify-center">
+          <EmailAndPassword />
+        </div>
       </div>
-      <div className="w-[90%] h-[9%] m-auto">
-        <PrimaryButton buttonText="Next" isBackgroundDark={isDark} />
+      <div className="w-full h-[10%] flex items-center justify-center mt-15">
+        <div className="w-[90%] h-full">
+          <PrimaryButton buttonText="Next" isBackgroundDark={isDark} />
+        </div>
       </div>
     </div>
   );
