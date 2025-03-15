@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-
+//This component is a simple back button componet that redirects the user to the prievious page and is styled accordingly. on click funtion can be created on the parent
 interface propsTypes {
   onClick: () => void;
 }

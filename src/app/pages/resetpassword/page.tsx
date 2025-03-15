@@ -1,11 +1,16 @@
 "use client";
 import BackButtonComponent from "@/components/BackButtonComponent";
 import React, { useEffect, useState } from "react";
-import EmailAndPassword from "@/components/EmailAndPassword";
+import EmailInputComponent from "@/components/EmailInputComponent";
 import PrimaryButton from "@/components/PrimaryButton";
+import PasswordInputComponent from "@/components/PasswordInputComponent";
 
 const page = () => {
   const [isDark, setIsDark] = useState(true);
+  const [isPasswordVisiable,setIsPasswordVisiable]=useState(false)
+    const togglePasswordVisibility = () => {
+      setIsPasswordVisiable(prev => !prev)
+  }
   const handleOnClick = () => {
     console.log("hello");
   };
@@ -21,8 +26,10 @@ const page = () => {
         <h5>Reset Password</h5>
       </div>
       <div className="w-full flex flex-col justify-center items-center">
-        <div className="w-[90%] h-[40%] flex justify-center">
-          <EmailAndPassword />
+        <div className="w-[90%] h-[40%] flex flex-col justify-center gap-15">
+        <EmailInputComponent/>
+        <PasswordInputComponent  handleToggleFunction={togglePasswordVisibility} isPasswordVisible={isPasswordVisiable} placeHolderText="Enter Password"/>
+        <PasswordInputComponent handleToggleFunction={togglePasswordVisibility} isPasswordVisible={isPasswordVisiable} placeHolderText="Confirm Password"/>
         </div>
       </div>
       <div className="w-full h-[10%] flex items-center justify-center mt-15">
