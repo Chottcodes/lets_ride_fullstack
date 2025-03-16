@@ -1,7 +1,7 @@
 "use client";
 import BackButtonComponent from "@/components/BackButtonComponent";
 import React, { useEffect, useState } from "react";
-import EmailInputComponent from "@/components/EmailInputComponent";
+import InputComponent from "@/components/InputComponent";
 import PrimaryButton from "@/components/PrimaryButton";
 import PasswordInputComponent from "@/components/PasswordInputComponent";
 
@@ -27,7 +27,7 @@ const page = () => {
       </div>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="w-[90%] h-[40%] flex flex-col justify-center gap-15">
-        <EmailInputComponent/>
+        <InputComponent inputTitle="Enter Email" imageSourcePath="/assets/images/mail1.png/" />
         <PasswordInputComponent  handleToggleFunction={togglePasswordVisibility} isPasswordVisible={isPasswordVisiable} placeHolderText="Enter Password"/>
         <PasswordInputComponent handleToggleFunction={togglePasswordVisibility} isPasswordVisible={isPasswordVisiable} placeHolderText="Confirm Password"/>
         </div>

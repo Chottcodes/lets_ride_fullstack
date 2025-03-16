@@ -1,4 +1,4 @@
 import { redirect } from "next/navigation";
 export default function Home() {
-    redirect('./pages/resetpassword');
+    redirect('./pages/aboutyou');
 }
