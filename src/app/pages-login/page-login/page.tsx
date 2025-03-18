@@ -13,75 +13,18 @@ const LoginPage = () => {
 
   return (
     // Home Page
-    <div className="flex flex-col justify-center items-center text-white mt-25">
+    <div className="flex flex-col justify-center items-center text-white sm:mt-10 mt-20">
       <div className="flex flex-col justify-center items-center">
-        <img src="/assets/images/Logo.png" alt="logo" className="w-120" />
-        <h1 className="text-[26px]">Connecting Riders, One Mile At A Time</h1>
+        <img src="/assets/images/Logo.png" alt="logo" className="sm:w-120 w-60" />
+        <h1 className="sm:text-[26px] text-[20px] mt-5">Connecting Riders, One Mile At A Time</h1>
 
-        <div className="mt-40 flex flex-col justify-center items-center gap-5">
-          <PrimaryButton buttonText="Log In" isBackgroundDark={false} onClick={() => push("/login")} />
-          <PrimaryButton buttonText="Sign Up" isBackgroundDark={true} />
+        <div className="mt-20 flex flex-col justify-center items-center gap-3">
+          <PrimaryButton buttonText="Log In" isBackgroundDark={false} onClick={() => push("/pages-login/page-login/login-section")} />
+          <PrimaryButton buttonText="Sign Up" isBackgroundDark={true} onClick={() => push("/pages-login/page-login/signup-section")} />
         </div>
       </div>
-      {/* Login Section */}
-      <div className="flex flex-col justify-center items-center mt-20 ">
-
-        <div className="text-[46px] pb-8">
-          <h1>
-            Let's <span className="text-blue-600 tracking-widest">Ride</span>
-          </h1>
-        </div>
-
-        <hr className="w-[20rem] pt-16" />
-        <h1 className="text-4xl tracking-widest mb-30">Login</h1>
-        
-      {/* Let's Ride Section */}
-      {/* Enter Email */}
-        <div className="w-100 flex flex-col gap-5">
-          <div className="">
-            <h2>Enter Email</h2>
-          </div>
-          <div className="w-full relative flex items-center border-b-2 pb-3">
-            <img
-              className="absolute h-[20px]"
-              src="/assets/images/mail (1).png"
-              alt="email logo"
-            />
-            <input
-              type="text"
-              placeholder="Enter Email"
-              className="pl-8 w-full focus:outline-none"
-            />
-          </div>
-          {/* Enter Password */}
-          <div className="">
-            <h2>Enter Password</h2>
-          </div>
-          <div className="relative w-full border-b-2 pb-3 flex items-center">
-            <img
-              src="/assets/images/padlock (1).png"
-              alt="lock icon"
-              className="absolute h-[20px]"
-            />
-            <input
-              type="text"
-              placeholder="Enter Password"
-              className="w-full pl-6 focus:outline-none"
-            />
-            <img
-              src="/assets/images/hide.png"
-              alt="eyeglass icon"
-              className="h-[20px] absolute left-[90%] cursor-pointer"
-            />
-          </div>
-          
-          <h1>forgot <span className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"> password</span></h1>
-
-          <PrimaryButton buttonText="Log In" isBackgroundDark={true}/> 
+     
       </div>
-      </div>
-
-    </div>
 
     
   );
