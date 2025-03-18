@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import EmailAndPassword from "@/components/EmailAndPassword";
-import BackButtonComponent from "@/components/BackButtonComponent";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "next/navigation";
 
