@@ -61,7 +61,7 @@ const LoginSection = () => {
             />
           </div>
           
-          <h1>forgot <button onClick={() => push("/pages/resetpassword")} className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"> password</button></h1>
+          <h1>forgot <button onClick={() => push("/pages/Login/resetpassword")} className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"> password</button></h1>
 
           <PrimaryButton buttonText="Log In" isBackgroundDark={true} onClick={() => push("/home/your-profile")}/> 
       </div>

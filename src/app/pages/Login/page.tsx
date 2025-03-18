@@ -19,8 +19,8 @@ const LoginPage = () => {
         <h1 className="sm:text-[26px] text-[20px] mt-5">Connecting Riders, One Mile At A Time</h1>
 
         <div className="mt-20 flex flex-col justify-center items-center gap-3">
-          <PrimaryButton buttonText="Log In" isBackgroundDark={false} onClick={() => push("/pages-login/page-login/login-section")} />
-          <PrimaryButton buttonText="Sign Up" isBackgroundDark={true} onClick={() => push("/pages-login/page-login/signup-section")} />
+          <PrimaryButton buttonText="Log In" isBackgroundDark={false} onClick={() => push("/pages/Login/login-section")} />
+          <PrimaryButton buttonText="Sign Up" isBackgroundDark={true} onClick={() => push("/pages/Login/signup-section")} />
         </div>
       </div>
      

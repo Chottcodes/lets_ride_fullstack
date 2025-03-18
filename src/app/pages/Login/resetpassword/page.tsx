@@ -3,8 +3,10 @@ import BackButtonComponent from "@/components/BackButtonComponent";
 import React, { useEffect, useState } from "react";
 import EmailAndPassword from "@/components/EmailAndPassword";
 import PrimaryButton from "@/components/PrimaryButton";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const {push} = useRouter();
   const [isDark, setIsDark] = useState(true);
   const handleOnClick = () => {
     console.log("hello");
@@ -24,7 +26,7 @@ const page = () => {
         <EmailAndPassword />
       </div>
       <div className="w-[90%] h-[9%] m-auto">
-        <PrimaryButton buttonText="Next" isBackgroundDark={isDark} />
+        <PrimaryButton buttonText="Next" isBackgroundDark={isDark} onClick={() => push("/home/your-profile")} />
       </div>
     </div>
   );
