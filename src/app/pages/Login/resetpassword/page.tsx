@@ -35,9 +35,9 @@ const page = () => {
   }, [email, password, confirmPassword]);
   
   return (
-    <div className="w-full h-screen fixed">
+    <div className="flex flex-col justify-center items-center">
       <div className="h-[5%] w-full mt-6 pl-4">
-        <BackButtonComponent onClick={handleOnClick} />
+        <BackButtonComponent onClick={() => push("./login-section")} />
       </div>
       <div className="w-full h-[30%] flex flex-col justify-center items-center gap-4 text-white text-3xl">
         <h1>
@@ -45,7 +45,7 @@ const page = () => {
         </h1>
         <h5>Reset Password</h5>
       </div>
-      <div className="w-full flex flex-col justify-center items-center">
+      <div className="w-100 flex flex-col justify-center items-center">
         <div className="w-[90%] h-[40%] flex flex-col justify-center gap-15">
           <InputComponent
             inputTitle="Email"
@@ -71,8 +71,8 @@ const page = () => {
           />
         </div>
       </div>
-      <div className="w-full h-[10%] flex items-center justify-center mt-15">
-        <div className="w-[90%] h-full">
+      <div className=" flex items-center justify-center mt-15">
+        <div className="">
           <PrimaryButton buttonText="Next" isBackgroundDark={isDark} />
         </div>
       </div>

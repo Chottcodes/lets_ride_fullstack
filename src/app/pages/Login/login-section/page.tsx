@@ -1,5 +1,6 @@
 "use client"
 
+import BackButtonComponent from '@/components/BackButtonComponent';
 import PrimaryButton from '@/components/PrimaryButton'
 import { useRouter } from 'next/navigation';
 import React from 'react'
@@ -9,7 +10,9 @@ const LoginSection = () => {
     
   return (
     <div>
-        <div className='flex flex-col justify-center items-center text-white mt-10'>
+    <BackButtonComponent onClick={() => push("/")}/>
+        
+<div className='flex flex-col justify-center items-center text-white mt-10'>
 
 
 <div className="text-[46px] pb-8">
@@ -30,7 +33,7 @@ const LoginSection = () => {
           <div className="w-100 relative flex items-center border-b-2 pb-3">
             <img
               className="absolute h-[20px]"
-              src="/assets/images/mail (1).png"
+              src="/assets/images/mail1.png"
               alt="email logo"
             />
             <input

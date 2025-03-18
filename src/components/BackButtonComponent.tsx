@@ -9,13 +9,13 @@ const BackButtonComponent = (props: propsTypes) => {
 
   return (
     <div>
-      <div className="w-full h-full flex justify-start">
+      <div className=" left-0 top-0 absolute">
         <button
           className="h-full flex justify-center items-center cursor-pointer"
           onClick={onClick}
         >
           <img
-            className={"h-[50px] hover:h-[60px] transition-all duration-300"}
+            className={"h-[50px] hover:bg-stone-800"}
             src="/assets/images/left.png"
             alt="backicon"
           />

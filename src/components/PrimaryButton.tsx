@@ -12,8 +12,9 @@ const PrimaryButton = (props: propTypes) => {
   return (
     <button
       className={`${
-        isBackgroundDark ? "bg-black border-2 border-white " : "bg-[#506FFD] "
-      }w-full h-full flex justify-center items-center text-white text-2xl rounded-2xl cursor-pointer`}
+        isBackgroundDark ? "bg-black border-2 border-white hover:border-stone-400 " : "bg-[#5070fd] hover:bg-[#2e53fc] "
+      } w-70 h-full sm:w-85 sm:h-13 flex justify-center items-center text-white text-2xl rounded-[.5rem] cursor-pointer`}
+      onClick={onClick}
     >
       <h1>{buttonText}</h1>
     </button>

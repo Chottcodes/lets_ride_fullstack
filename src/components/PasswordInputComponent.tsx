@@ -12,7 +12,7 @@ interface propTypes {
 const PasswordInputComponent = (props: propTypes) => {
   const { isPasswordVisible, handleToggleFunction, placeHolderText,input,handleInput } = props;
   return (
-    <div className="relative w-full border-b-2 pb-3 flex items-center text-white">
+    <div className=" w-full relative border-b-2 pb-3 flex items-center text-white bg-transparent">
       <img
         src="/assets/images/padlock (1).png"
         alt="lock icon"
@@ -23,7 +23,7 @@ const PasswordInputComponent = (props: propTypes) => {
         value={input}
         onChange={handleInput}
         placeholder={placeHolderText}
-        className="w-full pl-6 focus:outline-none"
+        className="w-full pl-6 focus:outline-none "
       />
       <img
         src={`${
