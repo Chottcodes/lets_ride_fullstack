@@ -30,7 +30,7 @@ const LoginSection = () => {
           <div className="">
             <h2>Enter Email</h2>
           </div>
-          <div className="w-100 relative flex items-center border-b-2 pb-3">
+          <div className=" flex items-center border-b-2 pb-3">
             <img
               className="absolute h-[20px]"
               src="/assets/images/mail1.png"
@@ -39,7 +39,7 @@ const LoginSection = () => {
             <input
               type="text"
               placeholder="Enter Email"
-              className="pl-8 w-full focus:outline-none"
+              className="pl-8 w-100 focus:outline-none"
             />
           </div>
           {/* Enter Password */}
@@ -66,7 +66,15 @@ const LoginSection = () => {
           
           <h1>forgot <button onClick={() => push("/pages/Login/resetpassword")} className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"> password</button></h1>
 
-          <PrimaryButton buttonText="Log In" isBackgroundDark={true} onClick={() => push("/home/your-profile")}/> 
+          <div className='flex flex-col justify-center items-center'>
+            <PrimaryButton buttonText="Log In" isBackgroundDark={true} onClick={() => push("/home/your-profile")}/>
+              <br /> 
+            <h1 className='inline-flex'> <span> <hr /> </span> Or <span><hr /></span></h1>
+            <br />
+          <PrimaryButton buttonText="Back To Sign In" isBackgroundDark={false} onClick={() => push("/home/your-profile")}/>
+          </div>
+           
+
       </div>
     </div>
     </div>
