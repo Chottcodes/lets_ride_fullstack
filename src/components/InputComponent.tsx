@@ -5,14 +5,16 @@ import { handleInputChange } from "./utils/GatherInput";
 interface propTypes {
   inputTitle: string;
   imageSourcePath: string
+  placeholderText:string
+  type:string
+  handleInput:(e: React.ChangeEvent<HTMLInputElement>) => void
+  input:string
 }
 
 const InputComponent = (props: propTypes) => {
-  const [emailInput, setEmailInput] = useState("");
-  const { inputTitle, imageSourcePath } = props;
-  useEffect(() => {}, [emailInput]);
+  const { inputTitle, imageSourcePath,placeholderText,type,handleInput,input } = props;
   return (
-    <div className="w-full flex flex-col gap-5">
+    <div className="w-full flex flex-col gap-5 text-white">
       <div>
         <h2>{inputTitle}</h2>
       </div>
@@ -23,10 +25,10 @@ const InputComponent = (props: propTypes) => {
           alt="Mail Icon"
         />
         <input
-          type="email"
-          value={emailInput}
-          onChange={(e) => handleInputChange(e, setEmailInput)}
-          placeholder="Enter Email"
+          type={type}
+          value={input}
+          onChange={handleInput}
+          placeholder={placeholderText}
           className="pl-8 w-full focus:outline-none text-white"
         />
       </div>

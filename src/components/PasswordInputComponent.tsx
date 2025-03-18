@@ -6,10 +6,11 @@ interface propTypes {
   isPasswordVisible: boolean;
   handleToggleFunction: () => void;
   placeHolderText: string;
+  handleInput:(e: React.ChangeEvent<HTMLInputElement>) => void
+  input:string
 }
 const PasswordInputComponent = (props: propTypes) => {
-  const [localValue, setLocalValue] = useState("");
-  const { isPasswordVisible, handleToggleFunction, placeHolderText } = props;
+  const { isPasswordVisible, handleToggleFunction, placeHolderText,input,handleInput } = props;
   return (
     <div className="relative w-full border-b-2 pb-3 flex items-center text-white">
       <img
@@ -19,8 +20,8 @@ const PasswordInputComponent = (props: propTypes) => {
       />
       <input
         type={`${isPasswordVisible ? "text" : "password"}`}
-        value={localValue}
-        onChange={(e) => handleInputChange(e, setLocalValue)}
+        value={input}
+        onChange={handleInput}
         placeholder={placeHolderText}
         className="w-full pl-6 focus:outline-none"
       />

@@ -27,8 +27,8 @@ const page = () => {
       </div>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="w-[90%] h-[40%] flex flex-col justify-center gap-15">
-        <InputComponent inputTitle="Enter Email" imageSourcePath="/assets/images/mail1.png/" />
-        <PasswordInputComponent  handleToggleFunction={togglePasswordVisibility} isPasswordVisible={isPasswordVisiable} placeHolderText="Enter Password"/>
+        <InputComponent inputTitle="Email" imageSourcePath="/assets/images/mail1.png/" placeholderText="Enter Email" type="email" />
+        <PasswordInputComponent  handleToggleFunction={togglePasswordVisibility} isPasswordVisible={isPasswordVisiable} placeHolderText="Enter New Password"/>
         <PasswordInputComponent handleToggleFunction={togglePasswordVisibility} isPasswordVisible={isPasswordVisiable} placeHolderText="Confirm Password"/>
         </div>
       </div>
