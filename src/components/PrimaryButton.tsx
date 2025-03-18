@@ -5,17 +5,19 @@ import React from "react";
 interface propTypes {
   buttonText: string;
   isBackgroundDark: boolean;
+  onClick?: () => void;
 }
 const PrimaryButton = (props: propTypes) => {
-  const { buttonText, isBackgroundDark } = props;
+  const { buttonText, isBackgroundDark, onClick } = props;
   return (
-    <div
+    <button
       className={`${
-        isBackgroundDark ? "bg-black border-2 border-white " : "bg-[#506FFD] "
-      }w-full h-full flex justify-center items-center text-white text-2xl rounded-2xl`}
+        isBackgroundDark ? "bg-black border-2 border-white hover:border-stone-400 " : "bg-[#5070fd] hover:bg-[#2e53fc] "
+      } w-full h-full sm:w-85 sm:h-13 flex justify-center items-center text-white text-2xl rounded-[.5rem] cursor-pointer`}
+      onClick={onClick}
     >
       <h1>{buttonText}</h1>
-    </div>
+    </button>
   );
 };
 
