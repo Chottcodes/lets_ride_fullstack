@@ -4,8 +4,10 @@ import React, { useEffect, useState } from "react";
 import InputComponent from "@/components/InputComponent";
 import PrimaryButton from "@/components/PrimaryButton";
 import PasswordInputComponent from "@/components/PasswordInputComponent";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const {push} = useRouter();
   const [isDark, setIsDark] = useState(true);
   const [isPasswordVisiable, setIsPasswordVisiable] = useState(false);
   const [email, setEmail] = useState("");
@@ -31,6 +33,7 @@ const page = () => {
     console.log("password", password);
     console.log("confirm Password", confirmPassword);
   }, [email, password, confirmPassword]);
+  
   return (
     <div className="w-full h-screen fixed">
       <div className="h-[5%] w-full mt-6 pl-4">
