@@ -27,10 +27,10 @@ const page = () => {
     setConfirmPassword(e.target.value);
   };
   useEffect(() => {
-    console.log('email',email);
-    console.log('password',password);
-    console.log('confirm Password',confirmPassword);
-  },[email,password,confirmPassword]);
+    console.log("email", email);
+    console.log("password", password);
+    console.log("confirm Password", confirmPassword);
+  }, [email, password, confirmPassword]);
   return (
     <div className="w-full h-screen fixed">
       <div className="h-[5%] w-full mt-6 pl-4">
