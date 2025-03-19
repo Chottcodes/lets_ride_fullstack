@@ -9,14 +9,15 @@ interface propTypes {
   type:string
   handleInput:(e: React.ChangeEvent<HTMLInputElement>) => void
   input:string
+  isFieldEmpty:boolean
 }
 
 const InputComponent = (props: propTypes) => {
-  const { inputTitle, imageSourcePath,placeholderText,type,handleInput,input } = props;
+  const { inputTitle, imageSourcePath,placeholderText,type,handleInput,input,isFieldEmpty } = props;
   return (
-    <div className="w-full flex flex-col gap-5 text-white">
+    <div className={" w-full flex flex-col gap-5 "}>
       <div>
-        <h2>{inputTitle}</h2>
+        <h2 className={`${isFieldEmpty ? 'text-red-500' : 'text-white'}`}>{inputTitle}</h2>
       </div>
       <div className="w-full relative flex items-center border-b-2 pb-3">
         <img
@@ -29,7 +30,8 @@ const InputComponent = (props: propTypes) => {
           value={input}
           onChange={handleInput}
           placeholder={placeholderText}
-          className="pl-8 w-full focus:outline-none text-white"
+          required
+          className="pl-8 w-full focus:outline-none text-white "
         />
       </div>
     </div>
