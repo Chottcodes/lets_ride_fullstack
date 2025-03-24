@@ -10,13 +10,13 @@ const page = () => {
   const {push} = useRouter();
   const [isDark, setIsDark] = useState(true);
   const [isPasswordVisiable, setIsPasswordVisiable] = useState(false);
+  const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const togglePasswordVisibility = () => {
     setIsPasswordVisiable((prev) => !prev);
   };
-  const handleOnClick = () => {};
   const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
@@ -28,6 +28,16 @@ const page = () => {
   ) => {
     setConfirmPassword(e.target.value);
   };
+  const handleNextButton = () => {
+    if (email === "")
+    {
+      setIsFieldEmpty(true);
+    }
+    //Push back to the login page
+  };
+  const handleBackButton = () => {
+    //Push back to the login page
+  }
   useEffect(() => {
     console.log("email", email);
     console.log("password", password);
@@ -39,7 +49,7 @@ const page = () => {
       <div className="h-[5%] w-full mt-6 pl-4">
         <BackButtonComponent onClick={() => push("./login-section")} />
       </div>
-      <div className="w-full h-[30%] flex flex-col justify-center items-center gap-4 text-white text-3xl">
+      <div className="w-full h-[30%] flex flex-col justify-center items-center gap-4 text-white text-3xl transition-all duration-300 lg:text-4xl">
         <h1>
           LETS<span className="text-[#506FFD]"> RIDE</span>
         </h1>
@@ -54,6 +64,7 @@ const page = () => {
             type="email"
             input={email}
             handleInput={handleEmailInput}
+            isFieldEmpty={isFieldEmpty}
           />
           <PasswordInputComponent
             handleInput={handlePasswordInput}
