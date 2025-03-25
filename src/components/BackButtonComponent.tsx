@@ -8,8 +8,8 @@ const BackButtonComponent = (props: propsTypes) => {
   const { onClick } = props;
 
   return (
-    <div>
-      <div className=" left-0 top-0 absolute">
+    <nav>
+      <section className="flex justify-center items-center ">
         <button
           className="h-full flex justify-center items-center cursor-pointer"
           onClick={onClick}
@@ -20,8 +20,8 @@ const BackButtonComponent = (props: propsTypes) => {
             alt="backicon"
           />
         </button>
-      </div>
-    </div>
+      </section>
+    </nav>
   );
 };
 

@@ -1,106 +1,96 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BackButtonComponent from "@/components/BackButtonComponent";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "next/navigation";
 import PasswordInputComponent from "@/components/PasswordInputComponent";
+import InputComponent from "@/components/InputComponent";
 
 const LoginSection = () => {
   const { push } = useRouter();
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisiable, setIsPasswordVisiable] = useState<boolean>(false);
+  const [isFieldEmpty, setIsFieldEmpty] = useState<boolean>(false);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisiable((prev) => !prev);
   };
+  const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
   const handlePasswordInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
+  useEffect(() => {
+    console.log(email);
+  }, [email]);
 
   return (
-    <div>
-      <BackButtonComponent onClick={() => push("/")} />
-
-      <div className="flex flex-col justify-center items-center text-white mt-10">
-        <div className="text-[46px] pb-8">
+    <div className=" h-screen ">
+      <nav className="w-full h-[100px] flex justify-start items-center pl-5">
+        <BackButtonComponent onClick={() => push("/")} />
+      </nav>
+      <main className="flex flex-col justify-center items-center text-white">
+        <header className="text-[46px] h-auto w-full flex flex-col justify-center items-center gap-5">
           <h1>
-            Let's <span className="text-blue-600 tracking-widest">Ride</span>
+            Let's<span className="text-blue-600 tracking-widest"> Ride</span>
           </h1>
-        </div>
-
-        <div className="flex flex-col justify-center items-center">
-          <hr className="w-[20rem] pt-10" />
+          <hr className="w-[20rem]" />
           <h1 className="text-4xl tracking-widest mb-20">Login</h1>
-        </div>
-
-        <div className="w-100 flex flex-col gap-5">
-          <div className="">
-            <h2>Enter Email</h2>
-          </div>
-          <div className=" flex items-center border-b-2 pb-3">
-            <img
-              className="absolute h-[20px]"
-              src="/assets/images/mail1.png"
-              alt="email logo"
+        </header>
+        <div className="w-[90%] md:h-full md:w-[50%] lg:w-[20%] flex flex-col gap-5 transform-all duration-300">
+          <section className="w-full h-full flex flex-col gap-5">
+            <InputComponent
+              type="email"
+              input={email}
+              imageSourcePath="/assets/images/mail1.png"
+              inputTitle="Enter Email"
+              placeholderText="Enter Email"
+              handleInput={handleEmailInput}
+              isFieldEmpty={isFieldEmpty}
             />
-            <input
-              type="text"
-              placeholder="Enter Email"
-              className="pl-8 w-100 focus:outline-none"
-            />
-          </div>
-          {/* Enter Password */}
-          <div className="">
-            <h2>Enter Password</h2>
-          </div>
-          <div className="relative w-full pb-3 flex items-center">
             <PasswordInputComponent
               isPasswordVisible={isPasswordVisiable}
               handleToggleFunction={togglePasswordVisibility}
               placeHolderText="Enter Password"
               handleInput={handlePasswordInput}
               input={password}
+              passwordTitle="Enter Password"
             />
-          </div>
+            <div className="w-full h-full flex ">
+              <button
+                onClick={() => push("/")}
+                className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"
+              >
+                <span className="text-white">forgot</span> password
+              </button>
+            </div>
+          </section>
 
-          <h1>
-            forgot{" "}
-            <button
-              onClick={() => push("/")}
-              className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"
-            >
-              {" "}
-              password
-            </button>
-          </h1>
-
-          <div className="flex flex-col justify-center items-center">
-            <PrimaryButton
-              buttonText="Log In"
-              isBackgroundDark={true}
-              onClick={() => push("/home/your-profile")}
-            />
-            <br />
-            <h1 className="inline-flex">
-              {" "}
-              <span>
-                {" "}
-                <hr />{" "}
-              </span>{" "}
-              Or{" "}
-              <span>
-                <hr />
-              </span>
-            </h1>
-            <br />
-            <PrimaryButton
-              buttonText="Back To Sign In"
-              isBackgroundDark={false}
-              onClick={() => push("/home/your-profile")}
-            />
-          </div>
+          <section className="flex flex-col justify-center items-center h-[200px]">
+            <section className="w-full h-[30%] flex justify-center">
+              <PrimaryButton
+                buttonText="Log In"
+                isBackgroundDark={true}
+                onClick={() => push("/pages/profile")}
+              />
+            </section>
+            <div className="w-full h-[20%] flex justify-evenly items-center">
+              <hr className="w-[40%]" />
+              <p>or</p>
+              <hr className="w-[40%]" />
+            </div>
+            <section className="w-full h-[30%] flex justify-center">
+              <PrimaryButton
+                buttonText="Sign Up"
+                isBackgroundDark={false}
+                onClick={() => push("/pages/Login/signup-section")}
+              />
+            </section>
+          </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
