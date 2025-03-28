@@ -57,7 +57,6 @@ Let's <span className="text-blue-600 tracking-widest">Ride</span>
         />
         
       </div>
-    </div>
 
 
       {/* Enter Password */}
@@ -77,7 +76,8 @@ Let's <span className="text-blue-600 tracking-widest">Ride</span>
           required 
           onChange={(e) => setPassword(e.target.value)}
         />
-        
+        </div>
+
       </div>
       {/* <PasswordInputComponent
         isPasswordVisible={isPasswordVisible}
