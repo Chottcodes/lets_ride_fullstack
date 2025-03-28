@@ -19,7 +19,7 @@ const InputComponent = (props: propTypes) => {
   const { inputTitle, imageSourcePath, placeholderText, type, handleInput, input, isFieldEmpty } = props;
 
   return (
-    <div className={" w-full flex flex-col gap-5 "}>
+    <div className="w-full flex flex-col gap-5 ">
       <div>
         <h2 className={`${isFieldEmpty ? 'text-red-500' : 'text-white'}`}>{inputTitle}</h2>
       </div>

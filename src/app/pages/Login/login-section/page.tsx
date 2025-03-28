@@ -1,6 +1,7 @@
 "use client"
 
 import BackButtonComponent from '@/components/BackButtonComponent';
+import InputComponent from '@/components/InputComponent';
 import PrimaryButton from '@/components/PrimaryButton'
 import { logIn } from '@/components/utils/DataServices';
 import { IToken } from '@/components/utils/Interface';
@@ -37,33 +38,29 @@ const LoginSection = () => {
       }
     }
   return (
-    <div>
-    <BackButtonComponent onClick={() => push("/")}/>
-        
-<div className='flex flex-col justify-center items-center text-white mt-10'>
-
-
-<div className="text-[46px] pb-8">
-  <h1>
-    Let's <span className="text-blue-600 tracking-widest">Ride</span>
-  </h1>
-</div>
-
-<div className='flex flex-col justify-center items-center'>
-<hr className="w-[20rem] pt-10" />
-<h1 className="text-4xl tracking-widest mb-20">Login</h1>
-</div>
-
-      <div className="w-100 flex flex-col gap-5">
-          <div className="">
-            <h2>Enter Email</h2>
-          </div>
-          <div className=" flex items-center border-b-2 pb-3">
-            <img
-              className="absolute h-[20px]"
-              src="/assets/images/mail1.png"
-              alt="email logo"
-            />
+    <div className=" h-screen ">
+      <nav className="w-full h-[100px] flex justify-start items-center pl-5">
+        <BackButtonComponent onClick={() => push("/")} />
+      </nav>
+      <main className="flex flex-col justify-center items-center text-white">
+        <header className="text-[46px] h-auto w-full flex flex-col justify-center items-center gap-5">
+          <h1>
+            Let's<span className="text-blue-600 tracking-widest"> Ride</span>
+          </h1>
+          <hr className="w-[20rem]" />
+          <h1 className="text-4xl tracking-widest mb-20">Login</h1>
+        </header>
+        <div className="w-[90%] md:h-full md:w-[50%] lg:w-[20%] flex flex-col gap-5 transform-all duration-300">
+          <div className="w-full h-full flex flex-col gap-5">
+            <InputComponent
+              type="email"
+              input={email}
+              imageSourcePath="/assets/images/mail1.png"
+              inputTitle="Enter Email"
+              placeholderText="Enter Email"
+              email={''} handleInput={function (e: React.ChangeEvent<HTMLInputElement>): void {
+                throw new Error('Function not implemented.');
+              } } isFieldEmpty={false}            />
             <input
               type="text"
               placeholder="Enter Email"
@@ -71,6 +68,7 @@ const LoginSection = () => {
               required
               onChange={(e) => setEmail(e.target.value)}
             />
+          </div>
           </div>
           {/* Enter Password */}
           <div className="">
@@ -106,12 +104,9 @@ const LoginSection = () => {
             <br />
           <PrimaryButton buttonText="Back To Sign In" isBackgroundDark={false} />
           </div>
-           
-
-      </div>
-    </div>
-    </div>
-  )
-}
-
-export default LoginSection
+          
+           </main>
+        </div>
+  );
+};
+export default LoginSection;

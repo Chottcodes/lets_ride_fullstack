@@ -6,13 +6,25 @@ interface propTypes {
   isPasswordVisible: boolean;
   handleToggleFunction: () => void;
   placeHolderText: string;
-  handleInput:(e: React.ChangeEvent<HTMLInputElement>) => void
-  input:string
+  handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  input: string;
+  passwordTitle:string
 }
 const PasswordInputComponent = (props: propTypes) => {
-  const { isPasswordVisible, handleToggleFunction, placeHolderText,input,handleInput } = props;
+  const {
+    isPasswordVisible,
+    handleToggleFunction,
+    placeHolderText,
+    input,
+    handleInput,
+    passwordTitle
+  } = props;
   return (
-    <div className=" w-full relative border-b-2 pb-3 flex items-center text-white bg-transparent">
+    <div className=" w-full relative border-b-2 pb-3 flex flex-col justify-start items-center text-white gap-5">
+      <header className="w-full flex justify-start items-start">
+        <h1>{passwordTitle}</h1>
+      </header>
+      <form className="w-full flex ">
       <img
         src="/assets/images/padlock (1).png"
         alt="lock icon"
@@ -23,7 +35,7 @@ const PasswordInputComponent = (props: propTypes) => {
         value={input}
         onChange={handleInput}
         placeholder={placeHolderText}
-        className="w-full pl-6 focus:outline-none "
+        className="w-full pl-8 focus:outline-none"
       />
       <img
         src={`${
@@ -35,6 +47,7 @@ const PasswordInputComponent = (props: propTypes) => {
         className="h-[20px] absolute left-[90%]"
         onClick={handleToggleFunction}
       />
+      </form>
     </div>
   );
 };

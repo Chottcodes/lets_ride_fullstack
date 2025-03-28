@@ -1,17 +1,38 @@
 "use client";
+import React from "react";
 import DesktopNavBar from "@/components/DesktopNavBar";
 import MobileNavBar from "@/components/MobileNavBar";
 import PrimaryButton from "@/components/PrimaryButton";
 import ProfileDisplay from "@/components/ProfileDisplay";
 import ProfileWithDescription from "@/components/ProfileWithDescription";
-import React from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
 
 const page = () => {
+  const { push } = useRouter();
+  
   return (
     <div className="h-screen w-full relative">
-        <nav className="bg-green-600 w-[120px] h-full absolute">
-            <DesktopNavBar /> 
-        </nav>
+      <nav className="w-[120px] hidden lg:flex h-full absolute">
+        <DesktopNavBar
+          isHomeOn={false}
+          isLocationOn={false}
+          isGalleryOn={false}
+          isProfileOn={true}
+        />
+      </nav>
+      <header className="absolute w-full h-[10%] flex justify-between items-center lg:hidden">
+        <button className="pl-5 text-white">Log Out</button>
+        <button className="pr-5 h-[45px] w-[45px] ">
+          <Image
+            src={"/assets/images/edit.png"}
+            width={100}
+            height={100}
+            alt="Edit Icon"
+          />
+        </button>
+      </header>
       <section className="h-[35%] w-full">
         <ProfileWithDescription
           Name="Christopher Wells-Hott"
@@ -63,15 +84,19 @@ const page = () => {
           />
         </section>
       </main>
-      <section className="flex lg:w-[60%] lg:h-[6%] lg:m-auto lg:justify-between">
-        <div className="w-[40%]">
+      <section className="hidden lg:flex lg:w-[60%] lg:h-[6%] lg:m-auto lg:justify-between">
+        <div className="w-full lg:w-[40%]">
+          <PrimaryButton
+            buttonText="Logout"
+            isBackgroundDark={false}
+            onClick={() => push("/")}
+          />
+        </div>
+        <div className="lg:w-[40%] lg:flex">
           <PrimaryButton buttonText="Edit" isBackgroundDark={true} />
         </div>
-        <div className="w-[40%]">
-          <PrimaryButton buttonText="Logout" isBackgroundDark={false} />
-        </div>
       </section>
-      <footer className="w-full h-[5%] lg:hidden bg-black flex justify-center items-end">
+      <footer className="w-full h-[5%] lg:hidden flex justify-center items-end">
         <MobileNavBar
           isHomeOn={false}
           isLocationOn={false}

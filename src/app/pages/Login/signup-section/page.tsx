@@ -57,6 +57,8 @@ Let's <span className="text-blue-600 tracking-widest">Ride</span>
         />
         
       </div>
+    </div>
+
 
       {/* Enter Password */}
        <div className="">
@@ -100,7 +102,6 @@ Let's <span className="text-blue-600 tracking-widest">Ride</span>
       </div>
 
   </div>
-</div>
 </div>
   )
 }
