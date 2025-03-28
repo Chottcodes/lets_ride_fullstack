@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+// import React, { useEffect, useState } from "react";
+// import { motion, AnimatePresence } from "framer-motion";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "next/navigation";
 
@@ -15,7 +15,6 @@ const LoginPage = () => {
       <div className="flex flex-col justify-center items-center">
         <img src="/assets/images/Logo.png" alt="logo" className="sm:w-120 w-60" />
         <h1 className="sm:text-[26px] text-[20px] mt-5">Connecting Riders, One Mile At A Time</h1>
-
         <div className="mt-20 flex flex-col justify-center items-center gap-3">
           <PrimaryButton buttonText="Log In" isBackgroundDark={false} onClick={() => push("/pages/Login/login-section")} />
           <PrimaryButton buttonText="Sign Up" isBackgroundDark={true} onClick={() => push("/pages/Login/signup-section")} />
