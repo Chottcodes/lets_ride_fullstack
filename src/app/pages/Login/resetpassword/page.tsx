@@ -28,21 +28,7 @@ const page = () => {
   ) => {
     setConfirmPassword(e.target.value);
   };
-  const handleNextButton = () => {
-    if (email === "")
-    {
-      setIsFieldEmpty(true);
-    }
-    //Push back to the login page
-  };
-  const handleBackButton = () => {
-    //Push back to the login page
-  }
-  useEffect(() => {
-    console.log("email", email);
-    console.log("password", password);
-    console.log("confirm Password", confirmPassword);
-  }, [email, password, confirmPassword]);
+
   
   return (
     <div className="flex flex-col justify-center items-center">
@@ -64,8 +50,7 @@ const page = () => {
             type="email"
             input={email}
             handleInput={handleEmailInput}
-            isFieldEmpty={isFieldEmpty}
-          />
+            isFieldEmpty={isFieldEmpty} email={""}          />
           <PasswordInputComponent
             handleInput={handlePasswordInput}
             handleToggleFunction={togglePasswordVisibility}

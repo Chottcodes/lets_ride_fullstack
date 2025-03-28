@@ -10,10 +10,14 @@ interface propTypes {
   handleInput:(e: React.ChangeEvent<HTMLInputElement>) => void
   input:string
   isFieldEmpty:boolean
+  email: string
 }
 
+
+
 const InputComponent = (props: propTypes) => {
-  const { inputTitle, imageSourcePath,placeholderText,type,handleInput,input,isFieldEmpty } = props;
+  const { inputTitle, imageSourcePath, placeholderText, type, handleInput, input, isFieldEmpty } = props;
+
   return (
     <div className={" w-full flex flex-col gap-5 "}>
       <div>

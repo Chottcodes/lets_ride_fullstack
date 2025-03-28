@@ -2,12 +2,40 @@
 
 import BackButtonComponent from '@/components/BackButtonComponent';
 import PrimaryButton from '@/components/PrimaryButton'
+import { logIn } from '@/components/utils/DataServices';
+import { IToken } from '@/components/utils/Interface';
 import { useRouter } from 'next/navigation';
-import React from 'react'
+import React, { useState } from 'react'
 
 const LoginSection = () => {
-      const { push } = useRouter(); 
+  const { push } = useRouter();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  
+  const handleLogIn = async () => 
+    {
+      const userData = { email: email, password: password };
+      
+      console.log(userData)
+
+
+      try {
+        const token: IToken = await logIn(userData);
     
+        if (token) {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("Token", token.token);
+            console.log(token.token);
+          }
+          console.log("Login Successful");
+          push("/pages/profile")
+        } else {
+          alert("Login unseccssful");
+        }
+      } catch (error) {
+        alert("Something went wrong.");
+      }
+    }
   return (
     <div>
     <BackButtonComponent onClick={() => push("/")}/>
@@ -40,6 +68,8 @@ const LoginSection = () => {
               type="text"
               placeholder="Enter Email"
               className="pl-8 w-100 focus:outline-none"
+              required
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           {/* Enter Password */}
@@ -55,7 +85,10 @@ const LoginSection = () => {
             <input
               type="text"
               placeholder="Enter Password"
+              required 
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-6 focus:outline-none"
+              
             />
             <img
               src="/assets/images/hide.png"
@@ -67,11 +100,11 @@ const LoginSection = () => {
           <h1>forgot <button onClick={() => push("/pages/Login/resetpassword")} className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"> password</button></h1>
 
           <div className='flex flex-col justify-center items-center'>
-            <PrimaryButton buttonText="Log In" isBackgroundDark={true} onClick={() => push("/home/your-profile")}/>
+            <PrimaryButton buttonText="Log In" isBackgroundDark={true} onClick={handleLogIn} />
               <br /> 
             <h1 className='inline-flex'> <span> <hr /> </span> Or <span><hr /></span></h1>
             <br />
-          <PrimaryButton buttonText="Back To Sign In" isBackgroundDark={false} onClick={() => push("/home/your-profile")}/>
+          <PrimaryButton buttonText="Back To Sign In" isBackgroundDark={false} />
           </div>
            
 

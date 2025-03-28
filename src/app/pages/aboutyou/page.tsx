@@ -74,16 +74,13 @@ const page = () => {
         <div className="w-[80%] h-full lg:w-[80%] lg:h-[85%] flex flex-col justify-center items-center">
           <div className="w-full h-full flex flex-col gap-3">
             <InputComponent
-              inputTitle={
-                isUserNameEmpty ? "Invalid, please enter username" : "User Name"
-              }
+              inputTitle={isUserNameEmpty ? "Invalid, please enter username" : "User Name"}
               imageSourcePath="/assets/images/user.png"
               placeholderText=""
               type="string"
               input={userName}
               handleInput={handleUserName}
-              isFieldEmpty={isUserNameEmpty}
-            />
+              isFieldEmpty={isUserNameEmpty} email={""}            />
             <InputComponent
               inputTitle={isNameEmpty ? "Invalid, please enter name" : "Name"}
               imageSourcePath="/assets/images/user.png"
@@ -91,30 +88,23 @@ const page = () => {
               type="string"
               input={name}
               handleInput={handleName}
-              isFieldEmpty={isNameEmpty}
-            />
+              isFieldEmpty={isNameEmpty} email={""}            />
             <InputComponent
-              inputTitle={
-                isLocationEmpty ? "Invalid, please enter city" : "City Name"
-              }
+              inputTitle={isLocationEmpty ? "Invalid, please enter city" : "City Name"}
               imageSourcePath="/assets/images/location.png"
               placeholderText=""
               type="string"
               input={location}
               handleInput={handleLocation}
-              isFieldEmpty={isLocationEmpty}
-            />
+              isFieldEmpty={isLocationEmpty} email={""}            />
             <InputComponent
-              inputTitle={
-                isBikeTypeEmpty ? "Invalid, please enter city" : "Bike Type"
-              }
+              inputTitle={isBikeTypeEmpty ? "Invalid, please enter city" : "Bike Type"}
               imageSourcePath="/assets/images/motorbike.png"
               placeholderText=""
               type="string"
               input={bikeType}
               handleInput={handleBikeType}
-              isFieldEmpty={isBikeTypeEmpty}
-            />
+              isFieldEmpty={isBikeTypeEmpty} email={""}            />
           </div>
           <div className="h-[20%] w-full mt-5 lg:h-[15%] lg:mt-0">
             <PrimaryButton
