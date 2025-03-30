@@ -3,7 +3,7 @@ import DropDownInputComponent from "@/components/DropDownInputComponent";
 import PrimaryButton from "@/components/PrimaryButton";
 import React, { useEffect, useState } from "react";
 
-const page = () => {
+const usePage = () => {
   const [beginner, setBeginner] = useState("");
   const [preferences, setPreferences] = useState("");
   const [ridingFrequency, setRidingFrequency] = useState("");
@@ -89,4 +89,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default usePage;

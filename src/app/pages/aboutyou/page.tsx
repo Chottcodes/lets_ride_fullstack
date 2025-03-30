@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import InputComponent from "@/components/InputComponent";
 
-const page = () => {
+const usePage = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isUserNameEmpty, setIsUserNameEmpty] = useState(false);
   const [isNameEmpty, setIsNameEmpty] = useState(false);
@@ -129,4 +129,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default usePage;
