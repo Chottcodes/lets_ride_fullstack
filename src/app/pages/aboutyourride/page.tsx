@@ -30,14 +30,14 @@ const page = () => {
   }, [beginner]);
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">
-      <div className="w-full  lg:h-[10%] flex flex-col items-center justify-center lg:gap-5 lg:mt-0">
+      <nav className="w-full  lg:h-[10%] flex flex-col items-center justify-center lg:gap-5 lg:mt-0">
         <h1 className="text-4xl text-white">
           Tell Us About <span className="text-[#506FFD]">Your Ride</span>
         </h1>
         <hr className="hidden lg:w-[20%] lg:block border-1" />
-      </div>
-      <div className="lg:h-[50%] lg:w-[20%] h-[60%] w-[80%] flex flex-col justify-evenly text-white transform-all duration-300">
-        <div className="lg:w-full lg:h-[10%] gap-5  flex flex-col justify-center text-xl">
+      </nav>
+      <main className="lg:h-[50%] lg:w-[20%] h-[60%] w-[80%] flex flex-col justify-evenly text-white transform-all duration-300">
+        <section className="lg:w-full lg:h-[10%] gap-5  flex flex-col justify-center text-xl">
           <h1>Riding Experience Level</h1>
           <DropDownInputComponent
             onChange={handleBeginnerChange}
@@ -50,8 +50,8 @@ const page = () => {
             titleFour={null}
             optionFour={null}
           />
-        </div>
-        <div className="w-full h-[10%] gap-5 flex flex-col justify-center text-xl">
+        </section>
+        <section className="w-full h-[10%] gap-5 flex flex-col justify-center text-xl">
           <h1>Riding Preferences</h1>
           <DropDownInputComponent
             onChange={handlePreferencesChange}
@@ -64,8 +64,8 @@ const page = () => {
             titleFour="Track Riding/Fast Riding"
             optionFour="Track Riding"
           />
-        </div>
-        <div className="w-full h-[15%] gap-5 flex flex-col justify-center text-xl">
+        </section>
+        <section className="w-full h-[15%] gap-5 flex flex-col justify-center text-xl">
           <h1>How often do you ride?</h1>
           <DropDownInputComponent
             onChange={handleRidingFrequencyChange}
@@ -78,13 +78,13 @@ const page = () => {
             titleFour="Daily"
             optionFour="Daily"
           />
-        </div>
-      </div>
-      <div className="lg:w-[20%] lg:h-[15%] h-[20%] w-[80%] flex justify-start items-center">
+        </section>
+      </main>
+      <footer className="lg:w-[20%] lg:h-[15%] h-[20%] w-[80%] flex justify-start items-center">
         <div className="w-full h-[45%]">
           <PrimaryButton buttonText="Next" isBackgroundDark={false} />
-        </div>
-      </div>
+        </div> 
+      </footer>
     </div>
   );
 };
