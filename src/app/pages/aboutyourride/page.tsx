@@ -2,14 +2,11 @@
 import DropDownInputComponent from "@/components/DropDownInputComponent";
 import PrimaryButton from "@/components/PrimaryButton";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 const page = () => {
-  const { push } = useRouter();
   const [beginner, setBeginner] = useState("");
   const [preferences, setPreferences] = useState("");
   const [ridingFrequency, setRidingFrequency] = useState("");
-  const handleNextButton = () => {};
   const handleBeginnerChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -28,8 +25,8 @@ const page = () => {
   };
   useEffect(() => {
     console.log("beginner", beginner);
-    // console.log('preferences',preferences)
-    // console.log('Frequency',ridingFrequency)
+    console.log('preferences',preferences)
+    console.log('Frequency',ridingFrequency)
   }, [beginner]);
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">

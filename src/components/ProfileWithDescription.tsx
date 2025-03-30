@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 interface propTypes {
   Name: string,

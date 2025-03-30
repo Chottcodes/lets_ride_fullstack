@@ -1,77 +1,84 @@
 "use client";
 import BackButtonComponent from "@/components/BackButtonComponent";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import InputComponent from "@/components/InputComponent";
 import PrimaryButton from "@/components/PrimaryButton";
 import PasswordInputComponent from "@/components/PasswordInputComponent";
 import { useRouter } from "next/navigation";
 
 const page = () => {
-  const {push} = useRouter();
-  const [isDark, setIsDark] = useState(true);
+  const { push } = useRouter();
   const [isPasswordVisiable, setIsPasswordVisiable] = useState(false);
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
   const togglePasswordVisibility = () => {
     setIsPasswordVisiable((prev) => !prev);
   };
-  const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-  const handlePasswordInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-  const handleConfirmPasswordInput = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setConfirmPassword(e.target.value);
-  };
-
   
+  const handleSubmit=()=>{
+    if(password==''||confirmPassword == ''||email=='')
+    {
+      setIsFieldEmpty(true)
+    }
+    push("./Login/login-section")
+  }
+
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="h-[5%] w-full mt-6 pl-4">
-        <BackButtonComponent onClick={() => push("./login-section")} />
-      </div>
-      <div className="w-full h-[30%] flex flex-col justify-center items-center gap-4 text-white text-3xl transition-all duration-300 lg:text-4xl">
+    <div className="h-screen flex flex-col justify-start items-center">
+      <nav className="w-full h-[10%] flex items-center">
+        <div className="pl-5">
+          <BackButtonComponent
+            onClick={() => push("/pages/Login/login-section")}
+          />
+        </div>
+      </nav>
+      <header className="w-full h-[20%] flex flex-col justify-center items-center gap-4 text-white text-3xl transition-all duration-300 lg:text-4xl">
         <h1>
           LETS<span className="text-[#506FFD]"> RIDE</span>
         </h1>
         <h5>Reset Password</h5>
-      </div>
-      <div className="w-100 flex flex-col justify-center items-center">
-        <div className="w-[90%] h-[40%] flex flex-col justify-center gap-15">
+      </header>
+      <main className="w-[85%] md:w-[50%] lg:w-[25%] flex flex-col justify-center items-center">
+        <section className="w-[90%] h-[40%] flex flex-col justify-center gap-15">
           <InputComponent
             inputTitle="Email"
-            imageSourcePath="/assets/images/mail1.png/"
+            imageSourcePath="/assets/images/mail1.png"
             placeholderText="Enter Email"
             type="email"
             input={email}
-            handleInput={handleEmailInput}
-            isFieldEmpty={isFieldEmpty} email={""}          />
+            handleInput={(e)=>setEmail(e.target.value)}
+            isFieldEmpty={isFieldEmpty}
+          />
           <PasswordInputComponent
-            handleInput={handlePasswordInput}
+            handleInput={(e)=>setPassword(e.target.value)}
             handleToggleFunction={togglePasswordVisibility}
             isPasswordVisible={isPasswordVisiable}
             placeHolderText="Enter New Password"
             input={password}
+            passwordTitle="Enter Password"
           />
           <PasswordInputComponent
-            handleInput={handleConfirmPasswordInput}
+            handleInput={(e)=>setConfirmPassword(e.target.value)}
             handleToggleFunction={togglePasswordVisibility}
             isPasswordVisible={isPasswordVisiable}
             placeHolderText="Confirm Password"
             input={confirmPassword}
+            passwordTitle="Enter Password"
+          />
+        </section>
+      </main>
+      <footer className="w-[80%] h-[15%] md:w-[50%] lg:w-[20%] flex items-center justify-center ">
+        <div className="w-[70%] h-[40%]">
+          <PrimaryButton
+            buttonText="Submit"
+            isBackgroundDark={true}
+            onClick={handleSubmit}
           />
         </div>
-      </div>
-      <div className=" flex items-center justify-center mt-15">
-        <div className="">
-          <PrimaryButton buttonText="Next" isBackgroundDark={isDark} />
-        </div>
-      </div>
+      </footer>
     </div>
   );
 };
