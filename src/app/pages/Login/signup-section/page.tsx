@@ -1,110 +1,123 @@
-"use client"
-import BackButtonComponent from '@/components/BackButtonComponent';
-import PasswordInputComponent from '@/components/PasswordInputComponent';
-import PrimaryButton from '@/components/PrimaryButton'
-import { createAccount } from '@/components/utils/DataServices';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react'
+"use client";
+import React, { useEffect, useState } from "react";
+import BackButtonComponent from "@/components/BackButtonComponent";
+import InputComponent from "@/components/InputComponent";
+import PasswordInputComponent from "@/components/PasswordInputComponent";
+import PrimaryButton from "@/components/PrimaryButton";
+import { createAccount } from "@/components/utils/DataServices";
+import { useRouter } from "next/navigation";
 
 const SignUpSection = () => {
-  const { push } = useRouter(); 
-    
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+  const { push } = useRouter();
 
-    const handleSubmit = async () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isTheSame, setIsTheSame] = useState<boolean>(true);
+  const [isPasswordVisiable, setIsPasswordVisiable] = useState(false);
+
+  const handleSubmit = async () => {
+    if (password == confirmPassword) {
       const userData = { email: email, password: password };
       const success = await createAccount(userData);
-    
       if (success) {
         alert("Account Created!");
-        push("/pages/aboutyou")
+        push("/pages/aboutyou");
       } else {
         alert("Email already in use.");
       }
-    };
-          
+    } else {
+      setIsTheSame(false);
+    }
+  };
+  const handlePasswordInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+  const handleConfirmPasswordInput = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setConfirmPassword(e.target.value);
+  };
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisiable((prev) => !prev);
+  };
+  useEffect(() => {
+    if (password != "") setIsTheSame(true);
+  }, [password]);
+
   // End of logic
   return (
-    <div>
-      <BackButtonComponent onClick={() => push("/")}/>
-<div className='flex flex-col justify-center items-center text-white mt-10'>
-
-<div className="text-[46px] pb-8">
-<h1>
-Let's <span className="text-blue-600 tracking-widest">Ride</span>
-</h1>
-</div>
-
-<hr className="w-[20rem] pt-10" />
-<h1 className="text-4xl tracking-widest mb-20">Sign Up</h1>
-  <div className="w-100 flex flex-col gap-3">
-      <div className="">
-        <h2>Enter Email</h2>
-      </div>
-      <div className="w-full relative flex items-center border-b-2 pb-3">
-        <img
-          className="absolute h-[20px]"
-          src="/assets/images/mail1.png"
-          alt="email logo"
-        />
-        <input
-          type="text"
-          placeholder="Enter Email Here"
-          className="pl-8 w-full focus:outline-none"
-          required 
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        
-      </div>
-
-
-      {/* Enter Password */}
-       <div className="">
-        <h2>Enter Password</h2>
-      </div>
-      <div className="w-full relative flex items-center border-b-2 pb-3">
-        <img
-          className="absolute h-[20px]"
-          src="/assets/images/mail1.png"
-          alt="email logo"
-        />
-        <input
-          type="text"
-          placeholder="Enter Password Here"
-          className="pl-8 w-full focus:outline-none"
-          required 
-          onChange={(e) => setPassword(e.target.value)}
-        />
+    <div className="h-screen">
+      <main className=" lg:h-[90%] flex flex-col justify-start items-center lg:gap-2 text-white  ">
+      <nav className="lg:h-[10%] w-full flex items-center ">
+        <div className="pl-5">
+          <BackButtonComponent
+            onClick={() => push("/pages/Login/login-section")}
+          />
         </div>
+      </nav>
+        <header className="lg:h-[20%] lg:w-[30%] text-4xl flex flex-col justify-center items-center lg:gap-2 ">
+          <h1>
+            Lets <span className="text-blue-600 tracking-widest">Ride</span>
+          </h1>
+          <hr className="lg:w-[50%]" />
+          <h1 className="tracking-widest">Sign Up</h1>
+        </header>
 
-      </div>
-      {/* <PasswordInputComponent
-        isPasswordVisible={isPasswordVisible}
-        handleToggleFunction={handleTogglePassword}
-        placeHolderText="Enter your password"
-        handleInput={handlePasswordChange}
-        input={password}
-      /> */}
+        <section className=" lg:w-[20%] flex flex-col gap-3 ">
+          <InputComponent
+            type="email"
+            input={email}
+            imageSourcePath="/assets/images/mail1.png"
+            inputTitle="Enter Email"
+            placeholderText="Enter Email"
+            handleInput={(e) => setEmail(e.target.value)}
+            isFieldEmpty={false}
+          />
+          <div
+            className={`${
+              isTheSame ? "border-none" : " border-red-500 border-2"
+            } flex flex-col lg:gap-5 h-full`}
+          >
+            <PasswordInputComponent
+              isPasswordVisible={isPasswordVisiable}
+              handleToggleFunction={togglePasswordVisibility}
+              placeHolderText="Enter your password"
+              passwordTitle={`${
+                isTheSame ? "Enter Password" : "Invalid Passwords Do Not Match"
+              }`}
+              handleInput={handlePasswordInput}
+              input={password}
+            />
+            <PasswordInputComponent
+              isPasswordVisible={isPasswordVisiable}
+              handleToggleFunction={togglePasswordVisibility}
+              placeHolderText="Confirm password"
+              passwordTitle="Confirm Password"
+              handleInput={handleConfirmPasswordInput}
+              input={confirmPassword}
+            />
+          </div>
+        </section>
 
-      {/* Confirm Password */}
-      {/* <h1>Confirm Password </h1>
-      <PasswordInputComponent
-        isPasswordVisible={isPasswordVisible}
-        handleToggleFunction={handleTogglePassword}
-        placeHolderText="Confirm your password"
-        handleInput={handlePasswordChange}
-        input={password}
-      /> */}
-
-      <div className='flex justify-center pt-5'>
-      <PrimaryButton  buttonText="Sign Up" isBackgroundDark={false} onClick={handleSubmit}/>
-      </div>
-
-  </div>
-</div>
-  )
-}
-
-
-export default SignUpSection
+        <footer className="lg:w-[20%] lg:h-[20%] flex flex-col justify-evenly ">
+          <div className="lg:h-[30%]">
+            <PrimaryButton
+              buttonText="Sign Up"
+              isBackgroundDark={false}
+              onClick={handleSubmit}
+            />
+          </div>
+          <div className="lg:h-[30%]">
+            <PrimaryButton
+              buttonText="Login"
+              isBackgroundDark={true}
+              onClick={()=>push('/pages/Login/login-section')}
+            />
+          </div>
+        </footer>
+      </main>
+    </div>
+  );
+};
+export default SignUpSection;

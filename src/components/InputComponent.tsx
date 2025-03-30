@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { handleInputChange } from "./utils/GatherInput";
+import Image from "next/image";
+
 //This is a reusable email component that captures the users email input
 interface propTypes {
   inputTitle: string;
@@ -10,7 +10,7 @@ interface propTypes {
   handleInput:(e: React.ChangeEvent<HTMLInputElement>) => void
   input:string
   isFieldEmpty:boolean
-  email: string
+
 }
 
 
@@ -24,9 +24,11 @@ const InputComponent = (props: propTypes) => {
         <h2 className={`${isFieldEmpty ? 'text-red-500' : 'text-white'}`}>{inputTitle}</h2>
       </div>
       <div className="w-full relative flex items-center border-b-2 pb-3">
-        <img
+        <Image
           className="absolute h-[20px]"
           src={imageSourcePath}
+          width={20}
+          height={20}
           alt="Mail Icon"
         />
         <input
