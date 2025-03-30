@@ -48,23 +48,23 @@ const SignUpSection = () => {
   // End of logic
   return (
     <div className="h-screen">
-      <main className=" lg:h-[90%] flex flex-col justify-start items-center lg:gap-2 text-white  ">
-      <nav className="lg:h-[10%] w-full flex items-center ">
+      <main className="h-[90%] md:h-[80%] lg:h-[90%] flex flex-col justify-start items-center md:gap-10 lg:gap-2 text-white   transform-all duration-300 ">
+      <nav className="h-[10%] md:h-[10%] lg:h-[10%] w-full flex items-center transform-all duration-300">
         <div className="pl-5">
           <BackButtonComponent
             onClick={() => push("/pages/Login/login-section")}
           />
         </div>
       </nav>
-        <header className="lg:h-[20%] lg:w-[30%] text-4xl flex flex-col justify-center items-center lg:gap-2 ">
+        <header className="w-[40%] h-[20%] gap-3 md:h-[10%] md:w-[40%] lg:h-[20%] lg:w-[30%] text-4xl flex flex-col justify-center items-center lg:gap-2  transform-all duration-300 ">
           <h1>
             Lets <span className="text-blue-600 tracking-widest">Ride</span>
           </h1>
-          <hr className="lg:w-[50%]" />
+          <hr className="w-full md:w-[70%] lg:w-[50%]" />
           <h1 className="tracking-widest">Sign Up</h1>
         </header>
 
-        <section className=" lg:w-[20%] flex flex-col gap-3 ">
+        <section className="h-[45%] w-[65%] md:w-[40%] md:h-[30%] lg:w-[20%] lg:h-[45%] flex flex-col gap-3 transform-all duration-300 ">
           <InputComponent
             type="email"
             input={email}
@@ -100,15 +100,15 @@ const SignUpSection = () => {
           </div>
         </section>
 
-        <footer className="lg:w-[20%] lg:h-[20%] flex flex-col justify-evenly ">
-          <div className="lg:h-[30%]">
+        <footer className="h-[15%] w-[60%] gap-5 md:h-[15%] md:w-[40%] lg:w-[20%] lg:h-[20%] flex flex-col justify-evenly">
+          <div className="h-[40%] lg:h-[30%]">
             <PrimaryButton
               buttonText="Sign Up"
               isBackgroundDark={false}
               onClick={handleSubmit}
             />
           </div>
-          <div className="lg:h-[30%]">
+          <div className="h-[40%] lg:h-[30%]">
             <PrimaryButton
               buttonText="Login"
               isBackgroundDark={true}

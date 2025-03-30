@@ -1,6 +1,5 @@
 "use client";
 
-import BackButtonComponent from "@/components/BackButtonComponent";
 import InputComponent from "@/components/InputComponent";
 import PasswordInputComponent from "@/components/PasswordInputComponent";
 import PrimaryButton from "@/components/PrimaryButton";

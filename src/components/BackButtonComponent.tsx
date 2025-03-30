@@ -16,7 +16,7 @@ const BackButtonComponent = (props: propsTypes) => {
           onClick={onClick}
         >
           <Image
-            className={"lg:h-[40px] lg:w-[40px] hover:bg-stone-800"}
+            className={"h-[35px] w-[35px] md:h-[40px] md:w-[40px] lg:h-[40px] lg:w-[40px] hover:bg-stone-800"}
             width={100}
             height={100}
             src="/assets/images/left.png"
