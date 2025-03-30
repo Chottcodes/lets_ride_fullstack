@@ -1,4 +1,4 @@
-import { IUserData, IUserInfo} from "./Interface"
+import { IUserInfo} from "./Interface"
 
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 
