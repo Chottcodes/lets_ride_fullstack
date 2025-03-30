@@ -8,7 +8,7 @@ import { IToken } from "@/components/utils/Interface";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const LoginSection = () => {
+const LoginSectionPage = () => {
   const { push } = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -114,4 +114,4 @@ const LoginSection = () => {
     </div>
   );
 };
-export default LoginSection;
+export default LoginSectionPage;

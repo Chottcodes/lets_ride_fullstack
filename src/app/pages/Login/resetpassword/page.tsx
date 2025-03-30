@@ -6,7 +6,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import PasswordInputComponent from "@/components/PasswordInputComponent";
 import { useRouter } from "next/navigation";
 
-const usePage = () => {
+const ResetPage = () => {
   const { push } = useRouter();
   const [isPasswordVisiable, setIsPasswordVisiable] = useState(false);
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
@@ -83,4 +83,4 @@ const usePage = () => {
   );
 };
 
-export default usePage;
+export default ResetPage;

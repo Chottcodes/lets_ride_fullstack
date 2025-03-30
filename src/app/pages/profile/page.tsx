@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 
-const usePage = () => {
+const ProfilePage = () => {
   const { push } = useRouter();
   
   return (
@@ -108,4 +108,4 @@ const usePage = () => {
   );
 };
 
-export default usePage;
+export default ProfilePage;

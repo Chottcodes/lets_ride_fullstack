@@ -4,7 +4,7 @@ import Image from "next/image";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "next/navigation";
 
-const LoginPage = () => {
+const SignUpIntroPage = () => {
   const { push } = useRouter();
 
   return (
@@ -46,6 +46,6 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignUpIntroPage;
 
 
