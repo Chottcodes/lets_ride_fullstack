@@ -1,9 +1,9 @@
-import { IUserInfo} from "./Interface"
+import { IUserCreate, IUserInfo} from "./Interface"
 
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 
 // Account Creation
-export const createAccount = async (user: IUserInfo) =>{
+export const createAccount = async (user:IUserCreate) =>{
     console.log(JSON.stringify(user))
     const response = await fetch(url + "User/CreateUser", {
         method: "POST",
@@ -12,7 +12,6 @@ export const createAccount = async (user: IUserInfo) =>{
         },
         body:JSON.stringify(user)
     })
-
     if(!response.ok)
         {
             const data = await response.json();
