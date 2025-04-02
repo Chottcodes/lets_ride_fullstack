@@ -27,7 +27,7 @@ const AboutYourRidePage = () => {
     console.log("beginner", beginner);
     console.log('preferences',preferences)
     console.log('Frequency',ridingFrequency)
-  }, [beginner]);
+  }, [beginner,preferences,ridingFrequency]);
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">
       <nav className="w-full  lg:h-[10%] flex flex-col items-center justify-center lg:gap-5 lg:mt-0">

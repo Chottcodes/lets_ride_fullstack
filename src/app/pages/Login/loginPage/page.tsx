@@ -73,7 +73,7 @@ const LoginSectionPage = () => {
             <h1>
               forgot{" "}
               <button
-                onClick={() => push("/pages/Login/resetpassword")}
+                onClick={() => push("/pages/Login/resetPage")}
                 className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"
               >
                 {" "}
@@ -107,7 +107,7 @@ const LoginSectionPage = () => {
           </h1>
           <br />
           <div className="w-full h-[70%] md:h-full">
-            <PrimaryButton buttonText="Sign up" isBackgroundDark={false} onClick={()=>push('/pages/Login/signup-section')} />
+            <PrimaryButton buttonText="Sign up" isBackgroundDark={false} onClick={()=>push('/pages/Login/signupPage')} />
           </div>
         </footer>
       </main>

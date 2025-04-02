@@ -29,14 +29,14 @@ const SignUpIntroPage = () => {
               <PrimaryButton
                 buttonText="Log In"
                 isBackgroundDark={false}
-                onClick={() => push("/pages/Login/login-section")}
+                onClick={() => push("/pages/Login/loginPage")}
               />
             </div>
             <div className="w-full h-[30%] md:h-[40%] lg:h-[20%] transform-all duration-300">
               <PrimaryButton
                 buttonText="Sign Up"
                 isBackgroundDark={true}
-                onClick={() => push("/pages/Login/signup-section")}
+                onClick={() => push("/pages/Login/signupPage")}
               />
             </div>
           
