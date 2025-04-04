@@ -3,10 +3,11 @@ import React from "react";
 import Image from "next/image";
 //This Component Take in the password and the password value and is designed according to the figma. I make the eye image clickable so the use can reviel there password once clicked. The boolean can be manipulated on the parent component just created a function that changes the boolean value on click when using on parent component.
 interface propTypes {
-  isPasswordVisible: boolean;
   handleToggleFunction: () => void;
-  placeHolderText: string;
   handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isPasswordVisible: boolean;
+  isFieldEmpty:boolean
+  placeHolderText: string;
   input: string;
   passwordTitle: string;
 }
@@ -18,10 +19,11 @@ const PasswordInputComponent = (props: propTypes) => {
     input,
     handleInput,
     passwordTitle,
+    isFieldEmpty
   } = props;
   return (
     <div className=" w-full relative border-b-2 pb-3 flex flex-col justify-start items-center text-white gap-5">
-      <header className="w-full flex justify-start items-start">
+      <header className={`${isFieldEmpty? "text-red-500":"text-white"} w-full flex justify-start items-start`}>
         <h1>{passwordTitle}</h1>
       </header>
       <form className="w-full flex ">

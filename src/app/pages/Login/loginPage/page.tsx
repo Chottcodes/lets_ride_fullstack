@@ -13,6 +13,7 @@ const LoginSectionPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  
 
   const handleToggleFunction = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -69,6 +70,7 @@ const LoginSectionPage = () => {
               handleInput={(e) => setPassword(e.target.value)}
               handleToggleFunction={handleToggleFunction}
               input={password}
+              isFieldEmpty={false}
             />
             <h1>
               forgot{" "}

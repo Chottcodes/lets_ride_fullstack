@@ -1,3 +1,4 @@
+
 import { IUserCreate, IUserInfo} from "./Interface"
 
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
@@ -23,7 +24,7 @@ export const createAccount = async (user:IUserCreate) =>{
     const data = await response.json();
     return data.success;
 }
-
+//Login
 export const logIn = async (user: IUserInfo) =>{
     const response = await fetch(url + "User/Login", {
         method: "POST",
@@ -44,3 +45,27 @@ export const logIn = async (user: IUserInfo) =>{
     const data = await response.json();
     return data;
 }
+export const resetPassword = async (user:IUserCreate) => {
+    try {
+        const res = await fetch(url + "User/UpdatePassword", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        });
+
+        if (!res.ok) {
+            const data = await res.json();
+            const message = data.message || "Unknown error occurred";
+            console.error("Error:", message);
+            return message; 
+        }
+        const data = await res.json();
+        return data;
+
+    } catch (error) {
+        
+        console.error("Network error or server not reachable:", error);
+    }
+}   

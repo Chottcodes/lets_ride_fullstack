@@ -93,6 +93,7 @@ const SignUpPage = () => {
               }`}
               handleInput={(e) => setPassword(e.target.value)}
               input={password}
+              isFieldEmpty={false}
             />
             <PasswordInputComponent
               isPasswordVisible={isPasswordVisiable}
@@ -101,6 +102,7 @@ const SignUpPage = () => {
               passwordTitle="Confirm Password"
               handleInput={(e) => setConfirmPassword(e.target.value)}
               input={confirmPassword}
+              isFieldEmpty={false}
             />
           </div>
         </section>
