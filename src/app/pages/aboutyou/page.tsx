@@ -1,10 +1,10 @@
 "use client";
-import HandleFileInput from "@/components/HandleFileInput";
+import HandleFileInput from "@/components/inputs/HandleFileInput";
 import React, { useEffect } from "react";
-import PrimaryButton from "@/components/PrimaryButton";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import InputComponent from "@/components/InputComponent";
+import InputComponent from "@/components/inputs/InputComponent";
 
 const AboutYouPage = () => {
   const [image, setImage] = useState<string | null>(null);

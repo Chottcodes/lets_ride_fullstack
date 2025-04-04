@@ -1,6 +1,6 @@
 "use client";
-import DropDownInputComponent from "@/components/DropDownInputComponent";
-import PrimaryButton from "@/components/PrimaryButton";
+import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import React, { useEffect, useState } from "react";
 
 const AboutYourRidePage = () => {

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 
-import PrimaryButton from "@/components/PrimaryButton";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 
 const SignUpIntroPage = () => {

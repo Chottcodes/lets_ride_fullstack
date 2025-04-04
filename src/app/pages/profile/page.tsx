@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import DesktopNavBar from "@/components/DesktopNavBar";
-import MobileNavBar from "@/components/MobileNavBar";
-import PrimaryButton from "@/components/PrimaryButton";
+import DesktopNavBar from "@/components/navbars/DesktopNavBar";
+import MobileNavBar from "@/components/navbars/MobileNavBar";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import ProfileDisplay from "@/components/ProfileDisplay";
 import ProfileWithDescription from "@/components/ProfileWithDescription";
 import Image from "next/image";

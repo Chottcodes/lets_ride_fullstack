@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import InputComponent from "@/components/InputComponent";
-import PasswordInputComponent from "@/components/PasswordInputComponent";
-import PrimaryButton from "@/components/PrimaryButton";
+import InputComponent from "@/components/inputs/InputComponent";
+import PasswordInputComponent from "@/components/inputs/PasswordInputComponent";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { createAccount } from "@/components/utils/DataServices";
 const SignUpPage = () => {
