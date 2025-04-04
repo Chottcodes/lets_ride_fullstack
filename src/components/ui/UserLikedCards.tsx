@@ -4,12 +4,14 @@ import React from "react";
 const UserLikedCards = () => {
   return (
     <div>
+      {/* Image */}
       <div className="w-[465px] h-[386px] overflow-hidden shadow-md  rounded-md border-2 bg-[#1E1E1E] border-black ">
         <img
           src="/assets/testImages/bikeTest2.webp"
           alt="Motorbike POV"
           className="transition-transform duration-300 hover:scale-105 w-[465px] h-[250px] object-cover  rounded-md border-2 border-blue-500 cursor-pointer"
         />
+        {/* Card Content */}
         <div className="text-white flex justify-between px-3 mt-3">
           <div className="text-white flex justify-between ">
             <div className="flex items-center space-x-2">
@@ -39,10 +41,10 @@ const UserLikedCards = () => {
                 <img
                   src="/assets/images/thumbs-up.png"
                   alt="comments"
-                  className="w-5 h-5"
+                  className="w-7 h-7"
                 />
               </div>
-              <span>20</span>
+              <span className="text-2xl">20</span>
             </div>
 
             <div className="flex items-center space-x-1 cursor-pointer">
@@ -50,14 +52,14 @@ const UserLikedCards = () => {
                 <img
                   src="/assets/images/coment.png"
                   alt="comments"
-                  className="w-5 h-5 mt-1"
+                  className="w-7 h-7 mt-1"
                 />
               </div>
-              <span className="">2</span>
+              <span className="text-2xl">2</span>
             </div>
           </div>
 
-          <span className="text-[18px] text-gray-400">2/18/2025</span>
+          <span className="text-[20px] text-gray-400">2/18/2025</span>
         </div>
       </div>
     </div>

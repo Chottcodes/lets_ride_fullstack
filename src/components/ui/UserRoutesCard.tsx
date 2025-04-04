@@ -1,35 +1,40 @@
 import React from 'react'
+import PrimaryButton from '../buttons/PrimaryButton'
 
 const UserRoutesCard = () => {
   return (
-    <div>
       <div>
-      <div className=" overflow-hidden shadow-md w-[430px] h-[373px] rounded-md border-2 border-black ">
-        <img src="/assets/testImages/ExampleMap.webp" alt="Motorbike POV" className="transition-transform duration-300 hover:scale-105 w-full h-56 object-cover  rounded-md border-2 border-blue-500 cursor-pointer" />
+      <div className=" overflow-hidden shadow-md w-full rounded-md border-2 border-black ">
+        <img src="/assets/testImages/ExampleMap.webp" alt="Motorbike POV" className="transition-transform duration-300 hover:scale-105 w-[465px] h-[386px] object-cover  rounded-md border-2 border-blue-500 cursor-pointer" />
       
         <div className="flex justify-between items-center px-4 py-2 text-white text-sm ">
       
           <div className="flex items-center space-x-4 ">
             <div className="flex items-center space-x-1 cursor-pointer">
             <div>
-                <img src="/assets/images/thumbs-up.png"  alt="comments" className="w-5 h-5"/>
+                <img src="/assets/images/thumbs-up.png"  alt="comments" className="w-7 h-7"/>
             </div>
-              <span>20</span>
+              <span className='text-2xl'>20</span>
             </div>
       
             <div className="flex items-center space-x-1 cursor-pointer">
               <div>
-                <img src="/assets/images/coment.png"  alt="comments" className="w-5 h-5 mt-1"/>
+                <img src="/assets/images/coment.png"  alt="comments" className="w-7 h-7 mt-1"/>
               </div>
-              <span className=''>2</span>
+              <span className='text-2xl'>2</span>
             </div>
           </div>
       
           <span className="text-[20px] text-gray-400">2/18/2025</span>
         </div>
+        <div className="flex justify-center w-full py-4">
+          <PrimaryButton buttonText={'Lets Ride'} isBackgroundDark={false} />
+        </div>
+
       </div>
+      
     </div>
-    </div>
+  
   )
 }
 

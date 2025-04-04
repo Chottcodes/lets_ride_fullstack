@@ -1,5 +1,6 @@
 import DesktopNavBar from '@/components/navbars/DesktopNavBar'
 import MobileNavBar from '@/components/navbars/MobileNavBar'
+import NavbarHeader from '@/components/ui/NavbarHeader'
 import UserCards from '@/components/ui/UserCards'
 import UserLikedCards from '@/components/ui/UserLikedCards'
 import UserRoutesCard from '@/components/ui/UserRoutesCard'
@@ -8,35 +9,29 @@ import React from 'react'
 const profile = () => {
   
   return (
-    <div>
-<nav className="text-white mb-15 mt-10">
-      <div className="text-2xl flex justify-around items-end mb-10">
+  <div className='sm:w-full md:w-20 lg:w-full w-full'>
+    <div className='border border-white fixed top-0 left-0 h-screen w-2'>
 
-    <div className="flex space-x-50 font-light">
-      <a href="#" className="hover:text-blue-500">My profile</a>
-      <a href="#" className="hover:text-blue-500">My routes</a>
     </div>
-
-    <div className=" ">
-        <img src="/assets/images/Logo.png" alt="Lets Ride" className="h-40 w-80" />       
-    </div>
-
-    <div className="flex space-x-50  font-light">
-      <a href="#" className="hover:text-blue-500">My pictures</a>
-      <a href="#" className="hover:text-blue-500">Likes</a>
-    </div>
+  <div className='fixed top-0 left-0 h-screen w-20'>
+    <DesktopNavBar isHomeOn={false} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
   </div>
-  <div className='border-b-2 border-gray-500 mx-15'> </div>
-</nav>
-<div className='absolute w-20 ms-2'>
-<DesktopNavBar isHomeOn={false} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
-</div>
+    
+    <NavbarHeader/>
 
 {/* Card Grid Section */}
-<div className='grid grid-cols-3 col- place-items-center ps-[8rem] pe-[5rem]'>
-<UserCards/>
-<UserCards/>
-<UserCards/>
+<div className="grid grid-cols-1 2xl:grid-cols-3 lg:grid-cols-2 gap-4 place-items-center
+ mb-10 mx-20 
+">
+  <div className="w-[465px] shrink-0">
+    <UserCards />
+  </div>
+  <div className="w-[465px] shrink-0">
+    <UserCards />
+  </div>
+  <div className="w-[465px] shrink-0">
+    <UserCards />
+  </div>
 <UserLikedCards/>
 <UserLikedCards/>
 <UserLikedCards/>
@@ -47,7 +42,10 @@ const profile = () => {
 
 
 </div>
+<div className=''>
+    <MobileNavBar isHomeOn={false} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
 
+</div>
 
 </div>
 
