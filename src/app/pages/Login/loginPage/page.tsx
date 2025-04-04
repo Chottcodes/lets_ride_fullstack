@@ -13,33 +13,39 @@ const LoginSectionPage = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  
+  const [isFieldEmpty, setIsFieldEmpty] = useState(false);
+  const[emailTitle, setEmailTitle] = useState<string>("Email");
+  const[enterPasswordTitle, setEnterPasswordTitle] = useState<string>("Password")
 
   const handleToggleFunction = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleLogIn = async () => {
-    const userData = { email: email, password: password };
+    if(!email || !password){
+      setIsFieldEmpty(true);
+    }else{
+      const userData = { email: email, password: password };
+      try {
+        const token: IToken = await logIn(userData);
+  
+        if (token) {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("Token", token.token);
+            console.log(token.token);
+          }
+          console.log("Login Successful");
+          push("/pages/profile");
+        } else {
+          setIsFieldEmpty(true);
+          setEmailTitle("Invalid Email or Password");
+          setEnterPasswordTitle("Invalid Password or Email")
 
-    console.log(userData);
-
-    try {
-      const token: IToken = await logIn(userData);
-
-      if (token) {
-        if (typeof window !== "undefined") {
-          localStorage.setItem("Token", token.token);
-          console.log(token.token);
         }
-        console.log("Login Successful");
-        push("/pages/profile");
-      } else {
-        alert("Login unseccssful");
+      } catch (error) {
+        console.error(error);
+        alert("Something went wrong.");
       }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong.");
     }
   };
   return (
@@ -58,19 +64,19 @@ const LoginSectionPage = () => {
               type="email"
               input={email}
               imageSourcePath="/assets/images/mail1.png"
-              inputTitle="Enter Email"
+              inputTitle={emailTitle}
               placeholderText="Enter Email"
               handleInput={(e) => setEmail(e.target.value)}
-              isFieldEmpty={false}
+              isFieldEmpty={isFieldEmpty}
             />
             <PasswordInputComponent
-              passwordTitle="Enter"
+              passwordTitle={enterPasswordTitle}
               placeHolderText="Enter Password"
               isPasswordVisible={isPasswordVisible}
               handleInput={(e) => setPassword(e.target.value)}
               handleToggleFunction={handleToggleFunction}
               input={password}
-              isFieldEmpty={false}
+              isFieldEmpty={isFieldEmpty}
             />
             <h1>
               forgot{" "}

@@ -11,13 +11,16 @@ import { resetPassword } from "@/components/utils/DataServices";
 import { IUserCreate } from "@/components/utils/Interface";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
+import { audio } from "framer-motion/client";
 
 const ResetPage = () => {
   const { push } = useRouter();
   const [isPasswordVisiable, setIsPasswordVisiable] = useState(false);
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
-  const [isSecurityComplete, setIsSecurityComplete] = useState(true);
+  const [isSecurityComplete, setIsSecurityComplete] = useState(false);
   const [isPasswordEmpty, setPasswordsEmpty] = useState(false);
+  const [isresetComplete, setIsResetComplete] = useState(false);
+  const [isSuccessful, setIsSuccessful] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -41,13 +44,12 @@ const ResetPage = () => {
     const interval = setInterval(() => {
       setSeconds((prev) => {
         if (prev < 100) {
-          return prev + 100;
+          return prev + 15; 
         }
-        clearInterval(interval);
-        return 100;
+        clearInterval(interval); 
+        return 100; 
       });
-    }, 700);
-    return true;
+    }, 30); 
   };
 
   const handleSubmit = async () => {
@@ -59,13 +61,8 @@ const ResetPage = () => {
       setPasswordTitle("Password Do Not Match");
       setPasswordsEmpty(true);
     } else {
-      const userResetDataObj: IUserCreate = {
-        Email: email,
-        Password: password,
-        Question: finalQuestion,
-        Answer: finalAnswer,
-      };
       secondTimer();
+      setIsResetComplete(true);
     }
   };
   const handleNext = () => {
@@ -88,25 +85,34 @@ const ResetPage = () => {
         };
         try {
           const sendUserInfo = await resetPassword(userResetDataObj);
-
           if (sendUserInfo) {
-
+            setIsSuccessful(true);
+            audioRef.current?.play();
+            setTimeout(() => {
+              push("/pages/Login/loginPage");
+            }, 3000);
+          } else if(sendUserInfo == false) {
+            setIsFieldEmpty(true);
+            setIsSecurityComplete(false);
+            setEmailTitle("Error:Make Sure All Fields Are Correct");
+            setSeconds(0);
           }
         } catch (error) {
           console.error(error);
         }
-        push("./Login/login-section");
       };
       changePassword();
     }
   }, [seconds]);
+ 
+
 
   return (
     <div className="h-screen flex flex-col justify-start items-center lg:gap-5">
       <nav className="w-full h-[10%] flex items-center">
         <div className="pl-5">
           <BackButtonComponent
-            onClick={() => push("/pages/Login/login-section")}
+            onClick={() => push("/pages/Login/loginPage")}
           />
         </div>
       </nav>
@@ -146,18 +152,29 @@ const ResetPage = () => {
           } w-[90%] h-[40%] lg:h-[80%] flex flex-col justify-center gap-15 lg:gap-2 relative `}
         >
           <div
-            className={`absolute w-full flex justify-center items-center top-0`}
+            className={`${
+              isresetComplete ? "block" : "hidden"
+            } absolute w-full flex justify-center items-center top-0`}
           >
             <Progress value={seconds} />
             <audio ref={audioRef} src="/audio/ding-126626.mp3" preload="auto" />
           </div>
-          <div className={`w-full h-full absolute top-4 flex flex-col justify-center items-center bg-gray-200/90 rounded-2xl`}>
+          <div
+            className={`${
+              isSuccessful ? "block" : "hidden"
+            } w-full h-full absolute top-4 flex flex-col justify-center items-center bg-gray-200/90 rounded-2xl`}
+          >
             <div className="w-[50%] h-[50%] flex justify-center items-center animate-bounce">
-            <Image width={60} height={60} src={'/assets/images/thumbs-up-blue.png'} alt="Blue thumbs up" />
+              <Image
+                width={60}
+                height={60}
+                src={"/assets/images/thumbs-up-blue.png"}
+                alt="Blue thumbs up"
+              />
             </div>
             <div className="w-full text-blue-600 flex flex-col justify-center items-center">
-            <p className="lg:text-5xl">Success!</p>
-            <p>Redirecting to login</p>
+              <p className="lg:text-5xl">Success!</p>
+              <p>Redirecting to login</p>
             </div>
           </div>
           <PasswordInputComponent
