@@ -5,9 +5,6 @@ const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
-    console.log(JSON.stringify(user))
-    console.log(user)
-
     const response = await fetch(url + "User/CreateUser", {
         method: "POST",
         headers: {
@@ -25,7 +22,6 @@ export const createAccount = async (user:IUserCreate) =>{
 
     const data = await response.json();
     console.log(data);
-    
     return data;
 }
 //Login

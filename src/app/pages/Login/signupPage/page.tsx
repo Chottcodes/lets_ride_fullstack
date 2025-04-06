@@ -6,7 +6,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { createAccount } from "@/components/utils/DataServices";
 import { Progress } from "@/components/ui/progress";
-import { IToken } from "@/components/utils/Interface";
+import { CreateUserReturnOBJ } from "@/components/utils/Interface";
 const SignUpPage = () => {
   const { push } = useRouter();
 
@@ -24,20 +24,19 @@ const SignUpPage = () => {
   const [isOptionsShowing, setIsOptionsShowing] = useState<boolean>(true);
   const [isSignUpComplete, setIsSignUpComplete] = useState<boolean>(false); // change back to false
   const [isFetchSuccessfull, setIsFetchSuccessFull] = useState<boolean>(false); //change back to false
-
-  const secondTimer = () => {
-    const interval = setInterval(() => {
-      setSeconds((prev) => {
-        if (prev < 100) {
-          return prev + 15;
-        }
-        clearInterval(interval);
-        return 100;
-      });
-    }, 30);
-  };
-
+ 
   const handleQuestionSubmit = async () => {
+      const secondTimer = () => {
+        const interval = setInterval(() => {
+          setSeconds((prev) => {
+            if (prev < 100) {
+              return prev + 15;
+            }
+            clearInterval(interval);
+            return 100;
+          });
+        }, 30);
+      };
     secondTimer();
   };
   const handleBackButton = () => {
@@ -59,6 +58,13 @@ const SignUpPage = () => {
   const togglePasswordVisibility = () => {
     setIsPasswordVisiable((prev) => !prev);
   };
+  const SaveToLocalStorage = (Token:string, ID:number)=>{
+    if(typeof window!=="undefined")
+    {
+      localStorage.setItem("Token", Token);
+      localStorage.setItem("ID", JSON.stringify(ID));
+    }
+  }
   useEffect(() => {
     if (seconds == 100 && email && password && finalAnswer && finalQuestion) {
       const Userobj = {
@@ -71,14 +77,18 @@ const SignUpPage = () => {
         try {
           const CreateAccount = await createAccount(Userobj);
           if (CreateAccount) {
-            console.log(CreateAccount);
+            const {result}:CreateUserReturnOBJ = CreateAccount;
+            SaveToLocalStorage(result.token,result.id);
+            console.log(CreateAccount)
             setIsFetchSuccessFull(true);
             audioRef.current?.play();
             setTimeout(()=>{
               push('/pages/aboutyou')
-            },3000)
+            },2000)
           } else {
-            alert("Failed");
+            setIsSignUpComplete(false);
+            setIsTheSame(false);
+            setEmail("Somthing went wrong try again later.")
           }
         } catch (error) {
           console.error(error);

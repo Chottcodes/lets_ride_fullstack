@@ -12,12 +12,15 @@ const AboutYouPage = () => {
   const [isNameEmpty, setIsNameEmpty] = useState(false);
   const [isLocationEmpty, setIsLocationEmpty] = useState(false);
   const [isBikeTypeEmpty, setIsBikeTypeEmpty] = useState(false);
+  const [userId, setUserID] = useState<number>();
+  const [userToken, setUserToken] = useState<string | null>();
 
   const { push } = useRouter();
   const [userName, setUserName] = React.useState("");
   const [name, setName] = React.useState("");
   const [location, setLocation] = React.useState("");
   const [bikeType, setBikeType] = React.useState("");
+  
   const handleImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImage = e.target.files?.[0];
     if (selectedImage) {
@@ -25,18 +28,7 @@ const AboutYouPage = () => {
       console.log(image);
     }
   };
-  const handleUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserName(e.target.value);
-  };
-  const handleName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-  const handleLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocation(e.target.value);
-  };
-  const handleBikeType = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setBikeType(e.target.value);
-  };
+
   const handleNextButton = () => {
     if (userName === "") {
       setIsUserNameEmpty(true);
@@ -53,9 +45,32 @@ const AboutYouPage = () => {
       push("./aboutyourride");
     }
   };
+
+  const GetLocalStorage = () => {
+    const Token = localStorage.getItem("Token");
+    const UserId = localStorage.getItem("ID");
+    if(Token && UserId){
+      const UsersOBJ: { id: number; token: string|null } = {
+        id: Number(UserId),
+        token: Token,
+      };
+      return UsersOBJ;
+    }
+    return null;
+  };
+
   useEffect(() => {
-    console.log("image", image);
-  }, [image]);
+    const UserToken_ID = GetLocalStorage();
+    if (UserToken_ID) {
+
+      setUserID(UserToken_ID.id);
+      setUserToken(UserToken_ID.token);
+    }
+    else{
+      push('pages/Login')
+    }
+    console.log(userId,userToken)
+  }, [userId,userToken]);
   return (
     <div className="text-white h-screen flex flex-col justify-center items-center">
       <header className="w-full h-[10%] flex flex-col items-center justify-center gap-5 lg:gap-7 lg:mt-0">
@@ -80,7 +95,7 @@ const AboutYouPage = () => {
             placeholderText=""
             type="string"
             input={userName}
-            handleInput={handleUserName}
+            handleInput={(e)=>setUserName(e.target.value)}
             isFieldEmpty={isUserNameEmpty}
           />
           <InputComponent
@@ -89,7 +104,7 @@ const AboutYouPage = () => {
             placeholderText=""
             type="string"
             input={name}
-            handleInput={handleName}
+            handleInput={(e) => setName(e.target.value)}
             isFieldEmpty={isNameEmpty}
           />
           <InputComponent
@@ -100,7 +115,7 @@ const AboutYouPage = () => {
             placeholderText=""
             type="string"
             input={location}
-            handleInput={handleLocation}
+            handleInput={(e)=> setLocation(e.target.value)}
             isFieldEmpty={isLocationEmpty}
           />
           <InputComponent
@@ -111,7 +126,7 @@ const AboutYouPage = () => {
             placeholderText=""
             type="string"
             input={bikeType}
-            handleInput={handleBikeType}
+            handleInput={(e)=>setBikeType(e.target.value)}
             isFieldEmpty={isBikeTypeEmpty}
           />
         </div>

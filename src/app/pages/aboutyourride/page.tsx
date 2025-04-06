@@ -17,7 +17,6 @@ const AboutYourRidePage = () => {
   ) => {
     setPreferences(event.target.value);
   };
-
   const handleRidingFrequencyChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
