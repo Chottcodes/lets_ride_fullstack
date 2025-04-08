@@ -10,41 +10,24 @@ const profile = () => {
   
   return (
   <div className='sm:w-full md:w-20 lg:w-full w-full'>
-    <div className='border border-white fixed top-0 left-0 h-screen w-2'>
 
-    </div>
   <div className='fixed top-0 left-0 h-screen w-20'>
-    <DesktopNavBar isHomeOn={false} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
+    <DesktopNavBar isHomeOn={true} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
   </div>
-    
-    <NavbarHeader/>
+    <NavbarHeader isRoutes={true} isYourLikes={false} isMyPictures={false} isMyRoutes={false}/>
 
 {/* Card Grid Section */}
-<div className="grid grid-cols-1 2xl:grid-cols-3 lg:grid-cols-2 gap-4 place-items-center
- mb-10 mx-20 
+<div className=" flex justify-center text-white text-5xl
 ">
-  <div className="w-[465px] shrink-0">
-    <UserCards />
-  </div>
-  <div className="w-[465px] shrink-0">
-    <UserCards />
-  </div>
-  <div className="w-[465px] shrink-0">
-    <UserCards />
-  </div>
-<UserLikedCards/>
-<UserLikedCards/>
-<UserLikedCards/>
-<UserRoutesCard/>
-<UserRoutesCard/>
-<UserRoutesCard/>
-
-
+ <h1>
+ ROUTE GPS PAGE
+ </h1>
 
 </div>
-<div className=''>
-    <MobileNavBar isHomeOn={false} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
 
+
+<div className=''>
+    <MobileNavBar isHomeOn={true} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
 </div>
 
 </div>

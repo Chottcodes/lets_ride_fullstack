@@ -5,13 +5,13 @@ const UserLikedCards = () => {
   return (
     <div>
       {/* Image */}
-      <div className="w-[465px] h-[386px] overflow-hidden shadow-md  rounded-md border-2 bg-[#1E1E1E] border-black ">
+      <div className="w-full h-full overflow-hidden shadow-md  rounded-md border-2 bg-[#1E1E1E] border-black ">
         <img
           src="/assets/testImages/bikeTest2.webp"
           alt="Motorbike POV"
           className="transition-transform duration-300 hover:scale-105 w-[465px] h-[250px] object-cover  rounded-md border-2 border-blue-500 cursor-pointer"
         />
-        {/* Card Content */}
+        {/* Card */}
         <div className="text-white flex justify-between px-3 mt-3">
           <div className="text-white flex justify-between ">
             <div className="flex items-center space-x-2">

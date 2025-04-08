@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useRouter } from "next/navigation";
 interface propTypes {
   isHomeOn: boolean;
   isLocationOn: boolean;
@@ -10,23 +11,26 @@ interface propTypes {
 }
 const DesktopNavBar = (prop: propTypes) => {
   const { isHomeOn, isLocationOn, isGalleryOn, isProfileOn } = prop;
-  const handleHomeButton = () => {
-    //Redirect to home
-  };
-  const handleLocationButton = () => {
-    //Redirect to Location page
-  };
-  const handleGalleryButton = () => {
-    //reditrect to Gallery Page
-  };
-  const handleProfileButton = () => {
-    //redirect to profile page
-  };
+  // const handleHomeButton = () => {
+  //   //Redirect to home
+  // };
+  // const handleLocationButton = () => {
+  //   //Redirect to Location page
+  // };
+  // const handleGalleryButton = () => {
+  //   //reditrect to Gallery Page
+  // };
+  // const handleProfileButton = () => {
+  //   //redirect to profile page
+  // };
+
+  // Navigation
+  const {push} = useRouter();
 
   return (
     <nav className="w-full h-full hidden lg:flex lg:flex-col justify-evenly items-center bg-[#161616] border border-slate-600 rounded-xl p-4">
       <section className="pt-[10rem] h-[50%] w-full flex flex-col space-y-20 items-center ">
-      <button onClick={handleHomeButton} className="cursor-pointer">
+      <button onClick={() => push("/home")} className="cursor-pointer">
         <Image
           className="h-[35px] w-[35px] lg:h-[47px] lg:w-[47px]"
           src={
@@ -39,7 +43,7 @@ const DesktopNavBar = (prop: propTypes) => {
           alt="Home Icon"
         />
       </button>
-      <button onClick={handleLocationButton} className="cursor-pointer">
+      <button onClick={() => push("/location")} className="cursor-pointer">
         <Image
           className="h-[35px] w-[35px] lg:h-[47px] lg:w-[47px]"
           src={
@@ -52,7 +56,7 @@ const DesktopNavBar = (prop: propTypes) => {
           alt="Location Icon"
         />
       </button>
-      <button onClick={handleGalleryButton} className="cursor-pointer">
+      <button onClick={() => push("/gallery")} className="cursor-pointer">
         <Image
           className="h-[35px] w-[35px] lg:h-[47px] lg:w-[47px]"
           src={
@@ -68,7 +72,7 @@ const DesktopNavBar = (prop: propTypes) => {
       </section>
       <section className="w-full h-[50vh] flex justify-center items-end">
   <button
-    onClick={handleProfileButton}
+    onClick={() => push("/pages/profile")}
     className={`${
       isProfileOn ? "border-2 border-blue-700" : "border-none"
     } rounded-full overflow-hidden mb-5 cursor-pointer`}

@@ -1,12 +1,26 @@
+"use client"
+
+import { useRouter } from 'next/navigation';
 import React from 'react'
 
-const NavbarHeader = () => {
+interface propTypes
+{
+  isRoutes: boolean,
+  isYourLikes: boolean,
+  isMyPictures: boolean,
+  isMyRoutes: boolean
+}
+
+const NavbarHeader = (prop: propTypes) => {
+  const {isRoutes, isYourLikes, isMyPictures, isMyRoutes} = prop;
+  const { push } = useRouter();
+  
+
   return (
     <div className="w-full ">
   <nav className="text-white mt-10 mb-15">
     <div className="flex flex-col gap-6 mb-10 lg:mx-10 mx-6">
       
-      {/* Logo centered */}
       <div>
         <img
           src="/assets/images/Logo.png"
@@ -15,16 +29,25 @@ const NavbarHeader = () => {
         />
       </div>
 
-      {/* Nav links all in a row, wrapping if needed */}
-      <div className="flex justify-around sm:gap-x-1 gap-x-10 gap-y-4 text-[18px] sm:text-3xl font-light">
-        <a href="#" className="hover:text-blue-500">Routes</a>
-        <a href="#" className="hover:text-blue-500">Your Likes</a>
-        <a href="#" className="hover:text-blue-500">My Pictures</a>
-        <a href="#" className="hover:text-blue-500">My Routes</a>
+      {/* Nav links */}
+      <div className="flex justify-around sm:gap-x-1 gap-x-10 gap-y-4 md:text-[25px] sm:text-3xl font-light cursor-pointer">
+
+
+      <div onClick={() => push("/home/yourlikes") } className={`hover:text-blue-500 ${isYourLikes ? "text-blue-500" : "text-white"}`}>
+        Your Likes
+      </div>
+
+      <div onClick={() => push("/home/mypictures") } className={`hover:text-blue-500 ${isMyPictures ? "text-blue-500" : "text-white"}`}>
+        My Pictures
+      </div>
+
+      <div onClick={() => push("/home/myroutes") } className={`hover:text-blue-500 ${isMyRoutes ? "text-blue-500" : "text-white"}`}>
+        My Routes
+      </div>
       </div>
     </div>
 
-    <div className="border-b border-white mx-5 sm:mx-30"></div>
+    <div className="border-b border-stone-500/40 mx-5 sm:mx-30"></div>
   </nav>
 </div>
 
