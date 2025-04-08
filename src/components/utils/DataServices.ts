@@ -1,5 +1,5 @@
 
-import { IUserCreate, IUserInfo} from "./Interface"
+import { IUserCreate, IUserInfo, UserProfileTypes} from "./Interface"
 
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 
@@ -26,6 +26,7 @@ export const createAccount = async (user:IUserCreate) =>{
 }
 //Login
 export const logIn = async (user: IUserInfo) =>{
+    console.log(user)
     const response = await fetch(url + "User/Login", {
         method: "POST",
         headers: {
@@ -45,6 +46,7 @@ export const logIn = async (user: IUserInfo) =>{
     const data = await response.json();
     return data;
 }
+//Reset Password
 export const resetPassword = async (user:IUserCreate) => {
     try {
         const res = await fetch(url + "User/UpdatePassword", {
@@ -66,3 +68,22 @@ export const resetPassword = async (user:IUserCreate) => {
         console.error("Network error or server not reachable:", error);
     }
 }   
+
+export const UserProfileSetup = async (user: UserProfileTypes) => {
+    
+        console.log(user)
+        const res = await fetch(url + "RideTables/AddUserProfile", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        });
+        if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        };
+        const data = await res.json();
+        return data;
+}

@@ -104,7 +104,7 @@ const SignUpPage = () => {
   // End of logic
   return (
     <div className="h-screen">
-      <main className="h-[90%] md:h-[80%] lg:h-[90%] flex flex-col justify-start items-center lg:justify-center md:gap-10 lg:gap-2 text-white   transform-all duration-300 ">
+      <main className="h-[90%] md:h-[80%] md:justify-center lg:h-[90%]  flex flex-col justify-start items-center lg:justify-center md:gap-10 lg:gap-2 text-white transform-all duration-300 ">
         <header className="w-[40%] h-[20%] gap-3 md:h-[10%] md:w-[40%] lg:h-[20%] lg:w-[30%] text-4xl flex flex-col justify-center items-center lg:gap-2  transform-all duration-300 ">
           <h1>
             Lets <span className="text-blue-600 tracking-widest">Ride</span>

@@ -31,3 +31,14 @@ export interface IToken
 {
     token: string
 }
+export interface UserProfileTypes {
+    UserName:string
+    userId:number
+    Name:string
+    Location:string
+    BikeType:string
+    RidingExperience:string
+    RidingPreference:string
+    RideConsistency:string
+    ProfilePicture:string
+}
