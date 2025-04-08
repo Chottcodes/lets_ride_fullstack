@@ -4,11 +4,11 @@ import React, { useEffect } from "react";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import InputComponent from "@/components/InputComponent";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import InputComponent from "@/components/inputs/InputComponent";
+import {ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { storage } from "@/lib/firebase";
 import { UserProfileTypes } from "@/components/utils/Interface";
-import DropDownInputComponent from "@/components/DropDownInputComponent";
+import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
 import { UserProfileSetup } from "@/components/utils/DataServices";
 
 const AboutYouPage = () => {
@@ -265,7 +265,7 @@ const AboutYouPage = () => {
             <PrimaryButton
               buttonText="submit"
               isBackgroundDark={false}
-              onClick={handleSubmitButton}
+              onClick={() => {handleSubmitButton(); push("/pages/profile")}}
             />
           </div>
         </footer>

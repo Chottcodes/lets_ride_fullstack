@@ -1,9 +1,9 @@
 "use client";
-import BackButtonComponent from "@/components/BackButtonComponent";
+import BackButtonComponent from "@/components/buttons/BackButtonComponent";
 import React, { useEffect, useState } from "react";
-import InputComponent from "@/components/InputComponent";
-import PrimaryButton from "@/components/PrimaryButton";
-import PasswordInputComponent from "@/components/PasswordInputComponent";
+import InputComponent from "@/components/inputs/InputComponent";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
+import PasswordInputComponent from "@/components/inputs/PasswordInputComponent";
 import { useRouter } from "next/navigation";
 import SecurityQuestions from "@/components/SecurityQuestions";
 
