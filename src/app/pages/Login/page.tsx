@@ -14,10 +14,10 @@ const SignUpIntroPage = () => {
         <div className="flex flex-col justify-center items-center gap-3 w-full  transform-all duration-300">
           <Image
             src="/assets/images/Logo.png"
-            width={100}
-            height={100}
+            width={1000}
+            height={1000}
             alt="logo"
-            className="w-80 sm:w-120 "
+            className="w-80  sm:w-120 "
           />
           <h1 className="sm:text-[26px] text-[20px]">
             Connecting Riders, One Mile At A Time
