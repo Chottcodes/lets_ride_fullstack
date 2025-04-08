@@ -1,20 +1,38 @@
-'use client'
-import React from 'react'
-import Image from 'next/image'
+"use client";
+import React from "react";
+import Image from "next/image";
 interface propTypes {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isFileUploaded: boolean;
+  imageURL: string | null;
 }
 
-const HandleFileInput = (props:propTypes) => {
-  const {onChange} = props
+const HandleFileInput = (props: propTypes) => {
+  const { onChange, isFileUploaded, imageURL } = props;
   return (
     <div className="w-full h-full  flex justify-center items-center rounded-full">
-        <input type="file" id='upload-File' className='hidden h-full w-full'  onChange={onChange}/>
-        <label htmlFor="upload-File" className='w-full h-full flex justify-center items-center cursor-pointer'>
-            <Image width={100} height={100} className='w-5'  src="/assets/images/plus.png" alt="plus symbol" />
-        </label>
+      <input
+        type="file"
+        id="upload-File"
+        className="hidden h-full w-full"
+        onChange={onChange}
+      />
+      <label
+        htmlFor="upload-File"
+        className="w-full h-full flex justify-center items-center cursor-pointer overflow-hidden"
+      >
+        <Image
+          width={100}
+          height={100}
+          className={`${
+            isFileUploaded ? "w-full h-full rounded-full" : "w-5"
+          }`}
+          src={`${isFileUploaded ? imageURL : "/assets/images/plus.png"}`}
+          alt="plus symbol"
+        />
+      </label>
     </div>
-  )
-}
+  );
+};
 
-export default HandleFileInput
+export default HandleFileInput;

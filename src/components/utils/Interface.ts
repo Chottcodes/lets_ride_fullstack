@@ -11,7 +11,13 @@ export interface IUserInfo
     email: string
     password: string
 }
-
+export interface CreateUserReturnOBJ
+{
+    result:{
+        id:number;
+        token:string;
+    }
+}
 
 // User Data 
 export interface IUserData
@@ -24,4 +30,15 @@ export interface IUserData
 export interface IToken
 {
     token: string
+}
+export interface UserProfileTypes {
+    UserName:string
+    userId:number
+    Name:string
+    Location:string
+    BikeType:string
+    RidingExperience:string
+    RidingPreference:string
+    RideConsistency:string
+    ProfilePicture:string
 }

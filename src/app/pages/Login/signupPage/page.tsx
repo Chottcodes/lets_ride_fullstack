@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
-import InputComponent from "@/components/inputs/InputComponent";
-import PasswordInputComponent from "@/components/inputs/PasswordInputComponent";
-import PrimaryButton from "@/components/buttons/PrimaryButton";
+import React, { useEffect, useState } from "react";
+import InputComponent from "@/components/InputComponent";
+import PasswordInputComponent from "@/components/PasswordInputComponent";
+import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "next/navigation";
 import { createAccount } from "@/components/utils/DataServices";
+import { Progress } from "@/components/ui/progress";
+import { CreateUserReturnOBJ } from "@/components/utils/Interface";
 const SignUpPage = () => {
   const { push } = useRouter();
 
@@ -13,50 +15,96 @@ const SignUpPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [finalAnswer, SetFinalAnswer] = useState<string>("");
   const [finalQuestion, setFinalQuestion] = useState<string>("");
+  const [emailTitle, setEmailTitle] = useState<string>("Email");
+  const [passwordTitle, setPasswordTitle] = useState<string>("Enter Password");
+  const [seconds, setSeconds] = useState<number>(0);
+   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const [isPasswordVisiable, setIsPasswordVisiable] = useState(false);
-  const [isTheSame, setIsTheSame] = useState<boolean>(true);
-  const [isOptionOneShowing, setIsOptionOneShowing] = useState<boolean>(false);
-  const [isSignUpComplete, setIsSignUpComplete] = useState<boolean>(false);
-
+  const [isTheSame, setIsTheSame] = useState<boolean>(false);
+  const [isOptionsShowing, setIsOptionsShowing] = useState<boolean>(true);
+  const [isSignUpComplete, setIsSignUpComplete] = useState<boolean>(false); // change back to false
+  const [isFetchSuccessfull, setIsFetchSuccessFull] = useState<boolean>(false); //change back to false
+ 
   const handleQuestionSubmit = async () => {
-    const Userobj = {
-      Email: email,
-      Password: password,
-      Question: finalQuestion,
-      Answer: finalAnswer,
-    };
-    try {
-      const CreateAccount = await createAccount(Userobj);
-      if (CreateAccount) {
-        alert("Account Created");
-      } else {
-        alert("Failed");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something Went Wrong or Account Already Exist")
-    }
+      const secondTimer = () => {
+        const interval = setInterval(() => {
+          setSeconds((prev) => {
+            if (prev < 100) {
+              return prev + 15;
+            }
+            clearInterval(interval);
+            return 100;
+          });
+        }, 30);
+      };
+    secondTimer();
   };
   const handleBackButton = () => {
     setIsSignUpComplete(false);
   };
 
   const handleSignUp = () => {
-    if (password == confirmPassword && email != "") {
+    if (email && password == confirmPassword) {
       setIsSignUpComplete(true);
-      setIsOptionOneShowing(true);
-    } else {
-      setIsTheSame(false);
+      setIsOptionsShowing(true);
+    } else if (!email && !password && !confirmPassword) {
+      setIsTheSame(true);
+      setEmailTitle("Invalid all fields must be filled");
+    } else if (password != confirmPassword) {
+      setIsTheSame(true);
+      setPasswordTitle("Passwords don't match");
     }
   };
   const togglePasswordVisibility = () => {
     setIsPasswordVisiable((prev) => !prev);
   };
+  const SaveToLocalStorage = (Token:string, ID:number)=>{
+    if(typeof window!=="undefined")
+    {
+      localStorage.setItem("Token", Token);
+      localStorage.setItem("ID", JSON.stringify(ID));
+    }
+  }
+  useEffect(() => {
+    if (seconds == 100 && email && password && finalAnswer && finalQuestion) {
+      const Userobj = {
+        Email: email,
+        Password: password,
+        Question: finalQuestion,
+        Answer: finalAnswer,
+      };
+      const SendData = async () => {
+        try {
+          const CreateAccount = await createAccount(Userobj);
+          if (CreateAccount) {
+            const {result}:CreateUserReturnOBJ = CreateAccount;
+            SaveToLocalStorage(result.token,result.id);
+            console.log(CreateAccount)
+            setIsFetchSuccessFull(true);
+            audioRef.current?.play();
+            setTimeout(()=>{
+              push('/pages/aboutyou')
+            },2000)
+          } else {
+            setIsSignUpComplete(false);
+            setIsTheSame(false);
+            setEmail("Somthing went wrong try again later.")
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Something Went Wrong or Account Already Exist");
+        }
+      };
+      SendData();
+    }else{
+      
+    }
+  }, [seconds, email, password, finalAnswer, finalQuestion]);
 
   // End of logic
   return (
     <div className="h-screen">
-      <main className="h-[90%] md:h-[80%] lg:h-[90%] flex flex-col justify-start items-center lg:justify-center md:gap-10 lg:gap-2 text-white   transform-all duration-300 ">
+      <main className="h-[90%] md:h-[80%] md:justify-center lg:h-[90%]  flex flex-col justify-start items-center lg:justify-center md:gap-10 lg:gap-2 text-white transform-all duration-300 ">
         <header className="w-[40%] h-[20%] gap-3 md:h-[10%] md:w-[40%] lg:h-[20%] lg:w-[30%] text-4xl flex flex-col justify-center items-center lg:gap-2  transform-all duration-300 ">
           <h1>
             Lets <span className="text-blue-600 tracking-widest">Ride</span>
@@ -74,25 +122,24 @@ const SignUpPage = () => {
             type="email"
             input={email}
             imageSourcePath="/assets/images/mail1.png"
-            inputTitle="Enter Email"
+            inputTitle={emailTitle}
             placeholderText="Enter Email"
             handleInput={(e) => setEmail(e.target.value)}
-            isFieldEmpty={false}
+            isFieldEmpty={isTheSame}
           />
-          <div
-            className={`${
-              isTheSame ? "border-none" : " border-red-500 border-2"
-            } flex flex-col lg:gap-5 h-full`}
-          >
+          <div className={`flex flex-col lg:gap-5 h-full`}>
             <PasswordInputComponent
               isPasswordVisible={isPasswordVisiable}
               handleToggleFunction={togglePasswordVisibility}
-              placeHolderText="Enter your password"
+              placeHolderText={passwordTitle}
               passwordTitle={`${
-                isTheSame ? "Enter Password" : "Invalid Passwords Do Not Match"
+                isTheSame
+                  ? "Invalid Make sure passwords match"
+                  : "Enter Password"
               }`}
               handleInput={(e) => setPassword(e.target.value)}
               input={password}
+              isFieldEmpty={isTheSame}
             />
             <PasswordInputComponent
               isPasswordVisible={isPasswordVisiable}
@@ -101,6 +148,7 @@ const SignUpPage = () => {
               passwordTitle="Confirm Password"
               handleInput={(e) => setConfirmPassword(e.target.value)}
               input={confirmPassword}
+              isFieldEmpty={isTheSame}
             />
           </div>
         </section>
@@ -110,10 +158,18 @@ const SignUpPage = () => {
           } h-[45%] w-[65%] md:w-[40%] md:h-[30%] lg:w-[20%] lg:h-[45%] flex flex-col justify-center items-center gap-3 transform-all duration-300`}
         >
           <div
-            className={` lg:w-full lg:h-[40%] flex flex-col lg:gap-5 ${
-              isOptionOneShowing ? "block" : "hidden"
+            className={` lg:w-full lg:h-[40%] flex flex-col lg:gap-5 relative ${
+              isOptionsShowing ? "block" : "hidden"
             } `}
           >
+            <div
+              className={`${
+                isFetchSuccessfull ? "block" : "hidden"
+              } h-full w-full absolute `}
+            >
+              <Progress value={seconds} />
+               <audio ref={audioRef} src="/audio/ding-126626.mp3" preload="auto" />
+            </div>
             <p>Please Answer Security Question</p>
             <select
               className="w-full bg-black"
