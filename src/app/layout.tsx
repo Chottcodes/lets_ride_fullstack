@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Lets Ride",
-  description: "A motorcycle social media app",
+  description: "Lets Ride GPS App",
 };
 
 export default function RootLayout({

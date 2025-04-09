@@ -72,6 +72,7 @@ const AboutYouPage = () => {
   };
   const handleSubmitButton = async () => {
     if (userId) {
+      console.log(userToken);
       if (image) {
         const UserInfoObj: UserProfileTypes = {
           UserName: userName,
@@ -87,6 +88,8 @@ const AboutYouPage = () => {
         try {
           const sendProfileData = await UserProfileSetup(UserInfoObj);
           console.log(sendProfileData);
+          console.log(userId);
+          push('/profile')
           if (sendProfileData) console.log("success");
           else console.log("failed");
         } catch (error) {

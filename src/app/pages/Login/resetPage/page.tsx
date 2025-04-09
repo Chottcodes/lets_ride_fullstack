@@ -11,7 +11,6 @@ import { resetPassword } from "@/components/utils/DataServices";
 import { IUserCreate } from "@/components/utils/Interface";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
-import { audio } from "framer-motion/client";
 
 const ResetPage = () => {
   const { push } = useRouter();
