@@ -12,14 +12,14 @@ const UserRoutesCard = () => {
           <div className="flex items-center space-x-4 ">
             <div className="flex items-center space-x-1 cursor-pointer">
             <div>
-                <img src="/assets/images/thumbs-up.png"  alt="comments" className="w-7 h-7"/>
+                <img src="/assets/images/card/thumbs-up.png"  alt="comments" className="w-7 h-7"/>
             </div>
               <span className='text-2xl'>20</span>
             </div>
       
             <div className="flex items-center space-x-1 cursor-pointer">
               <div>
-                <img src="/assets/images/coment.png"  alt="comments" className="w-7 h-7 mt-1"/>
+                <img src="/assets/images/card/coment.png"  alt="comments" className="w-7 h-7 mt-1"/>
               </div>
               <span className='text-2xl'>2</span>
             </div>
