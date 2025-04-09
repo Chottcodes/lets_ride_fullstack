@@ -76,7 +76,7 @@ const AboutYouPage = () => {
       if (image) {
         const UserInfoObj: UserProfileTypes = {
           UserName: userName,
-          userId: userId,
+          UserId: userId,
           Name: name,
           Location: location,
           BikeType: bikeType,
@@ -89,7 +89,7 @@ const AboutYouPage = () => {
           const sendProfileData = await UserProfileSetup(UserInfoObj);
           console.log(sendProfileData);
           console.log(userId);
-          push('/profile')
+          push('/pages/profile')
           if (sendProfileData) console.log("success");
           else console.log("failed");
         } catch (error) {

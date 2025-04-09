@@ -77,7 +77,7 @@ const DesktopNavBar = (prop: propTypes) => {
       isProfileOn ? "border-2 border-blue-700" : "border-none"
     } rounded-full overflow-hidden mb-5 cursor-pointer`}
   >
-    <Avatar className="w-[55px] h-[55px] lg:h-[40px] lg:w-[80px]">
+    <Avatar className="w-[55px] h-[55px] lg:h-[40px] lg:w-[40px]">
       <AvatarImage src="/assets/images/motorcycle-tires.jpg" className="object-left-bottom"/>
       <AvatarFallback>Profile Picture</AvatarFallback>
     </Avatar>

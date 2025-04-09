@@ -87,3 +87,9 @@ export const UserProfileSetup = async (user: UserProfileTypes) => {
         const data = await res.json();
         return data;
 }
+export const GetUserProfile = async(UserId:number) =>
+{
+    const res = await fetch(url + `RideTables/GetProfile/${UserId}`)
+    const data = await res.json();
+    return data;
+}

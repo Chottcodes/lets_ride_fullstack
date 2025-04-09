@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DesktopNavBar from "@/components/navbars/DesktopNavBar";
 import MobileNavBar from "@/components/navbars/MobileNavBar";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
@@ -7,11 +7,54 @@ import ProfileDisplay from "@/components/ProfileDisplay";
 import ProfileWithDescription from "@/components/ProfileWithDescription";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { GetUserProfile } from "@/components/utils/DataServices";
+import { UserProfileReturnTypes } from "@/components/utils/Interface";
 
 const ProfilePage = () => {
   const { push } = useRouter();
-  
+  const [name, setName] = useState<string>("");
+  const [userId, setUserId] = useState<number>();
+  const [username, setUserName] = useState<string>("");
+  const [profilePicture,setProfilePicture]=useState<string>("")
+  const [bikeType, setBikeType] = useState<string>("");
+  const [ridingFrequency, setRidingFrequency] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [ridePreference, setRidePreference] = useState<string>("");
+  const [experienceLevel, setExperienceLevel] = useState<string>("");
+  const GetLocalStorageId = () => {
+    const getId = localStorage.getItem("ID");
+    return Number(getId);
+  };
+  useEffect(() => {
+    const getInfo = GetLocalStorageId();
+    const fetchData = async () => {
+      if (getInfo) {
+        const id = getInfo;
+        const getData = await GetUserProfile(id);
+        const {
+          bikeType,
+          location,
+          profilePicture,
+          rideConsistency,
+          ridingExperience,
+          ridingPreference,
+          userName,
+          name,
+        }: UserProfileReturnTypes = getData;
+        setBikeType(bikeType);
+        setLocation(location);
+        setProfilePicture(profilePicture);
+        setRidingFrequency(rideConsistency);
+        setExperienceLevel(ridingExperience);
+        setRidePreference(ridingPreference);
+        setUserName(userName);
+        setName(name)
+
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="h-screen w-full relative">
       <nav className="w-[120px] hidden lg:flex h-full absolute">
@@ -35,9 +78,10 @@ const ProfilePage = () => {
       </header>
       <section className="h-[35%] w-full">
         <ProfileWithDescription
-          Name="Christopher Wells-Hott"
-          Username="Chott"
-          Location="Stockton,CA"
+        ProfilePicture={profilePicture}
+          Name={name}
+          Username={username}
+          Location={location}
         />
       </section>
       <main className=" m-auto w-[80%] h-[55%] flex flex-col lg:flex-wrap lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto">
@@ -45,42 +89,42 @@ const ProfilePage = () => {
           <ProfileDisplay
             header="Name"
             src="/assets/images/user.png"
-            text="Christopher Wells-Hott"
+            text={name}
           />
         </section>
         <section className=" h-[20%] w-full lg:w-[40%]">
           <ProfileDisplay
             header="Bike Type"
             src="/assets/images/motorbike.png"
-            text="Harley Davidson Road Glide"
+            text={bikeType}
           />
         </section>
         <section className=" h-[20%] w-full lg:w-[40%]">
           <ProfileDisplay
             header="Ride Frequency"
             src="/assets/images/motorbike.png"
-            text="Daily"
+            text={ridingFrequency}
           />
         </section>
         <section className=" h-[20%] w-full lg:w-[40%]">
           <ProfileDisplay
             header="Location"
             src="/assets/images/location.png"
-            text="Stockton"
+            text={location}
           />
         </section>
         <section className=" h-[20%] w-full lg:w-[40%]">
           <ProfileDisplay
             header="Riding Preferences"
             src="/assets/images/motorbike.png"
-            text="Cruising"
+            text={ridePreference}
           />
         </section>
         <section className=" h-[20%] w-full lg:w-[40%]">
           <ProfileDisplay
             header="Experience Level"
             src="/assets/images/motorbike.png"
-            text="Intermediate"
+            text={experienceLevel}
           />
         </section>
       </main>

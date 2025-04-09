@@ -33,7 +33,7 @@ export interface IToken
 }
 export interface UserProfileTypes {
     UserName:string
-    userId:number
+    UserId:number
     Name:string
     Location:string
     BikeType:string
@@ -41,4 +41,14 @@ export interface UserProfileTypes {
     RidingPreference:string
     RideConsistency:string
     ProfilePicture:string
+}
+export interface UserProfileReturnTypes {
+    userName:string
+    name:string
+    location:string
+    bikeType:string
+    ridingExperience:string
+    ridingPreference:string
+    rideConsistency:string
+    profilePicture:string
 }
