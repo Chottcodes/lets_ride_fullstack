@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 
-import PrimaryButton from "@/components/PrimaryButton";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { useRouter } from "next/navigation";
 
 const SignUpIntroPage = () => {
@@ -17,7 +17,7 @@ const SignUpIntroPage = () => {
             width={1000}
             height={1000}
             alt="logo"
-            className="w-80 sm:w-120 "
+            className="w-80  sm:w-120 "
           />
           <h1 className="sm:text-[26px] text-[20px]">
             Connecting Riders, One Mile At A Time

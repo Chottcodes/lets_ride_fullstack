@@ -1,8 +1,8 @@
 "use client";
 
-import InputComponent from "@/components/InputComponent";
-import PasswordInputComponent from "@/components/PasswordInputComponent";
-import PrimaryButton from "@/components/PrimaryButton";
+import InputComponent from "@/components/inputs/InputComponent";
+import PasswordInputComponent from "@/components/inputs/PasswordInputComponent";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { logIn } from "@/components/utils/DataServices";
 import { IToken } from "@/components/utils/Interface";
 import { useRouter } from "next/navigation";
