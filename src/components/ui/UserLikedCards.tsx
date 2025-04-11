@@ -1,4 +1,5 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
+import Image from "next/image";
 import React from "react";
 
 const UserLikedCards = () => {
@@ -6,8 +7,10 @@ const UserLikedCards = () => {
     <div>
       {/* Image */}
       <div className="w-full h-full overflow-hidden shadow-md  rounded-md border-2 bg-[#1E1E1E] border-black ">
-        <img
+        <Image
           src="/assets/testImages/bikeTest2.webp"
+          width={900}
+          height={900}
           alt="Motorbike POV"
           className="transition-transform duration-300 hover:scale-105 w-[465px] h-[250px] object-cover  rounded-md border-2 border-blue-500 cursor-pointer"
         />
@@ -38,8 +41,10 @@ const UserLikedCards = () => {
           <div className="flex items-center space-x-4 ">
             <div className="flex items-center space-x-1 cursor-pointer">
               <div>
-                <img
+                <Image
                   src="/assets/images/card/thumbs-up.png"
+                  width={900}
+                  height={900}
                   alt="comments"
                   className="w-7 h-7"
                 />
@@ -49,10 +54,12 @@ const UserLikedCards = () => {
 
             <div className="flex items-center space-x-1 cursor-pointer">
               <div>
-                <img
+                <Image
                   src="/assets/images/card/coment.png"
                   alt="comments"
                   className="w-7 h-7 mt-1"
+                  width={100}
+                  height={100}
                 />
               </div>
               <span className="text-2xl">2</span>

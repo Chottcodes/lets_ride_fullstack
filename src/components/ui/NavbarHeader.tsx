@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import React from 'react'
+import Image from 'next/image'
 
 interface propTypes
 {
@@ -12,7 +13,7 @@ interface propTypes
 }
 
 const NavbarHeader = (prop: propTypes) => {
-  const {isRoutes, isYourLikes, isMyPictures, isMyRoutes} = prop;
+  const { isYourLikes, isMyPictures, isMyRoutes} = prop;
   const { push } = useRouter();
   
 
@@ -22,9 +23,11 @@ const NavbarHeader = (prop: propTypes) => {
     <div className="flex flex-col gap-6 mb-10 lg:mx-10 mx-6">
       
       <div>
-        <img
+        <Image
           src="/assets/images/Logo.png"
           alt="Lets Ride"
+          width={100}
+          height={100}
           className="h-40 w-80 mx-auto relative"
         />
       </div>

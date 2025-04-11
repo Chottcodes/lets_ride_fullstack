@@ -30,6 +30,7 @@ const LoginSectionPage = () => {
         const token: IToken = await logIn(userData);
   
         if (token) {
+          console.log(token)
           if (typeof window !== "undefined") {
             localStorage.setItem("Token", token.token);
             console.log(token.token);

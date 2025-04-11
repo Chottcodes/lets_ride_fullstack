@@ -13,7 +13,6 @@ import { UserProfileReturnTypes } from "@/components/utils/Interface";
 const ProfilePage = () => {
   const { push } = useRouter();
   const [name, setName] = useState<string>("");
-  const [userId, setUserId] = useState<number>();
   const [username, setUserName] = useState<string>("");
   const [profilePicture,setProfilePicture]=useState<string>("")
   const [bikeType, setBikeType] = useState<string>("");
@@ -25,6 +24,11 @@ const ProfilePage = () => {
     const getId = localStorage.getItem("ID");
     return Number(getId);
   };
+  const handleLogOut=()=>{
+    localStorage.setItem("Token", "");
+    localStorage.setItem("ID", "");
+    push("/");
+  }
   useEffect(() => {
     const getInfo = GetLocalStorageId();
     const fetchData = async () => {
@@ -133,7 +137,7 @@ const ProfilePage = () => {
           <PrimaryButton
             buttonText="Logout"
             isBackgroundDark={false}
-            onClick={() => push("/")}
+            onClick={handleLogOut}
           />
         </div>
         <div className="lg:w-[40%] lg:flex">

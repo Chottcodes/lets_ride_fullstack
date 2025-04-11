@@ -1,16 +1,17 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import Image from "next/image";
 import React, { useState } from "react";
 
-interface UserCard {
-  userImage: string;
-  userTitle: string;
-  userLikes: number;
-  userDate: string;
-  userDescription: string;
-  userName: string;
-  userComments: string[];
-}
+// interface UserCard {
+//   userImage: string;
+//   userTitle: string;
+//   userLikes: number;
+//   userDate: string;
+//   userDescription: string;
+//   userName: string;
+//   userComments: string[];
+// }
 
 const BikeCard = () => {
   // Model Card
@@ -18,16 +19,16 @@ const BikeCard = () => {
   const [isFullImage, setIsFullImage] = useState(false);
 
   // User Card Blob
-  const [userProfile, setUserProfile] = useState("");
-  const [userImage, setUserImage] = useState("");
-  const [userDate, setUserDate] = useState("");
-  const [userTitle, setUserTitle] = useState("");
-  const [userDescription, setUserDescription] = useState("");
+  // const [userProfile, setUserProfile] = useState("");
+  // const [userImage, setUserImage] = useState("");
+  // const [userDate, setUserDate] = useState("");
+  // const [userTitle, setUserTitle] = useState("");
+  // const [userDescription, setUserDescription] = useState("");
 
   // User Interact section
-  const [userName, setUserName] = useState("");
+  // const [userName, setUserName] = useState("");
   const [isUserLiked, setIsUserLiked] = useState(false);
-  const [userComments, setUserComments] = useState(false);
+  // const [userComments, setUserComments] = useState(false);
 
   return (
     <>
@@ -35,8 +36,10 @@ const BikeCard = () => {
       <div className="max-w-[1570px] h-full overflow-hidden shadow-md rounded-md border-2 border-black">
         {/* Image */}
         <button onClick={() => setIsModel(true)}>
-          <img
+          <Image
             src="/assets/testImages/BikeTest1.jpg"
+            width={900}
+            height={900}
             alt="Motorbike POV"
             className="transition-transform duration-300 hover:scale-105 w-[465px] h-[250px] object-cover rounded-md border-2 border-blue-500 cursor-pointer"
           />
@@ -52,9 +55,11 @@ const BikeCard = () => {
                   onClick={() => setIsUserLiked(false)}
                   className="flex items-center space-x-1 cursor-pointer"
                 >
-                  <img
+                  <Image
                     src="/assets/images/card/like (1).png"
                     alt="Liked"
+                    width={900}
+                    height={900}
                     className="w-8 h-6 ps-1 text-black"
                   />
                   <span className="text-lg font-medium">20</span>
@@ -65,9 +70,11 @@ const BikeCard = () => {
                   onClick={() => setIsUserLiked(true)}
                   className="flex items-center space-x-1 cursor-pointer"
                 >
-                  <img
+                  <Image
                     src="/assets/images/card/thumbs-up.png"
                     alt="Like"
+                    width={900}
+                    height={900}
                     className="w-6 h-6"
                   />
                   <span className="text-[18px] ps-1 ">20</span>
@@ -79,8 +86,10 @@ const BikeCard = () => {
               onClick={() => setIsModel(true)}
               className="flex items-center space-x-1 cursor-pointer"
             >
-              <img
+              <Image
                 src="/assets/images/card/coment.png"
+                width={900}
+                height={900}
                 alt="comments"
                 className="w-6 h-6 mt-1"
               />
@@ -117,8 +126,10 @@ const BikeCard = () => {
             </button> */}
 
             {/* Zoomable Image */}
-            <img
+            <Image
               src="/assets/testImages/BikeTest1.jpg"
+              width={900}
+              height={900}
               alt="Motorbike POV"
               onClick={() => setIsFullImage(!isFullImage)}
               className={`transition-all duration-300 cursor-pointer rounded-md mb-4 hover:border-1 hover:border-black/20 ${
@@ -160,8 +171,10 @@ const BikeCard = () => {
                 <div className="mt-6 border-t pt-4">
                   <div className="flex items-center space-x-6">
                     <button className="flex items-center space-x-2 text-gray-700">
-                      <img
+                      <Image
                         src="/assets/images/card/thumbs-up-black.png"
+                        width={900}
+                        height={900}
                         alt="Like"
                         className="w-6 h-6 text-black"
                       />
@@ -169,10 +182,12 @@ const BikeCard = () => {
                     </button>
 
                     <button className="flex items-center space-x-2 text-gray-700">
-                      <img
+                      <Image
                         src="/assets/images/card/comment-black.png"
                         alt="Comment"
                         className="w-6 h-6"
+                        width={900}
+                        height={900}
                       />
                       <span className="text-lg font-medium">2 Comments</span>
                     </button>

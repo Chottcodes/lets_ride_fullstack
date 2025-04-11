@@ -1,7 +1,6 @@
 import DesktopNavBar from '@/components/navbars/DesktopNavBar'
 import MobileNavBar from '@/components/navbars/MobileNavBar'
 import NavbarHeader from '@/components/ui/NavbarHeader'
-import UserCards from '@/components/ui/UserCards'
 import UserLikedCards from '@/components/ui/UserLikedCards'
 import React from 'react'
 
