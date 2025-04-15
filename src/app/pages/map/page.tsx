@@ -7,7 +7,7 @@ const page = () => {
   return (
     <div className='h-screen relative'>
         <header className='bg-blue-700/2 backdrop-blur-2xl absolute top-0 w-full h-[10%] flex justify-center items-center z-10' >
-            <button className='cursor pointer text-white'>Community routes</button>
+            <button className='cursor-pointer text-white'>Community routes</button>
         </header>
         <main className='h-full w-full'>
             <section className='h-full w-full'>
