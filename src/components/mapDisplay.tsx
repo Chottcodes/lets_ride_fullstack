@@ -51,7 +51,6 @@ const MapDisplay = () => {
   return (
     <div className="w-full h-full relative text-white">
       <div className="w-full h-full" ref={mapContainerRef} />
-      <div className="absolute bottom-0 bg-blue-900 w-full h-[10%]"/>
     </div>
   );
 };
