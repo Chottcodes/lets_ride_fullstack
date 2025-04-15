@@ -25,7 +25,7 @@ const MobileNavBar = (prop: propTypes) => {
     <nav className="w-full h-[10%] lg:hidden flex justify-evenly items-center">
       <button onClick={handleHomeButton}>
         <Image
-          className="h-[35px] w-[35px]"
+          className="h-[25px] w-[25px]"
           src={
             isHomeOn
               ? "/assets/images/home(2).png"
@@ -38,7 +38,7 @@ const MobileNavBar = (prop: propTypes) => {
       </button>
       <button onClick={handleLocationButton}>
         <Image
-          className="h-[35px] w-[35px]"
+          className="h-[25px] w-[25px]"
           src={
             isLocationOn
               ? "/assets/images/location(1).png"
@@ -51,7 +51,7 @@ const MobileNavBar = (prop: propTypes) => {
       </button>
       <button onClick={handleGalleryButton}>
         <Image
-          className="h-[35px] w-[35px]"
+          className="h-[25px] w-[25px]"
           src={
             isGalleryOn
               ? "/assets/images/gallery(1).png"
@@ -69,7 +69,7 @@ const MobileNavBar = (prop: propTypes) => {
         } rounded-full overflow-hidden`}
       >
         <Image
-          className="h-[35px] w-[35px]"
+          className="h-[25px] w-[25px]"
           src="/assets/images/motorcycle-tires.jpg"
           width={100}
           height={100}

@@ -9,14 +9,14 @@ const page = () => {
         <header className='bg-blue-700/2 backdrop-blur-2xl absolute top-0 w-full h-[10%] flex justify-center items-center z-10' >
             <button className='cursor-pointer text-white'>Community routes</button>
         </header>
-        <main className='h-[90%] w-full'>
+        <main className='h-full w-full relative'>
             <section className='h-full w-full'>
                 <MapDisplay/>
             </section>
-        </main>
-        <footer className='absolute bottom-0 w-full h-[10%] bg-blue-700/20 backdrop-blur-2xl lg:hidden flex items-center'>
+        <footer className='w-full h-[10%] absolute bottom-0 bg-blue-700/5 backdrop-blur-2xl lg:hidden flex items-center'>
             <MobileNavBar isHomeOn={false} isGalleryOn={false} isLocationOn={true} isProfileOn={false} />
         </footer>
+        </main>
     </div>
   )
 }
