@@ -1,4 +1,4 @@
-'use client'
+
 import MapDisplay from '@/components/mapDisplay'
 import MobileNavBar from '@/components/navbars/MobileNavBar'
 import React from 'react'
