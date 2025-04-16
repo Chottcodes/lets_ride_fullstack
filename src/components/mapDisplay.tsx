@@ -15,6 +15,7 @@ const MapDisplay = () => {
   const [hasStarted, setHasStarted] = useState<boolean>(false);
   const [countDown, setCountDown] = useState<number>(3);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapzoom: number = 12;
 
   const startRecord = () => {
@@ -36,11 +37,6 @@ const MapDisplay = () => {
   };
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      alert("browser not supported");
-      setLocation({ lat: 37.7749, lng: -122.4194 });
-      return;
-    }
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocation({
@@ -59,15 +55,26 @@ const MapDisplay = () => {
   }, []);
 
   useEffect(() => {
-    if (!location || !mapContainerRef.current) return;
+    if (!mapContainerRef.current) return;
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
       center: [location.lng, location.lat],
       zoom: mapzoom,
     });
-    new mapboxgl.Marker().setLngLat([location.lng, location.lat]).addTo(map);
+    mapRef.current = map;
     return () => map.remove();
+  }, []);
+  useEffect(() => {
+    if (!mapRef.current) return;
+  
+    // Update map center when location updates
+    mapRef.current.setCenter([location.lng, location.lat]);
+  
+    // Optionally update marker:
+    new mapboxgl.Marker()
+      .setLngLat([location.lng, location.lat])
+      .addTo(mapRef.current);
   }, [location]);
 
   return (
