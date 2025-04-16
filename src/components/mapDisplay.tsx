@@ -55,26 +55,27 @@ const MapDisplay = () => {
   }, []);
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!mapContainerRef.current || location.lat === 0 || location.lng === 0) return;
+    
+    // Only initialize map once we have actual location data
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
       center: [location.lng, location.lat],
       zoom: mapzoom,
     });
-    mapRef.current = map;
-    return () => map.remove();
-  }, []);
-  useEffect(() => {
-    if (!mapRef.current) return;
-  
-    // Update map center when location updates
-    mapRef.current.setCenter([location.lng, location.lat]);
-  
-    // Optionally update marker:
-    new mapboxgl.Marker()
+    
+    // Add marker at current location
+    const marker = new mapboxgl.Marker()
       .setLngLat([location.lng, location.lat])
-      .addTo(mapRef.current);
+      .addTo(map);
+    
+    mapRef.current = map;
+    
+    return () => {
+      marker.remove();
+      map.remove();
+    };
   }, [location]);
 
   return (
