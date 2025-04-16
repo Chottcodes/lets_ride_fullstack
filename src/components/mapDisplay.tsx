@@ -22,6 +22,8 @@ const MapDisplay = () => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
   const mapzoom: number = 15;
+  const [debugMsg, setDebugMsg] = useState<string | null>(null);
+
 
   const startRecord = () => {
     if (!navigator.geolocation) {
@@ -36,27 +38,29 @@ const MapDisplay = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        alert(`Latitude: ${latitude}, Longitude: ${longitude}`);
+        setDebugMsg(`Latitude: ${latitude}, Longitude: ${longitude}`);
         setLocation({ latitude, longitude });
         setHasStarted(true);
       },
       handleError,
       { enableHighAccuracy: true }
     );
-
-    let counter = 3;
-    const interval = setInterval(() => {
-      counter -= 1;
-      if (counter > 0) {
-        setCountDown(counter);
-      }
-      if (counter === 0) {
-        clearInterval(interval);
-        setIsRecording(true);
-        setHasStarted(false);
-        setCountDown(3);
-      }
-    }, 1000);
+    if(!hasStarted){
+      
+      let counter = 3;
+      const interval = setInterval(() => {
+        counter -= 1;
+        if (counter > 0) {
+          setCountDown(counter);
+        }
+        if (counter === 0) {
+          clearInterval(interval);
+          setIsRecording(true);
+          setHasStarted(false);
+          setCountDown(3);
+        }
+      }, 1000);
+    }
   };
 
   useEffect(() => {
@@ -145,6 +149,11 @@ const MapDisplay = () => {
       >
         <p>{countDown}</p>
       </div>
+      {debugMsg && (
+        <div className="absolute bottom-4 left-4 bg-black/80 text-green-400 p-3 rounded-md text-xs z-50 max-w-xs">
+          {debugMsg}
+        </div>
+      )}
     </div>
   );
 };
