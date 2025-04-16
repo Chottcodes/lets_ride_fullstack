@@ -37,21 +37,42 @@ const MapDisplay = () => {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-      },
-      (error) => {
-        console.warn(error);
-        setLocation({ lat: 37.7749, lng: -122.4194 });
-      },
-      {
-        enableHighAccuracy: true,
-      }
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+  
+    // For debugging
+    const showPosition = (position: { coords: { latitude: any; longitude: any; }; }) => {
+      alert(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
+      setLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    };
+  
+    const handleError = (error: { code: any; message: any; }) => {
+      console.warn("Geolocation error:", error.code, error.message);
+      alert(`Geolocation error: ${error.message}`);
+      // Fallback to San Francisco
+      setLocation({ lat: 37.7749, lng: -122.4194 });
+    };
+  
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 10000,  // 10 seconds
+      maximumAge: 0    // Don't use cached position
+    };
+  
+    // For better mobile experience, use watchPosition
+    const watchId = navigator.geolocation.watchPosition(
+      showPosition, 
+      handleError,
+      options
     );
+  
+    // Clean up
+    return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
   useEffect(() => {
