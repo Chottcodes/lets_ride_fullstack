@@ -4,7 +4,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div className="h-screen relative">
+    <div className="h-screen relative overflow-hidden">
       <header className="bg-blue-700/2 backdrop-blur-2xl absolute top-0 w-full h-[10%] flex justify-center items-center z-10">
         <button className="cursor-pointer text-white">Community routes</button>
       </header>
