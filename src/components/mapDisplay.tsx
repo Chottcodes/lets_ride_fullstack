@@ -27,13 +27,13 @@ const MapDisplay = () => {
 
   const startRecord = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      setDebugMsg("Geolocation is not supported by your browser.");
       return;
     }
 
     const handleError = (error: { message: string }) => {
       setLocation({ longitude: 122.4194, latitude: 37.7749 });
-      console.error(error.message);
+      setDebugMsg(`Error: ${error.message}`);
     };
     navigator.geolocation.getCurrentPosition(
       (position) => {
