@@ -43,7 +43,7 @@ const MapDisplay = () => {
     }
   
     // For debugging
-    const showPosition = (position: { coords: { latitude: any; longitude: any; }; }) => {
+    const showPosition = (position: { coords: { latitude: number; longitude: number; }; }) => {
       alert(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
       setLocation({
         lat: position.coords.latitude,
@@ -51,7 +51,7 @@ const MapDisplay = () => {
       });
     };
   
-    const handleError = (error: { code: any; message: any; }) => {
+    const handleError = (error: GeolocationPositionError) => {
       console.warn("Geolocation error:", error.code, error.message);
       alert(`Geolocation error: ${error.message}`);
       // Fallback to San Francisco
