@@ -7,10 +7,11 @@ import Image from "next/image";
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 const MapDisplay = () => {
-  const [location, setLocation] = useState<{ lat: number; lng: number }>({
-    lat: 0,
-    lng: 0,
+  const [location, setLocation] = useState<{ latitude: number; longitude: number }>({
+    longitude: 0,
+    latitude: 0,
   });
+  const [locationError, setLocationError] = useState<string>('');
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [hasStarted, setHasStarted] = useState<boolean>(false);
   const [countDown, setCountDown] = useState<number>(3);
@@ -41,62 +42,33 @@ const MapDisplay = () => {
       alert("Geolocation is not supported by your browser");
       return;
     }
-  
-  
-    const showPosition = (position: { coords: { latitude: number; longitude: number; }; }) => {
-      alert(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
-      setLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
+
+    const handleSuccess = (position: { coords: { latitude: number; longitude: number; }; }) => {
+      const { latitude, longitude } = position.coords;
+      setLocation({ latitude, longitude });
     };
-  
-    const handleError = (error: GeolocationPositionError) => {
-      console.warn("Geolocation error:", error.code, error.message);
-      alert(`Geolocation error: ${error.message}`);
-      // Fallback to San Francisco
-      setLocation({ lat: 37.7749, lng: -122.4194 });
+    const handleError = (error: { message: string; }) => {
+      setLocation({ longitude: 122.4194,latitude: 37.7749})
+      setLocationError(error.message);
     };
-  
-    const options = {
-      enableHighAccuracy: true,
-      timeout: 10000,  // 10 seconds
-      maximumAge: 0    // Don't use cached position
-    };
-  
-    
-    const watchId = navigator.geolocation.watchPosition(
-      showPosition, 
+    navigator.geolocation.getCurrentPosition(
+      handleSuccess,
       handleError,
-      options
+      { enableHighAccuracy: true }
     );
-  
     
-    return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
   useEffect(() => {
-    if (!mapContainerRef.current || location.lat === 0 || location.lng === 0) return;
+    if (!mapContainerRef.current || location.latitude === 0 || location.longitude === 0) return;
     
-    // Only initialize map once we have actual location data
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
-      center: [location.lng, location.lat],
+      center: [location.longitude, location.latitude],
       zoom: mapzoom,
     });
-    
-    // Add marker at current location
-    const marker = new mapboxgl.Marker()
-      .setLngLat([location.lng, location.lat])
-      .addTo(map);
-    
-    mapRef.current = map;
-    
-    return () => {
-      marker.remove();
-      map.remove();
-    };
+        
   }, [location]);
 
   return (
