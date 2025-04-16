@@ -36,6 +36,7 @@ const MapDisplay = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        alert(`Latitude: ${latitude}, Longitude: ${longitude}`);
         setLocation({ latitude, longitude });
         setHasStarted(true);
       },
