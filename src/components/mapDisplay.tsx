@@ -7,66 +7,101 @@ import Image from "next/image";
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 const MapDisplay = () => {
-  const [location, setLocation] = useState<{ latitude: number; longitude: number }>({
-    longitude: 0,
-    latitude: 0,
+  const [location, setLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  }>({
+    longitude: -122.4194,
+    latitude: 37.7749,
   });
- 
+
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [hasStarted, setHasStarted] = useState<boolean>(false);
   const [countDown, setCountDown] = useState<number>(3);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapzoom: number = 12;
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const mapzoom: number = 15;
 
   const startRecord = () => {
-    setHasStarted(true);
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    const handleError = (error: { message: string }) => {
+      setLocation({ longitude: 122.4194, latitude: 37.7749 });
+      console.error(error.message);
+    };
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation({ latitude, longitude });
+        setHasStarted(true);
+      },
+      handleError,
+      { enableHighAccuracy: true }
+    );
+
     let counter = 3;
     const interval = setInterval(() => {
       counter -= 1;
       if (counter > 0) {
         setCountDown(counter);
       }
-      if(counter === 0 )
-      {
-        clearInterval(interval)
+      if (counter === 0) {
+        clearInterval(interval);
         setIsRecording(true);
-        setHasStarted(false)
-        setCountDown(3)
+        setHasStarted(false);
+        setCountDown(3);
       }
     }, 1000);
   };
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
-      return;
-    }
+    if (!mapContainerRef.current || mapRef.current) return;
 
-    const handleSuccess = (position: { coords: { latitude: number; longitude: number; }; }) => {
-      const { latitude, longitude } = position.coords;
-      setLocation({ latitude, longitude });
-    };
-    const handleError = (error: { message: string; }) => {
-      setLocation({ longitude: 122.4194,latitude: 37.7749})
-      console.error(error.message);
-    };
-    navigator.geolocation.getCurrentPosition(
-      handleSuccess,
-      handleError,
-      { enableHighAccuracy: true }
-    );
-    
-  }, []);
-
-  useEffect(() => {
-    if (!mapContainerRef.current || location.latitude === 0 || location.longitude === 0) return;
-    
-      new mapboxgl.Map({
+    const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
       center: [location.longitude, location.latitude],
       zoom: mapzoom,
     });
+
+    mapRef.current = map;
+    //now I need to create a marker
+    const el = document.createElement("div");
+    el.className = "custom-marker";
+    el.style.backgroundImage = "url(/assets/images/custom-pin.png)";
+    el.style.width = "50px";
+    el.style.height = "50px";
+    el.style.backgroundSize = "contain";
+    el.style.backgroundRepeat = "no-repeat";
+    el.style.backgroundPosition = "center";
+
+    el.addEventListener("click", () => {
+      map.flyTo({
+        center: [location.longitude, location.latitude],
+        zoom: mapzoom,
+        essential: true,
+      });
+    });
+
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat([location.longitude, location.latitude])
+      .addTo(map);
+    markerRef.current = marker;
+
+    return () => {
+      mapRef.current?.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (mapRef.current && markerRef.current) {
+      mapRef.current.setCenter([location.longitude, location.latitude]);
+      markerRef.current.setLngLat([location.longitude, location.latitude]);
+    }
   }, [location]);
 
   return (
