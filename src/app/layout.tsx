@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: "Lets Ride",
   description: "Lets Ride GPS App",
 };
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export default function RootLayout({
   children,
