@@ -11,12 +11,11 @@ const MapDisplay = () => {
     longitude: 0,
     latitude: 0,
   });
-  const [locationError, setLocationError] = useState<string>('');
+ 
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [hasStarted, setHasStarted] = useState<boolean>(false);
   const [countDown, setCountDown] = useState<number>(3);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
   const mapzoom: number = 12;
 
   const startRecord = () => {
@@ -49,7 +48,7 @@ const MapDisplay = () => {
     };
     const handleError = (error: { message: string; }) => {
       setLocation({ longitude: 122.4194,latitude: 37.7749})
-      setLocationError(error.message);
+      console.error(error.message);
     };
     navigator.geolocation.getCurrentPosition(
       handleSuccess,
@@ -62,13 +61,12 @@ const MapDisplay = () => {
   useEffect(() => {
     if (!mapContainerRef.current || location.latitude === 0 || location.longitude === 0) return;
     
-    const map = new mapboxgl.Map({
+      new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
       center: [location.longitude, location.latitude],
       zoom: mapzoom,
     });
-        
   }, [location]);
 
   return (
