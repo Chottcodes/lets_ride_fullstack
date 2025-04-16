@@ -42,7 +42,7 @@ const MapDisplay = () => {
       return;
     }
   
-    // For debugging
+  
     const showPosition = (position: { coords: { latitude: number; longitude: number; }; }) => {
       alert(`Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`);
       setLocation({
@@ -64,14 +64,14 @@ const MapDisplay = () => {
       maximumAge: 0    // Don't use cached position
     };
   
-    // For better mobile experience, use watchPosition
+    
     const watchId = navigator.geolocation.watchPosition(
       showPosition, 
       handleError,
       options
     );
   
-    // Clean up
+    
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
