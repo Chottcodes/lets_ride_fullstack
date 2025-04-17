@@ -4,7 +4,6 @@ import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 const MapDisplay = () => {
   const [location, setLocation] = useState<{
@@ -23,30 +22,12 @@ const MapDisplay = () => {
   const markerRef = useRef<mapboxgl.Marker | null>(null);
   const mapzoom: number = 15;
   const [debugMsg, setDebugMsg] = useState<string | null>(null);
+  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
-
+  
   const startRecord = () => {
-    if (!navigator.geolocation) {
-      setDebugMsg("Geolocation is not supported by your browser.");
-      return;
-    }
-
-    const handleError = (error: { message: string }) => {
-      setLocation({ longitude: 122.4194, latitude: 37.7749 });
-      setDebugMsg(`Error: ${error.message}`);
-    };
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setDebugMsg(`Latitude: ${latitude}, Longitude: ${longitude}`);
-        setLocation({ latitude, longitude });
-        setHasStarted(true);
-      },
-      handleError,
-      { enableHighAccuracy: true }
-    );
-    if(!hasStarted){
-      
+    setHasStarted(true);
+    if (!hasStarted) {
       let counter = 3;
       const interval = setInterval(() => {
         counter -= 1;
@@ -62,8 +43,19 @@ const MapDisplay = () => {
       }, 1000);
     }
   };
-
+  
+  const handleError = (error: { message: string }) => {
+    setLocation({ longitude: 122.4194, latitude: 37.7749 });
+    setDebugMsg(`Error: ${error.message}`);
+  };
   useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setLocation({ latitude, longitude });
+      },handleError);
+    }
+
     if (!mapContainerRef.current || mapRef.current) return;
 
     const map = new mapboxgl.Map({
