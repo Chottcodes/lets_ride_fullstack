@@ -1,3 +1,4 @@
+'use client'
 import MapDisplay from "@/components/mapDisplay";
 import MobileNavBar from "@/components/navbars/MobileNavBar";
 import React from "react";
@@ -13,7 +14,7 @@ const page = () => {
           <MapDisplay />
         </div>
       </main>
-      <footer className="w-full h-[10%] flex items-center">
+      <footer className="w-full h-[10%] flex items-center"> 
         <MobileNavBar
           isHomeOn={false}
           isLocationOn={true}
