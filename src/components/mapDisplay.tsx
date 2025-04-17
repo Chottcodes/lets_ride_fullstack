@@ -48,7 +48,7 @@ const MapDisplay = () => {
     }
   };
   const handleError = (error: { message: string }) => {
-    setDebugMsg(`Error: ${error.message}`);
+    setDebugMsg(`Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`);
   };
   useEffect(() => {
     
