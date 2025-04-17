@@ -21,10 +21,12 @@ const MapDisplay = () => {
 
   
   const startRecord = () => {
+
     if (typeof window !== 'undefined' && navigator.geolocation) {
+
       if (navigator.permissions) {
         navigator.permissions.query({ name: "geolocation" }).then((result) => {
-          console.log("Geolocation permission state:", result.state);
+          setDebugMsg(`Geolocation permission state: ${result.state}`);
           setDebugMsg(`Permission state: ${result.state}`);
   
           if (result.state === "denied") {
@@ -34,9 +36,6 @@ const MapDisplay = () => {
           setDebugMsg(`Permissions API error:"${err}`);
         });
       }
-
-
-
 
 
       navigator.geolocation.getCurrentPosition(
