@@ -3,7 +3,7 @@ import MapDisplay from "@/components/mapDisplay";
 import MobileNavBar from "@/components/navbars/MobileNavBar";
 import React from "react";
 
-const page = () => {
+const MapPage = () => {
   return (
     <div className="h-screen relative">
       <header className="bg-blue-700/5 backdrop-blur-2xl w-full h-[10%] flex justify-center items-center">
@@ -26,4 +26,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default MapPage;
