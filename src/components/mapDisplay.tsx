@@ -6,13 +6,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
 
 const MapDisplay = () => {
-  const [location, setLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  }>({
-    longitude: -122.4194,
-    latitude: 37.7749,
-  });
+  const [latitude,setLatitude] = useState<number>()
+  const [longitude,setLongitude] = useState<number>();
 
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [hasStarted, setHasStarted] = useState<boolean>(false);
@@ -26,7 +21,16 @@ const MapDisplay = () => {
 
   
   const startRecord = () => {
-    setHasStarted(true);
+    if(typeof window !== 'undefined')
+    {
+      navigator.geolocation.watchPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        setLongitude(longitude)
+        setLatitude(latitude)
+        console.log(longitude,latitude)
+        setHasStarted(true);
+      },handleError);
+    }
     if (!hasStarted) {
       let counter = 3;
       const interval = setInterval(() => {
@@ -43,25 +47,17 @@ const MapDisplay = () => {
       }, 1000);
     }
   };
-  
   const handleError = (error: { message: string }) => {
-    setLocation({ longitude: 122.4194, latitude: 37.7749 });
     setDebugMsg(`Error: ${error.message}`);
   };
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        setLocation({ longitude, latitude });
-      },handleError);
-    }
-
+    
     if (!mapContainerRef.current || mapRef.current) return;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
-      center: [location.longitude, location.latitude],
+      center: [longitude ?? 0, latitude ?? 0],
       zoom: mapzoom,
     });
 
@@ -78,14 +74,14 @@ const MapDisplay = () => {
 
     el.addEventListener("click", () => {
       map.flyTo({
-        center: [location.longitude, location.latitude],
+        center: [longitude ?? 0, latitude ?? 0],
         zoom: mapzoom,
         essential: true,
       });
     });
 
     const marker = new mapboxgl.Marker({ element: el })
-      .setLngLat([location.longitude, location.latitude])
+      .setLngLat([longitude ?? 0, latitude ?? 0])
       .addTo(map);
     markerRef.current = marker;
 
@@ -95,11 +91,11 @@ const MapDisplay = () => {
   }, []);
 
   useEffect(() => {
-    if (mapRef.current && markerRef.current) {
-      mapRef.current.setCenter([location.longitude, location.latitude]);
-      markerRef.current.setLngLat([location.longitude, location.latitude]);
+    if (mapRef.current && markerRef.current && longitude && latitude) {
+      mapRef.current.setCenter([longitude, latitude]);
+      markerRef.current.setLngLat([longitude, latitude]);
     }
-  }, [location]);
+  }, [latitude,longitude]);
 
   return (
     <div className="w-full h-full relative flex justify-center items-center text-white">
