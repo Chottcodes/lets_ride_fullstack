@@ -22,12 +22,29 @@ const MapDisplay = () => {
   
   const startRecord = () => {
     if (typeof window !== 'undefined' && navigator.geolocation) {
+      if (navigator.permissions) {
+        navigator.permissions.query({ name: "geolocation" }).then((result) => {
+          console.log("Geolocation permission state:", result.state);
+          setDebugMsg(`Permission state: ${result.state}`);
+  
+          if (result.state === "denied") {
+            setDebugMsg("Location permission was denied. Check browser and iOS settings.");
+          }
+        }).catch((err) => {
+          setDebugMsg(`Permissions API error:"${err}`);
+        });
+      }
+
+
+
+
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setLatitude(latitude);
           setLongitude(longitude);
-          setHasStarted(true);
+          setHasStarted(true);  
           navigator.geolocation.watchPosition((pos) => {
             const { latitude, longitude } = pos.coords;
             setLongitude(longitude);
