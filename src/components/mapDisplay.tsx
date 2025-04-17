@@ -21,15 +21,24 @@ const MapDisplay = () => {
 
   
   const startRecord = () => {
-    if(typeof window !== 'undefined')
-    {
-      navigator.geolocation.watchPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        setLongitude(longitude)
-        setLatitude(latitude)
-        console.log(longitude,latitude)
-        setHasStarted(true);
-      },handleError);
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLatitude(latitude);
+          setLongitude(longitude);
+          setHasStarted(true);
+          navigator.geolocation.watchPosition((pos) => {
+            const { latitude, longitude } = pos.coords;
+            setLongitude(longitude);
+            setLatitude(latitude);
+            console.log("Tracking:", longitude, latitude);
+          }, handleError);
+        },
+        handleError
+      );
+    } else {
+      setDebugMsg("Geolocation not supported on this device/browser.");
     }
     if (!hasStarted) {
       let counter = 3;
