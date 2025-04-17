@@ -19,59 +19,55 @@ const MapDisplay = () => {
   const [debugMsg, setDebugMsg] = useState<string | null>(null);
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
-  
   const startRecord = () => {
-
-    if (typeof window !== 'undefined' && navigator.geolocation) {
-
-      if (navigator.permissions) {
-        navigator.permissions.query({ name: "geolocation" }).then((result) => {
-          setDebugMsg(`Geolocation permission state: ${result.state}`);
-          setDebugMsg(`Permission state: ${result.state}`);
-  
-          if (result.state === "denied") {
-            setDebugMsg("Location permission was denied. Check browser and iOS settings.");
-          }
-        }).catch((err) => {
-          setDebugMsg(`Permissions API error:"${err}`);
-        });
-      }
-
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLatitude(latitude);
-          setLongitude(longitude);
-          setHasStarted(true);  
-          navigator.geolocation.watchPosition((pos) => {
-            const { latitude, longitude } = pos.coords;
-            setLongitude(longitude);
-            setLatitude(latitude);
-            console.log("Tracking:", longitude, latitude);
-          }, handleError);
-        },
-        handleError
-      );
-    } else {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
       setDebugMsg("Geolocation not supported on this device/browser.");
+      return;
     }
-    if (!hasStarted) {
-      let counter = 3;
-      const interval = setInterval(() => {
-        counter -= 1;
-        if (counter > 0) {
-          setCountDown(counter);
+  
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        setDebugMsg(`Permission state: ${result.state}`);
+        if (result.state === "denied") {
+          setDebugMsg("Location permission was denied. Check browser and iOS settings.");
         }
-        if (counter === 0) {
-          clearInterval(interval);
-          setIsRecording(true);
-          setHasStarted(false);
-          setCountDown(3);
-        }
-      }, 1000);
+      }).catch((err) => {
+        setDebugMsg(`Permissions API error: ${err}`);
+      });
     }
+  
+    navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setHasStarted(true);
+        console.log("Tracking:", longitude, latitude);
+  
+        // Start countdown only once
+        if (!hasStarted) {
+          let counter = 3;
+          const interval = setInterval(() => {
+            counter -= 1;
+            if (counter > 0) {
+              setCountDown(counter);
+            }
+            if (counter === 0) {
+              clearInterval(interval);
+              setIsRecording(true);
+              setHasStarted(false);
+              setCountDown(3);
+            }
+          }, 1000);
+        }
+      },
+      handleError
+    );
   };
+  
+   
+
+
   const handleError = (error: { message: string }) => {
     setDebugMsg(`Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`);
   };
