@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -11,43 +11,32 @@ const MapDisplay = () => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [startCountDown, setStartCountDown] = useState<boolean>(false);
   const [countDown, setCountDown] = useState<number>(3);
-  const [debugMsg, setDebugMsg] = useState<string | null>(null);
-
+  //map ref and marker ref
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
-
+  //tracking Refs and array
+  const [path, setPath] = useState<[number, number][]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const geojsonSourceRef = useRef<mapboxgl.GeoJSONSource | null>(null);
+  //map zoom level
   const mapzoom: number = 15;
 
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   const startRecord = () => {
     if (typeof window === "undefined" || !navigator.geolocation) {
-      setDebugMsg("Geolocation not supported on this device/browser.");
+      alert("Geolocation not supported on this device/browser.");
       return;
     }
-    if (navigator.permissions) {
-      navigator.permissions
-        .query({ name: "geolocation" })
-        .then((result) => {
-          setDebugMsg(`Permission state: ${result.state}`);
-          if (result.state === "denied") {
-            setDebugMsg(
-              "Location permission was denied. Check browser and iOS settings."
-            );
-          }
-        })
-        .catch((err) => {
-          setDebugMsg(`Permissions API error: ${err}`);
-        });
-    }
 
-    navigator.geolocation.watchPosition((pos) => {
+    navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude, longitude } = pos.coords;
       setLatitude(latitude);
       setLongitude(longitude);
       setStartCountDown(true);
-      if (!startCountDown) {
+
+     
         let counter = 3;
         const interval = setInterval(() => {
           counter -= 1;
@@ -59,17 +48,65 @@ const MapDisplay = () => {
             setIsRecording(true);
             setStartCountDown(false);
             setCountDown(3);
+            intervalRef.current = setInterval(() => {
+              navigator.geolocation.getCurrentPosition((pos) => {
+                const { latitude, longitude } = pos.coords;
+                setLatitude(latitude);
+                setLongitude(longitude);
+
+                setPath((prevPath: [number, number][]) => {
+                  const updatedPath: [number, number][] = [...prevPath, [longitude, latitude]];
+
+                  // Update the geojson source for the line
+                  if (geojsonSourceRef.current) {
+                    geojsonSourceRef.current.setData({
+                      type: "Feature",
+                      properties: {}, // Add this line to include the required properties field
+                      geometry: {
+                        type: "LineString",
+                        coordinates: updatedPath,
+                      },
+                    });
+                  }
+                  return updatedPath;
+                });
+              },handleError);
+            }, 10000);
           }
         }, 1000);
-      }
+      
     }, handleError);
   };
 
+const handleStopButton = () => {
+  setIsRecording(false);
+
+  if (intervalRef.current) {
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
+  }
+
+  setPath([]);
+
+ 
+  if (geojsonSourceRef.current) {
+    geojsonSourceRef.current.setData({
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "LineString",
+        coordinates: [],
+      },
+    });
+  }
+}
+
   const handleError = (error: { message: string }) => {
-    setDebugMsg(
+    alert(
       `Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`
     );
   };
+
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -82,6 +119,37 @@ const MapDisplay = () => {
     });
 
     mapRef.current = map;
+
+    map.on("load", () => {
+      map.addSource("route", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          properties: {}, 
+          geometry: {
+            type: "LineString",
+            coordinates: [],
+          },
+        },
+      });
+
+      map.addLayer({
+        id: "route-line",
+        type: "line",
+        source: "route",
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
+        paint: {
+          "line-color": "#FFFFFF", // White trail
+          "line-width": 4,
+        },
+      });
+
+      geojsonSourceRef.current = map.getSource("route") as mapboxgl.GeoJSONSource;
+    });
+
     //now I need to create a marker
     const el = document.createElement("div");
     el.className = "custom-marker";
@@ -139,7 +207,9 @@ const MapDisplay = () => {
       markerRef.current = newMarker;
     }
   }, [latitude, longitude]);
-
+  useEffect(() => {
+    console.log(path);
+  }, [path]);
 
   return (
     <div className="w-full h-full relative flex justify-center items-center text-white">
@@ -163,7 +233,7 @@ const MapDisplay = () => {
           className={`${
             isRecording ? "block bg-red-500 " : "hidden"
           } rounded-full h-15 w-15`}
-          onClick={() => setIsRecording(false)}
+          onClick={handleStopButton}
         >
           <Image
             className="w-full h-full"
@@ -181,11 +251,6 @@ const MapDisplay = () => {
       >
         <p>{countDown}</p>
       </div>
-      {debugMsg && (
-        <div className="absolute bottom-4 left-4 bg-black/80 text-green-400 p-3 rounded-md text-xs z-50 max-w-xs">
-          {debugMsg}
-        </div>
-      )}
     </div>
   );
 };
