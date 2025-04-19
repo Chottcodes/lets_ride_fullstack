@@ -6,79 +6,78 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Image from "next/image";
 
 const MapDisplay = () => {
-  const [latitude,setLatitude] = useState<number>()
-  const [longitude,setLongitude] = useState<number>();
-
+  const [latitude, setLatitude] = useState<number>(37.7749);
+  const [longitude, setLongitude] = useState<number>(-122.4194);
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [hasStarted, setHasStarted] = useState<boolean>(false);
+  const [startCountDown, setStartCountDown] = useState<boolean>(false);
   const [countDown, setCountDown] = useState<number>(3);
+  const [debugMsg, setDebugMsg] = useState<string | null>(null);
+
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
+
   const mapzoom: number = 15;
-  const [debugMsg, setDebugMsg] = useState<string | null>(null);
+
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   const startRecord = () => {
-    if (typeof window === 'undefined' || !navigator.geolocation) {
+    if (typeof window === "undefined" || !navigator.geolocation) {
       setDebugMsg("Geolocation not supported on this device/browser.");
       return;
     }
-  
     if (navigator.permissions) {
-      navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        setDebugMsg(`Permission state: ${result.state}`);
-        if (result.state === "denied") {
-          setDebugMsg("Location permission was denied. Check browser and iOS settings.");
-        }
-      }).catch((err) => {
-        setDebugMsg(`Permissions API error: ${err}`);
-      });
+      navigator.permissions
+        .query({ name: "geolocation" })
+        .then((result) => {
+          setDebugMsg(`Permission state: ${result.state}`);
+          if (result.state === "denied") {
+            setDebugMsg(
+              "Location permission was denied. Check browser and iOS settings."
+            );
+          }
+        })
+        .catch((err) => {
+          setDebugMsg(`Permissions API error: ${err}`);
+        });
     }
-  
-    navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setLatitude(latitude);
-        setLongitude(longitude);
-        setHasStarted(true);
-        console.log("Tracking:", longitude, latitude);
-  
-        // Start countdown only once
-        if (!hasStarted) {
-          let counter = 3;
-          const interval = setInterval(() => {
-            counter -= 1;
-            if (counter > 0) {
-              setCountDown(counter);
-            }
-            if (counter === 0) {
-              clearInterval(interval);
-              setIsRecording(true);
-              setHasStarted(false);
-              setCountDown(3);
-            }
-          }, 1000);
-        }
-      },
-      handleError
-    );
-  };
-  
-   
 
+    navigator.geolocation.watchPosition((pos) => {
+      const { latitude, longitude } = pos.coords;
+      setLatitude(latitude);
+      setLongitude(longitude);
+      setStartCountDown(true);
+      if (!startCountDown) {
+        let counter = 3;
+        const interval = setInterval(() => {
+          counter -= 1;
+          if (counter > 0) {
+            setCountDown(counter);
+          }
+          if (counter === 0) {
+            clearInterval(interval);
+            setIsRecording(true);
+            setStartCountDown(false);
+            setCountDown(3);
+          }
+        }, 1000);
+      }
+    }, handleError);
+  };
 
   const handleError = (error: { message: string }) => {
-    setDebugMsg(`Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`);
+    setDebugMsg(
+      `Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`
+    );
   };
+
   useEffect(() => {
-    
     if (!mapContainerRef.current || mapRef.current) return;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
-      center: [longitude ?? 0, latitude ?? 0],
+      center: [longitude, latitude],
       zoom: mapzoom,
     });
 
@@ -95,19 +94,19 @@ const MapDisplay = () => {
 
     el.addEventListener("click", () => {
       map.flyTo({
-        center: [longitude ?? 0, latitude ?? 0],
+        center: [longitude, latitude],
         zoom: mapzoom,
         essential: true,
       });
     });
 
     const marker = new mapboxgl.Marker({ element: el })
-      .setLngLat([longitude ?? 0, latitude ?? 0])
+      .setLngLat([longitude, latitude])
       .addTo(map);
     markerRef.current = marker;
 
     return () => {
-      mapRef.current?.remove();
+      map.remove();
     };
   }, []);
 
@@ -115,8 +114,32 @@ const MapDisplay = () => {
     if (mapRef.current && markerRef.current && longitude && latitude) {
       mapRef.current.setCenter([longitude, latitude]);
       markerRef.current.setLngLat([longitude, latitude]);
+
+      if (markerRef.current) markerRef.current.remove();
+
+      const el = document.createElement("div");
+      el.className = "custom-marker";
+      el.style.backgroundImage = "url(/assets/images/custom-pin.png)";
+      el.style.width = "50px";
+      el.style.height = "50px";
+      el.style.backgroundSize = "contain";
+      el.style.backgroundRepeat = "no-repeat";
+      el.style.backgroundPosition = "center";
+
+      el.addEventListener("click", () => {
+        mapRef.current?.flyTo({
+          center: [longitude, latitude],
+          zoom: mapzoom,
+          essential: true,
+        });
+      });
+      const newMarker = new mapboxgl.Marker({ element: el })
+        .setLngLat([longitude, latitude])
+        .addTo(mapRef.current);
+      markerRef.current = newMarker;
     }
-  }, [latitude,longitude]);
+  }, [latitude, longitude]);
+
 
   return (
     <div className="w-full h-full relative flex justify-center items-center text-white">
@@ -153,7 +176,7 @@ const MapDisplay = () => {
       </section>
       <div
         className={`${
-          hasStarted ? "block" : "hidden"
+          startCountDown ? "block" : "hidden"
         } w-[60%] h-[50%] bg-[#2B2B2B]/80 rounded-2xl absolute text-5xl text-white flex justify-center items-center`}
       >
         <p>{countDown}</p>
