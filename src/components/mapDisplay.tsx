@@ -1,5 +1,5 @@
 "use client";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -15,13 +15,13 @@ const MapDisplay = () => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const watchIdRef = useRef<number | null>(null);
   //tracking Refs and array
   const [path, setPath] = useState<[number, number][]>([]);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const geojsonSourceRef = useRef<mapboxgl.GeoJSONSource | null>(null);
   //map zoom level
   const mapzoom: number = 15;
-
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   const startRecord = () => {
@@ -30,83 +30,100 @@ const MapDisplay = () => {
       return;
     }
 
-    navigator.geolocation.getCurrentPosition((pos) => {
-      const { latitude, longitude } = pos.coords;
-      setLatitude(latitude);
-      setLongitude(longitude);
-      setStartCountDown(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setLatitude(latitude);
+        setLongitude(longitude);
+        setStartCountDown(true);
 
-     
+        // Start countdown
         let counter = 3;
         const interval = setInterval(() => {
           counter -= 1;
-          if (counter > 0) {
-            setCountDown(counter);
-          }
+          if (counter > 0) setCountDown(counter);
           if (counter === 0) {
             clearInterval(interval);
             setIsRecording(true);
             setStartCountDown(false);
             setCountDown(3);
-            intervalRef.current = setInterval(() => {
-              navigator.geolocation.getCurrentPosition((pos) => {
+
+            // Start watching position for smooth live tracking
+            const watchId = navigator.geolocation.watchPosition(
+              (pos) => {
                 const { latitude, longitude } = pos.coords;
                 setLatitude(latitude);
                 setLongitude(longitude);
 
-                setPath((prevPath: [number, number][]) => {
-                  const updatedPath: [number, number][] = [...prevPath, [longitude, latitude]];
+                const newPoint: [number, number] = [longitude, latitude];
+                setPath((prevPath) => {
+                  // Optional: filter out tiny GPS noise
+                  if (
+                    prevPath.length === 0 ||
+                    isSignificantChange(prevPath[prevPath.length - 1], newPoint)
+                  ) {
+                    const updatedPath = [...prevPath, newPoint];
 
-                  // Update the geojson source for the line
-                  if (geojsonSourceRef.current) {
-                    geojsonSourceRef.current.setData({
-                      type: "Feature",
-                      properties: {}, // Add this line to include the required properties field
-                      geometry: {
-                        type: "LineString",
-                        coordinates: updatedPath,
-                      },
-                    });
+                    if (geojsonSourceRef.current) {
+                      geojsonSourceRef.current.setData({
+                        type: "Feature",
+                        properties: {},
+                        geometry: {
+                          type: "LineString",
+                          coordinates: updatedPath,
+                        },
+                      });
+                    }
+
+                    return updatedPath;
                   }
-                  return updatedPath;
+                  return prevPath;
                 });
-              },handleError);
-            }, 10000);
+              },
+              handleError,
+              {
+                enableHighAccuracy: true,
+                maximumAge: 1000,
+                timeout: 10000,
+              }
+            );
+
+            watchIdRef.current = watchId;
           }
         }, 1000);
-      
-    }, handleError);
+      },
+      handleError
+    );
   };
 
-const handleStopButton = () => {
-  setIsRecording(false);
+  const handleStopButton = () => {
+    setIsRecording(false);
 
-  if (intervalRef.current) {
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
-  }
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
 
-  setPath([]);
+  };
 
- 
-  if (geojsonSourceRef.current) {
-    geojsonSourceRef.current.setData({
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: [],
-      },
-    });
-  }
-}
+  const isSignificantChange = (
+    prev: [number, number],
+    next: [number, number]
+  ) => {
+    const [prevLng, prevLat] = prev;
+    const [nextLng, nextLat] = next;
+    const threshold = 0.00005;
+    return (
+      Math.abs(prevLng - nextLng) > threshold ||
+      Math.abs(prevLat - nextLat) > threshold
+    );
+  };
 
   const handleError = (error: { message: string }) => {
     alert(
       `Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`
     );
   };
-
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -125,7 +142,7 @@ const handleStopButton = () => {
         type: "geojson",
         data: {
           type: "Feature",
-          properties: {}, 
+          properties: {},
           geometry: {
             type: "LineString",
             coordinates: [],
@@ -142,12 +159,14 @@ const handleStopButton = () => {
           "line-cap": "round",
         },
         paint: {
-          "line-color": "#FFFFFF", // White trail
+          "line-color": "#FFFFFF", 
           "line-width": 4,
         },
       });
 
-      geojsonSourceRef.current = map.getSource("route") as mapboxgl.GeoJSONSource;
+      geojsonSourceRef.current = map.getSource(
+        "route"
+      ) as mapboxgl.GeoJSONSource;
     });
 
     //now I need to create a marker
