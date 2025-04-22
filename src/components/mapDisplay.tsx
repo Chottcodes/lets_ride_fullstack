@@ -23,7 +23,7 @@ const MapDisplay = () => {
 
   const [image, setImage] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [stopedRecording, setStoppedRecording] = useState<boolean>(true);
+  const [stopedRecording, setStoppedRecording] = useState<boolean>(false);
   const [startCountDown, setStartCountDown] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
