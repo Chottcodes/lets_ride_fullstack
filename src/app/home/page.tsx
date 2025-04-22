@@ -40,4 +40,34 @@ const profile = () => {
   );
 };
 
-export default profile;
+//   <div className='fixed top-0 left-0 h-screen w-20'>
+//     <DesktopNavBar isHomeOn={true} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
+//   </div>
+//     <NavbarHeader isRoutes={true} isYourLikes={false} isMyPictures={false} isMyRoutes={false}/>
+
+// {/* Card Grid Section */}
+// <div className=" flex justify-center text-white text-5xl
+// ">
+  
+
+// </div>
+
+
+// <div className=''>
+//     <MobileNavBar isHomeOn={true} isLocationOn={false} isGalleryOn={false} isProfileOn={false}/>
+// </div>
+
+// </div>
+
+
+//   )
+// }
+
+export default profile
+
+
+
+// User Post Logic
+{/* {users.map((user) => (
+  <UserCards key={user.id} data={user} />
+))} */}

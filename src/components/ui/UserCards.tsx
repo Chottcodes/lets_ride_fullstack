@@ -2,33 +2,16 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import React, { useState } from "react";
+import { IUserCardType } from "../utils/Interface";
 
-// interface UserCard {
-//   userImage: string;
-//   userTitle: string;
-//   userLikes: number;
-//   userDate: string;
-//   userDescription: string;
-//   userName: string;
-//   userComments: string[];
-// }
+// Start of Render
 
-const BikeCard = () => {
+const UserCardsPost = ({ card }: { card: IUserCardType }) => {
+
   // Model Card
   const [isModel, setIsModel] = useState(false);
   const [isFullImage, setIsFullImage] = useState(false);
-
-  // User Card Blob
-  // const [userProfile, setUserProfile] = useState("");
-  // const [userImage, setUserImage] = useState("");
-  // const [userDate, setUserDate] = useState("");
-  // const [userTitle, setUserTitle] = useState("");
-  // const [userDescription, setUserDescription] = useState("");
-
-  // User Interact section
-  // const [userName, setUserName] = useState("");
   const [isUserLiked, setIsUserLiked] = useState(false);
-  // const [userComments, setUserComments] = useState(false);
 
   return (
     <>
@@ -37,10 +20,10 @@ const BikeCard = () => {
         {/* Image */}
         <button onClick={() => setIsModel(true)}>
           <Image
-            src="/assets/testImages/BikeTest1.jpg"
-            width={900}
-            height={900}
-            alt="Motorbike POV"
+            src={card.imageUrl}
+            width={1000}
+            height={1000}
+            alt="User Image"
             className="transition-transform duration-300 hover:scale-105 w-[465px] h-[250px] object-cover rounded-md border-2 border-blue-500 cursor-pointer"
           />
         </button>
@@ -56,13 +39,12 @@ const BikeCard = () => {
                   className="flex items-center space-x-1 cursor-pointer"
                 >
                   <Image
-                    src="/assets/images/card/like (1).png"
-                    alt="Liked"
-                    width={900}
-                    height={900}
-                    className="w-8 h-6 ps-1 text-black"
+                    src={isUserLiked ? "/assets/images/card/like (1).png" : "/assets/images/card/thumbs-up.png"} alt="Liked"
+                    width={1000}
+                    height={1000}
+                    className={`w-6 h-6 ${isUserLiked ? "w-8 h-6 ps-1" : ""}`}
                   />
-                  <span className="text-lg font-medium">20</span>
+                  <span className="text-lg font-medium">{card.likes.length}</span>
                 </div>
               ) : (
                 // Default like
@@ -73,11 +55,11 @@ const BikeCard = () => {
                   <Image
                     src="/assets/images/card/thumbs-up.png"
                     alt="Like"
-                    width={900}
-                    height={900}
+                    width={1000}
+                    height={1000}
                     className="w-6 h-6"
                   />
-                  <span className="text-[18px] ps-1 ">20</span>
+                  <span className="text-[18px] ps-1 ">{card.comments.length ?? 0}</span>
                 </button>
               )}
             </div>
@@ -88,16 +70,16 @@ const BikeCard = () => {
             >
               <Image
                 src="/assets/images/card/coment.png"
-                width={900}
-                height={900}
+                width={1000}
+                height={1000}
                 alt="comments"
                 className="w-6 h-6 mt-1"
               />
-              <span className="text-xl ps-1">2</span>
+              <span className="text-xl ps-1">{card.comments.length}</span>
             </button>
           </div>
 
-          <span className="text-[18px]">2/18/2025</span>
+          <span className="text-[18px]">{card.dateCreated}</span>
         </div>
       </div>
 
@@ -114,22 +96,11 @@ const BikeCard = () => {
             className="bg-white rounded-xl shadow-xl max-w-4xl w-full p-6 relative"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
-            {/* <button
-              onClick={() => {
-                setIsModel(false);
-                setIsFullImage(false);
-              }}
-              className="absolute top-1 right-2 text-gray-700 hover:text-black text-2xl"
-            >
-              &times;
-            </button> */}
-
             {/* Zoomable Image */}
             <Image
-              src="/assets/testImages/BikeTest1.jpg"
-              width={900}
-              height={900}
+              src={card.imageUrl}
+              width={1000}
+              height={1000}
               alt="Motorbike POV"
               onClick={() => setIsFullImage(!isFullImage)}
               className={`transition-all duration-300 cursor-pointer rounded-md mb-4 hover:border-1 hover:border-black/20 ${
@@ -146,64 +117,58 @@ const BikeCard = () => {
                   <button className="border-none rounded-full overflow-hidden cursor-pointer">
                     <Avatar className="w-[55px] h-[55px] lg:h-[1px] lg:w-[1px]">
                       <AvatarImage
-                        src="/assets/images/motorcycle-tires.jpg"
+                        src="/assets/images/motorcycle-tires.jpg" // Profile picture
                         className="object-cover w-[45px] h-[40px]"
                       />
                       <AvatarFallback>Profile Picture</AvatarFallback>
                     </Avatar>
                   </button>
 
-                  <h2 className="text-2xl font-bold self-end ">Bike Title</h2>
+                  <h2 className="text-[24px] font-semibold self-end ">{card.title}</h2>
                 </div>
 
                 {/* Info */}
                 <div className="text-black space-y-2">
                   <p className="text-lg">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Aut exercitationem id adipisci amet mollitia fuga porro
-                    dignissimos hic nisi eos perspiciatis facere harum ipsam
-                    ipsa doloremque sunt, nobis vero. Perferendis.
+                   {card.description}
                   </p>
-                  <p className="text-gray-500">Date: 2/18/2025</p>
+                  <p className="text-gray-500">Date: {card.dateCreated}</p>
                 </div>
 
                 {/* Likes & Comments */}
                 <div className="mt-6 border-t pt-4">
-                  <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-5">
                     <button className="flex items-center space-x-2 text-gray-700">
                       <Image
                         src="/assets/images/card/thumbs-up-black.png"
-                        width={900}
-                        height={900}
+                        width={1000}
+                        height={1000}
                         alt="Like"
                         className="w-6 h-6 text-black"
                       />
-                      <span className="text-lg font-medium">20 Likes</span>
+                      <span className="text-lg font-medium">{card.likes.length}</span>
                     </button>
 
                     <button className="flex items-center space-x-2 text-gray-700">
                       <Image
                         src="/assets/images/card/comment-black.png"
                         alt="Comment"
-                        className="w-6 h-6"
-                        width={900}
-                        height={900}
+                        className="w-6 h-6 mt-1 opacity-70"
+                        width={1000}
+                        height={1000}
                       />
-                      <span className="text-lg font-medium">2 Comments</span>
+                      <span className="text-lg font-medium">{card.comments.length} Comments</span>
                     </button>
                   </div>
                   {/* Comments Section */}
                   <div className="mt-4 space-y-2">
-                    <div className="bg-gray-100 p-2 rounded">
-                      <p className="text-sm">
-                        <span>User 1:</span> That ride looks epic!
-                      </p>
-                    </div>
-                    <div className="bg-gray-100 p-2 rounded">
-                      <p className="text-sm">
-                        <span>User 2:</span> Wow nice car bro!
-                      </p>
-                    </div>
+                    {card.comments.map((comment, index) => 
+                    <div key={index} className="bg-gray-100 p-2 rounded">
+                    <p className="text-sm">
+                    <p key={index}>{comment.text}</p>
+                    </p>
+                  </div>
+                    )}
                   </div>
                 </div>
               </>
@@ -215,4 +180,4 @@ const BikeCard = () => {
   );
 };
 
-export default BikeCard;
+export default UserCardsPost;

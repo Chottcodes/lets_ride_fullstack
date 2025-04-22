@@ -88,7 +88,7 @@ const DesktopNavBar = () => {
   return (
     <nav className="w-full h-full hidden lg:flex lg:flex-col justify-evenly items-center bg-[#161616] border rounded-xl p-4">
       <section className="pt-[10rem] h-[50%] w-full flex flex-col space-y-20 items-center ">
-      <button onClick={handleHomeButton} className="cursor-pointer">
+      <button onClick={() => push("/home/yourlikes")} className="cursor-pointer">
         <Image
           className="h-[25px] w-[25px] lg:h-[27px] lg:w-[27px]"
           src={
