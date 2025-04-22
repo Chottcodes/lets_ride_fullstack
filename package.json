@@ -7,11 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-     "start:server": "ts-node --project tsconfig.server.json server.ts"
+    "start:server": "ts-node --project tsconfig.server.json server.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.3",
     "@radix-ui/react-progress": "^1.1.3",
+    "@radix-ui/react-switch": "^1.2.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "express": "^5.1.0",
@@ -22,9 +23,9 @@
     "next": "^15.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tailwind-merge": "^3.0.2",
+    "tailwind-merge": "^3.2.0",
     "ts-node": "^10.9.2",
-    "tw-animate-css": "^1.2.4"
+    "tw-animate-css": "^1.2.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

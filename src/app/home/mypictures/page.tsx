@@ -1,4 +1,3 @@
-
 import MobileNavBar from "@/components/navbars/MobileNavBar";
 import NavbarHeader from "@/components/ui/NavbarHeader";
 import UserLikedCards from "@/components/ui/UserLikedCards";

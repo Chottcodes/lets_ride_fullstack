@@ -1,5 +1,5 @@
 
-import { IUserCreate, IUserInfo, UserProfileTypes} from "./Interface"
+import { IUserCreate, IUserInfo, RoutePostTypes, UserProfileTypes} from "./Interface"
 
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 
@@ -90,6 +90,22 @@ export const UserProfileSetup = async (user: UserProfileTypes) => {
 export const GetUserProfile = async(UserId:number) =>
 {
     const res = await fetch(url + `RideTables/GetProfile/${UserId}`)
+    const data = await res.json();
+    return data;
+}
+
+export const PostRoute = async (route:RoutePostTypes ) => {
+    const res = await fetch(url + "RideTables/AddRoute", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(route)
+    });
+    if (!res.ok) {
+        console.log("Error");
+        return null;
+    };
     const data = await res.json();
     return data;
 }

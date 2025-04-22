@@ -56,3 +56,18 @@ export interface UserProfileReturnTypes {
     rideConsistency:string
     profilePicture:string
 }
+export interface RoutePostTypes {
+    CreatorId:number
+    RouteName:string
+    RouteDescription:string
+    ImageUrl:string
+    CityName:string
+    IsPrivate:boolean
+    IsDeleted:boolean
+    PathCoordinates:Coordinates[]
+
+}
+export interface Coordinates {
+    latitude: number;
+    longitude: number;
+  }
