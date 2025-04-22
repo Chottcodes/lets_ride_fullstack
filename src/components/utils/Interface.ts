@@ -52,3 +52,26 @@ export interface UserProfileReturnTypes {
     rideConsistency:string
     profilePicture:string
 }
+// --------------------- Card interfaces ---------------------
+export interface IUserCardType {
+    id: number;
+    creatorId: number;
+    imageUrl: string;
+    title: string;
+    description: string;
+    dateCreated: string;
+    isDeleted: boolean;
+    likes: LikeModel[];
+    comments: CommentModel[];
+  }
+
+  export interface LikeModel {
+    userId: number;
+  }
+  
+  export interface CommentModel {
+    userId: number;
+    text: string;
+    createdAt: string;
+
+  }

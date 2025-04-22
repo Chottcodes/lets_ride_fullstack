@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "creatorId": 1001,
+    "imageUrl": "/assets/testImages/BikeTest1.jpg",
+    "title": "Shadow Canyon Drift",
+    "description": "Slid through the gravel under moonlight. Tires screamed, I laughed.",
+    "dateCreated": "2025-04-18",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 2001 },
+      { "userId": 2002 }
+    ],
+    "comments": [
+      {
+        "userId": 3001,
+        "text": "I felt that last turn in my soul.",
+        "createdAt": "2025-04-18"
+      },
+      {
+        "userId": 3002,
+        "text": "Do you just live on your bike?",
+        "createdAt": "2025-04-18"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "creatorId": 1002,
+    "imageUrl": "/assets/testImages/bikeTest2.webp",
+    "title": "Storm Chaser",
+    "description": "Rode through the edge of a storm cloud. Thunder behind me, thrill ahead.",
+    "dateCreated": "2025-04-19",
+    "isDeleted": false,
+    "likes": [],
+    "comments": [
+      {
+        "userId": 3003,
+        "text": "You ride like it’s the last day on Earth.",
+        "createdAt": "2025-04-19"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "creatorId": 1003,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Urban Shadows",
+    "description": "Cruised empty city streets at 3am. Just me and neon reflections.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 2004 }
+    ],
+    "comments": []
+  }
+]

@@ -26,14 +26,14 @@ const NavbarHeader = (prop: propTypes) => {
         <Image
           src="/assets/images/Logo.png"
           alt="Lets Ride"
-          width={100}
-          height={100}
+          width={1000}
+          height={1000}
           className="h-40 w-80 mx-auto relative"
         />
       </div>
 
       {/* Nav links */}
-      <div className="flex justify-around sm:gap-x-1 gap-x-10 gap-y-4 md:text-[25px] sm:text-3xl font-light cursor-pointer">
+      {/* <div className="flex justify-around sm:gap-x-1 gap-x-10 gap-y-4 md:text-[25px] sm:text-3xl font-light cursor-pointer">
 
 
       <div onClick={() => push("/home/yourlikes") } className={`hover:text-blue-500 ${isYourLikes ? "text-blue-500" : "text-white"}`}>
@@ -47,10 +47,10 @@ const NavbarHeader = (prop: propTypes) => {
       <div onClick={() => push("/home/myroutes") } className={`hover:text-blue-500 ${isMyRoutes ? "text-blue-500" : "text-white"}`}>
         My Routes
       </div>
-      </div>
+      </div> */}
     </div>
 
-    <div className="border-b border-stone-500/40 mx-5 sm:mx-30"></div>
+    {/* <div className="border-b border-stone-500/40 mx-5 sm:mx-30"></div> */}
   </nav>
 </div>
 

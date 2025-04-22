@@ -9,8 +9,8 @@ const UserLikedCards = () => {
       <div className="w-full h-full overflow-hidden shadow-md  rounded-md border-2 bg-[#1E1E1E] border-black ">
         <Image
           src="/assets/testImages/bikeTest2.webp"
-          width={900}
-          height={900}
+          width={1000}
+          height={1000}
           alt="Motorbike POV"
           className="transition-transform duration-300 hover:scale-105 w-[465px] h-[250px] object-cover  rounded-md border-2 border-blue-500 cursor-pointer"
         />
@@ -43,8 +43,8 @@ const UserLikedCards = () => {
               <div>
                 <Image
                   src="/assets/images/card/thumbs-up.png"
-                  width={900}
-                  height={900}
+                  width={100}
+                  height={100}
                   alt="comments"
                   className="w-7 h-7"
                 />
@@ -58,8 +58,8 @@ const UserLikedCards = () => {
                   src="/assets/images/card/coment.png"
                   alt="comments"
                   className="w-7 h-7 mt-1"
-                  width={100}
-                  height={100}
+                  width={1000}
+                  height={1000}
                 />
               </div>
               <span className="text-2xl">2</span>

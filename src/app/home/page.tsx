@@ -16,9 +16,7 @@ const profile = () => {
 {/* Card Grid Section */}
 <div className=" flex justify-center text-white text-5xl
 ">
- <h1>
- ROUTE GPS PAGE
- </h1>
+  
 
 </div>
 
