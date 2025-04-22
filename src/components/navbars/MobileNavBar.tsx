@@ -1,28 +1,88 @@
 "use client";
 import Image from "next/image";
-import React from "react";
-interface propTypes {
-  isHomeOn: boolean;
-  isLocationOn: boolean;
-  isGalleryOn: boolean;
-  isProfileOn: boolean;
-}
-const MobileNavBar = (prop: propTypes) => {
-  const { isHomeOn, isLocationOn, isGalleryOn, isProfileOn } = prop;
+import React, { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { GetUserProfile } from "../utils/DataServices";
+
+const MobileNavBar = () => {
+  const [isHomeOn, setIsHomeOn] = useState<boolean>(true);
+  const [isLocationOn, setIsLocationOn] = useState<boolean>(false);
+  const [isGalleryOn, setIsGalleryOn] = useState<boolean>(false);
+  const [isProfileOn, setIsProfileOn] = useState<boolean>(false);
+  const [haveProfilePicture, setHaveProfilePicture] = useState<boolean>(false);
+  const [userPicture, setUserPicture] = useState<string>("");
+
+  const pathname = usePathname();
+
+  const { push } = useRouter();
+
   const handleHomeButton = () => {
-    //Redirect to home
+    setIsHomeOn(true);
+    setIsLocationOn(false);
+    setIsGalleryOn(false);
+    setIsProfileOn(false);
+    push("/home");
   };
   const handleLocationButton = () => {
-    //Redirect to Location page
+    setIsHomeOn(false);
+    setIsLocationOn(true);
+    setIsGalleryOn(false);
+    setIsProfileOn(false);
+    push("/home/map");
   };
   const handleGalleryButton = () => {
-    //reditrect to Gallery Page
+    setIsHomeOn(false);
+    setIsLocationOn(false);
+    setIsGalleryOn(true);
+    setIsProfileOn(false);
+    push("/home/map");
   };
   const handleProfileButton = () => {
-    //redirect to profile page
+    setIsHomeOn(false);
+    setIsLocationOn(false);
+    setIsGalleryOn(false);
+    setIsProfileOn(true);
+    push("/home/profile");
   };
+  useEffect(() => {
+    const getProfilePicture = async () => {
+      if (typeof window !== "undefined") {
+        const getFromLocalStorage = localStorage.getItem("ID");
+        if (getFromLocalStorage) {
+          const id = Number(getFromLocalStorage);
+          const userData = await GetUserProfile(id);
+          setUserPicture(userData.profilePicture);
+          setHaveProfilePicture(true);
+        }
+      }
+    };
+    getProfilePicture();
+  }, []);
+  useEffect(() => {
+    if (pathname === "/home") {
+      setIsHomeOn(true);
+      setIsLocationOn(false);
+      setIsGalleryOn(false);
+      setIsProfileOn(false);
+    } else if (pathname === "/home/map") {
+      setIsHomeOn(false);
+      setIsLocationOn(true);
+      setIsGalleryOn(false);
+      setIsProfileOn(false);
+    } else if (pathname === "/home/gallery") {
+      setIsHomeOn(false);
+      setIsLocationOn(false);
+      setIsGalleryOn(true);
+      setIsProfileOn(false);
+    } else if (pathname === "/home/profile") {
+      setIsHomeOn(false);
+      setIsLocationOn(false);
+      setIsGalleryOn(false);
+      setIsProfileOn(true);
+    }
+  }, [pathname]);
   return (
-    <nav className="w-full h-[10%] lg:hidden flex justify-evenly items-center">
+    <nav className="w-[80%] h-[10%] lg:hidden flex justify-between items-center">
       <button onClick={handleHomeButton}>
         <Image
           className="h-[25px] w-[25px]"
@@ -69,10 +129,14 @@ const MobileNavBar = (prop: propTypes) => {
         } rounded-full overflow-hidden`}
       >
         <Image
-          className="h-[25px] w-[25px]"
-          src="/assets/images/motorcycle-tires.jpg"
-          width={100}
-          height={100}
+          className="h-[30px] w-[30px]"
+          src={
+            haveProfilePicture && userPicture
+              ? userPicture
+              : "/assets/images/defaultUserPicture.png"
+          }
+          width={900}
+          height={900}
           alt="Profile Icon"
         />
       </button>

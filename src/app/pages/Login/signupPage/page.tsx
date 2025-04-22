@@ -83,7 +83,7 @@ const SignUpPage = () => {
             setIsFetchSuccessFull(true);
             audioRef.current?.play();
             setTimeout(()=>{
-              push('/pages/aboutyou')
+              push('/pages/Login/signupPage/aboutyou')
             },2000)
           } else {
             setIsSignUpComplete(false);

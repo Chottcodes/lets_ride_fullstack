@@ -1,42 +1,60 @@
-import React from 'react'
-import PrimaryButton from '../buttons/PrimaryButton'
-import Image from 'next/image'
+"use client";
+import React from "react";
+
+import Image from "next/image";
 
 const UserRoutesCard = () => {
   return (
-      <div>
-      <div className=" overflow-hidden shadow-md w-full rounded-md border-2 border-black ">
-        <Image src="/assets/testImages/ExampleMap.webp" width={100} height={100} alt="Motorbike POV" className="transition-transform duration-300 hover:scale-105 w-[465px] h-[386px] object-cover  rounded-md border-2 border-blue-500 cursor-pointer" />
-      
-        <div className="flex justify-between items-center px-4 py-2 text-white text-sm ">
-      
-          <div className="flex items-center space-x-4 ">
-            <div className="flex items-center space-x-1 cursor-pointer">
-            <div>
-                <Image src="/assets/images/card/thumbs-up.png" width={100} height={100}  alt="comments" className="w-7 h-7"/>
-            </div>
-              <span className='text-2xl'>20</span>
-            </div>
-      
-            <div className="flex items-center space-x-1 cursor-pointer">
-              <div>
-                <Image src="/assets/images/card/coment.png" width={100} height={100} alt="comments" className="w-7 h-7 mt-1"/>
-              </div>
-              <span className='text-2xl'>2</span>
-            </div>
+    <div className="w-full h-full shadow-md rounded-md border-2 border-blue-500 flex flex-col ">
+      <section className="lg:w-full lg:h-[70%]">
+        <Image
+          src="/assets/testImages/ExampleMap.webp"
+          width={900}
+          height={900}
+          alt="Motorbike POV"
+          className=" w-full h-full object-cover"
+        />
+      </section>
+      <main className="h-[70%] w-[90%] m-auto lg:w-full lg:h-[50%]  flex justify-between items-center text-white text-sm ">
+        <section className="flex justify-center items-center gap-2 w-[25%] h-full ">
+          <div className="flex items-center gap-1 cursor-pointer">
+            <button className="cursor-pointer h-[15px] w-[15px] ">
+              <Image
+                src="/assets/images/card/thumbs-up.png"
+                width={900}
+                height={900}
+                alt="comments"
+                className="w-full h-full"
+              />
+            </button>
+            <p className="lg:text-[15px]">20</p>
           </div>
-      
-          <span className="text-[20px] text-gray-400">2/18/2025</span>
-        </div>
-        <div className="flex justify-center w-full py-4">
-          <PrimaryButton buttonText={'Lets Ride'} isBackgroundDark={false} />
-        </div>
 
+          <div className="flex items-center gap-1 cursor-pointer">
+            <button className="cursor-pointer h-[15px] w-[15px] flex justify-center items-center">
+              <Image
+                src="/assets/images/card/coment.png"
+                width={900}
+                height={900}
+                alt="comments"
+                className="w-full h-full"
+              />
+            </button>
+            <p className="lg:text-[15px]">2</p>
+          </div>
+        </section>
+        <section className="w-[50%] h-full  flex justify-center items-center lg:text-[15px]">
+          Descriptions
+        </section>
+        <section className="w-[25%] h-full flex justify-center items-center ">
+          <p className="lg:text-[15px] text-white">2/18/2025</p>
+        </section>
+      </main>
+      <div className="h-[90%]  lg:w-full lg:h-[40%] rounded-xl  flex justify-center items-center lg:pb-2">
+          <button className="h-[80%] w-[50%] lg:w-[40%] lg:h-full bg-blue-600 rounded-lg hover:bg-blue-800 text-lg">Lets Ride</button>
       </div>
-      
     </div>
-  
-  )
-}
+  );
+};
 
-export default UserRoutesCard
+export default UserRoutesCard;

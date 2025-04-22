@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import DesktopNavBar from "@/components/navbars/DesktopNavBar";
-import MobileNavBar from "@/components/navbars/MobileNavBar";
+
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import ProfileDisplay from "@/components/ProfileDisplay";
 import ProfileWithDescription from "@/components/ProfileWithDescription";
@@ -27,7 +26,7 @@ const ProfilePage = () => {
   const handleLogOut=()=>{
     localStorage.setItem("Token", "");
     localStorage.setItem("ID", "");
-    push("/");
+    push("/pages/Login/loginPage");
   }
   useEffect(() => {
     const getInfo = GetLocalStorageId();
@@ -61,26 +60,18 @@ const ProfilePage = () => {
 
   return (
     <div className="h-screen w-full relative">
-      <nav className="w-[120px] hidden lg:flex h-full absolute">
-        <DesktopNavBar
-          isHomeOn={false}
-          isLocationOn={false}
-          isGalleryOn={false}
-          isProfileOn={true}
-        />
-      </nav>
       <header className="absolute w-full h-[10%] flex justify-between items-center lg:hidden">
-        <button className="pl-5 text-white">Log Out</button>
+        <button onClick={handleLogOut} className="pl-5 text-white">Log Out</button>
         <button className="pr-5 h-[45px] w-[45px] ">
           <Image
             src={"/assets/images/edit.png"}
-            width={100}
-            height={100}
+            width={900}
+            height={900}
             alt="Edit Icon"
           />
         </button>
       </header>
-      <section className="h-[35%] w-full">
+      <section className="h-[30%] w-full">
         <ProfileWithDescription
         ProfilePicture={profilePicture}
           Name={name}
@@ -88,7 +79,7 @@ const ProfilePage = () => {
           Location={location}
         />
       </section>
-      <main className=" m-auto w-[80%] h-[55%] flex flex-col lg:flex-wrap lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto">
+      <main className=" m-auto w-[80%] h-[50%] flex flex-col lg:flex-wrap lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto">
         <section className=" h-[20%] w-full lg:w-[40%]">
           <ProfileDisplay
             header="Name"
@@ -144,14 +135,6 @@ const ProfilePage = () => {
           <PrimaryButton buttonText="Edit" isBackgroundDark={true} />
         </div>
       </section>
-      <footer className="w-full h-[5%] lg:hidden flex justify-center items-end">
-        <MobileNavBar
-          isHomeOn={false}
-          isLocationOn={false}
-          isGalleryOn={false}
-          isProfileOn={true}
-        />
-      </footer>
     </div>
   );
 };

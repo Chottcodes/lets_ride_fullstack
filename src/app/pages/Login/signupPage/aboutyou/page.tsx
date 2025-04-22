@@ -90,7 +90,10 @@ const AboutYouPage = () => {
           console.log(sendProfileData);
           console.log(userId);
           push('/pages/profile')
-          if (sendProfileData) console.log("success");
+          if (sendProfileData){
+            console.log("success");
+            push("/home")
+          } 
           else console.log("failed");
         } catch (error) {
           console.error(error);
@@ -268,7 +271,7 @@ const AboutYouPage = () => {
             <PrimaryButton
               buttonText="submit"
               isBackgroundDark={false}
-              onClick={() => {handleSubmitButton(); push("/pages/profile")}}
+              onClick={() => {handleSubmitButton()}}
             />
           </div>
         </footer>

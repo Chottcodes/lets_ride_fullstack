@@ -14,34 +14,35 @@ const LoginSectionPage = () => {
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFieldEmpty, setIsFieldEmpty] = useState(false);
-  const[emailTitle, setEmailTitle] = useState<string>("Email");
-  const[enterPasswordTitle, setEnterPasswordTitle] = useState<string>("Password")
+  const [emailTitle, setEmailTitle] = useState<string>("Email");
+  const [enterPasswordTitle, setEnterPasswordTitle] =
+    useState<string>("Password");
 
   const handleToggleFunction = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
   const handleLogIn = async () => {
-    if(!email || !password){
+    if (!email || !password) {
       setIsFieldEmpty(true);
-    }else{
+    } else {
       const userData = { email: email, password: password };
       try {
-        const token: IToken = await logIn(userData);
-  
+        const response:IToken = await logIn(userData);
+        const { id, token } = response.result;
         if (token) {
-          console.log(token)
+          console.log(token);
           if (typeof window !== "undefined") {
-            localStorage.setItem("Token", token.token);
-            console.log(token.token);
+            localStorage.setItem("Token", token);
+            localStorage.setItem("ID", id.toString());
+           
           }
           console.log("Login Successful");
-          push("/pages/profile");
+          push("/home/profile");
         } else {
           setIsFieldEmpty(true);
           setEmailTitle("Invalid Email or Password");
-          setEnterPasswordTitle("Invalid Password or Email")
-
+          setEnterPasswordTitle("Invalid Password or Email");
         }
       } catch (error) {
         console.error(error);
@@ -100,9 +101,7 @@ const LoginSectionPage = () => {
             />
           </div>
           <br />
-          <div className="">
-            
-          </div>
+          <div className=""></div>
           <h1 className="inline-flex ">
             {" "}
             <span>
@@ -116,7 +115,11 @@ const LoginSectionPage = () => {
           </h1>
           <br />
           <div className="w-full h-[70%] md:h-full">
-            <PrimaryButton buttonText="Sign up" isBackgroundDark={false} onClick={()=>push('/pages/Login/signupPage')} />
+            <PrimaryButton
+              buttonText="Sign up"
+              isBackgroundDark={false}
+              onClick={() => push("/pages/Login/signupPage")}
+            />
           </div>
         </footer>
       </main>

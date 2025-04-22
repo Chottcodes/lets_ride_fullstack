@@ -127,17 +127,19 @@ const MapDisplay = () => {
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
-
+  
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
       center: [longitude, latitude],
       zoom: mapzoom,
+      attributionControl: false
     });
-
-    mapRef.current = map;
-
+  
+   
     map.on("load", () => {
+      mapRef.current = map;  
+      
       map.addSource("route", {
         type: "geojson",
         data: {
@@ -149,7 +151,7 @@ const MapDisplay = () => {
           },
         },
       });
-
+  
       map.addLayer({
         id: "route-line",
         type: "line",
@@ -163,47 +165,10 @@ const MapDisplay = () => {
           "line-width": 4,
         },
       });
-
-      geojsonSourceRef.current = map.getSource(
-        "route"
-      ) as mapboxgl.GeoJSONSource;
-    });
-
-    //now I need to create a marker
-    const el = document.createElement("div");
-    el.className = "custom-marker";
-    el.style.backgroundImage = "url(/assets/images/custom-pin.png)";
-    el.style.width = "50px";
-    el.style.height = "50px";
-    el.style.backgroundSize = "contain";
-    el.style.backgroundRepeat = "no-repeat";
-    el.style.backgroundPosition = "center";
-
-    el.addEventListener("click", () => {
-      map.flyTo({
-        center: [longitude, latitude],
-        zoom: mapzoom,
-        essential: true,
-      });
-    });
-
-    const marker = new mapboxgl.Marker({ element: el })
-      .setLngLat([longitude, latitude])
-      .addTo(map);
-    markerRef.current = marker;
-
-    return () => {
-      map.remove();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (mapRef.current && markerRef.current && longitude && latitude) {
-      mapRef.current.setCenter([longitude, latitude]);
-      markerRef.current.setLngLat([longitude, latitude]);
-
-      if (markerRef.current) markerRef.current.remove();
-
+  
+      geojsonSourceRef.current = map.getSource("route") as mapboxgl.GeoJSONSource;
+      
+      // Create initial marker only after map is loaded
       const el = document.createElement("div");
       el.className = "custom-marker";
       el.style.backgroundImage = "url(/assets/images/custom-pin.png)";
@@ -212,7 +177,39 @@ const MapDisplay = () => {
       el.style.backgroundSize = "contain";
       el.style.backgroundRepeat = "no-repeat";
       el.style.backgroundPosition = "center";
+  
+      el.addEventListener("click", () => {
+        map.flyTo({
+          center: [longitude, latitude],
+          zoom: mapzoom,
+          essential: true,
+        });
+      });
+  
+      const marker = new mapboxgl.Marker({ element: el })
+        .setLngLat([longitude, latitude])
+        .addTo(map);
+      markerRef.current = marker;
+    });
+  
+    return () => {
+      if (map) map.remove();
+    };
+  }, []);
 
+  useEffect(() => {
+    if (mapRef.current && longitude && latitude) {
+      mapRef.current.setCenter([longitude, latitude]);
+      
+      const el = document.createElement("div");
+      el.className = "custom-marker";
+      el.style.backgroundImage = "url(/assets/images/custom-pin.png)";
+      el.style.width = "50px";
+      el.style.height = "50px";
+      el.style.backgroundSize = "contain";
+      el.style.backgroundRepeat = "no-repeat";
+      el.style.backgroundPosition = "center";
+  
       el.addEventListener("click", () => {
         mapRef.current?.flyTo({
           center: [longitude, latitude],
@@ -220,12 +217,18 @@ const MapDisplay = () => {
           essential: true,
         });
       });
+  
+      if (markerRef.current) {
+        markerRef.current.remove();
+      }
+  
       const newMarker = new mapboxgl.Marker({ element: el })
         .setLngLat([longitude, latitude])
         .addTo(mapRef.current);
       markerRef.current = newMarker;
     }
   }, [latitude, longitude]);
+
   useEffect(() => {
     console.log(path);
   }, [path]);
@@ -269,6 +272,10 @@ const MapDisplay = () => {
         } w-[60%] h-[50%] bg-[#2B2B2B]/80 rounded-2xl absolute text-5xl text-white flex justify-center items-center`}
       >
         <p>{countDown}</p>
+      </div>
+      <div className={`${isRecording? "hidden":"block"}`}>
+        
+
       </div>
     </div>
   );

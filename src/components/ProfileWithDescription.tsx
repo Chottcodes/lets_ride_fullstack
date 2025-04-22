@@ -11,7 +11,7 @@ const ProfileWithDescription = (props:propTypes) => {
   const {Name,Username,Location,ProfilePicture} = props
   return (
     <section className='w-full h-full flex flex-col justify-center items-center gap-2 text-2xl text-white transform-all duration-300'>
-      <header className=" h-[125px] w-[125px] flex justify-center items-center rounded-full overflow-hidden">
+      <header className=" h-[100px] w-[100px] flex justify-center items-center rounded-full overflow-hidden">
       <Avatar className='w-full h-full'>
       <AvatarImage src={ProfilePicture}/>
       <AvatarFallback>Profile Picture</AvatarFallback>

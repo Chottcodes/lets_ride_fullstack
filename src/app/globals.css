@@ -9,6 +9,24 @@ body{
   height: 100%;
   overflow: hidden
 }
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #000000; /* Tailwind gray-800 */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d5d3f7; /* Tailwind indigo-600 */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #3474ff; /* Tailwind indigo-500 */
+}
+
 
 
 @import "tailwindcss";

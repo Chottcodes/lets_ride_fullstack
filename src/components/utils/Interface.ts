@@ -29,7 +29,11 @@ export interface IUserData
 // Token
 export interface IToken
 {
-    token: string
+    result:{
+        id:number;
+        token:string;
+    }
+
 }
 export interface UserProfileTypes {
     UserName:string
