@@ -7,7 +7,6 @@ import { IUserCardType } from '@/components/utils/Interface';
 import cardData from "@/data/cardData.json";
 import React from 'react';
 
-// You can cast the data to the correct type if you're sure it matches
 const typedUserCards: IUserCardType[] = cardData;
 
 const page = () => {
