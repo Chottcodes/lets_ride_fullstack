@@ -4,8 +4,6 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { IUserCardType } from "../utils/Interface";
 
-// Start of Render
-
 const UserCardsPost = ({ card }: { card: IUserCardType }) => {
 
   // Model Card
@@ -112,7 +110,7 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
 
             {!isFullImage && (
               <>
-                {/* Avatar */}
+                {/* User Name Account */}
                 <div className="flex space-x-2">
                   <button className="border-none rounded-full overflow-hidden cursor-pointer">
                     <Avatar className="w-[55px] h-[55px] lg:h-[1px] lg:w-[1px]">
@@ -123,11 +121,13 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                       <AvatarFallback>Profile Picture</AvatarFallback>
                     </Avatar>
                   </button>
-
-                  <h2 className="text-[24px] font-semibold self-end ">{card.title}</h2>
+                  <div>
+                    <h1 className="">username</h1> 
+                    <h2 className="text-[24px] font-semibold self-end">{card.title}</h2>
+                  </div>
                 </div>
 
-                {/* Info */}
+                {/* Date */}
                 <div className="text-black space-y-2">
                   <p className="text-lg">
                    {card.description}
@@ -164,9 +164,9 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                   <div className="mt-4 space-y-2">
                     {card.comments.map((comment, index) => 
                     <div key={index} className="bg-gray-100 p-2 rounded">
-                    <p className="text-sm">
+                    <div className="text-sm">
                     <p key={index}>{comment.text}</p>
-                    </p>
+                    </div>
                   </div>
                     )}
                   </div>
