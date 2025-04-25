@@ -17,25 +17,7 @@ const profile = () => {
           Recents
         </div>
       </header>
-      <main className=" h-[80%] flex flex-col items-center text-white">
-        <section className="w-[90%] h-[50%] lg:w-[90%] lg:h-[60%] flex items-center overflow-x-auto whitespace-nowrap gap-5 custom-scrollbar pb-2">
-          <div className="w-[90%] h-full lg:w-[30%] lg:h-full flex-shrink-0">
-          <UserRoutesCard/>
-          </div>
-          <div className="w-[90%] h-full lg:w-[30%] lg:h-full flex-shrink-0">
-          <UserRoutesCard/>
-          </div>
-          <div className="w-[90%] h-full lg:w-[30%] lg:h-full flex-shrink-0">
-          <UserRoutesCard/>
-          </div>
-          <div className="w-[90%] h-full lg:w-[30%] lg:h-full flex-shrink-0">
-          <UserRoutesCard/>
-          </div>
-          <div className="w-[90%] h-full lg:w-[30%] lg:h-full flex-shrink-0">
-          <UserRoutesCard/>
-          </div>
-        </section>
-      </main>
+      <h1>Home Page</h1>
     </div>
   );
 };

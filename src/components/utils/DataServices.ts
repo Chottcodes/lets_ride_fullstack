@@ -96,6 +96,7 @@ export const GetUserProfile = async(UserId:number) =>
 
 // export const PostRoute = async (route:RoutePostTypes ) => {
 //     const res = await fetch(url + "RideTables/AddRoute", {
+
 // ---------------------------- User Data For Cards ----------------------------
 
 export const getUserPostData = async (user: IUserCardType ) =>
