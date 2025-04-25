@@ -1,69 +1,123 @@
 "use client";
 
-import React, { useState } from "react";
-import { getUserPostData } from "../utils/DataServices";
-import { IUserCardType } from "../utils/Interface";
+import React, { useEffect, useState } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase";
+import { InputField } from "../utils/Interface";
+import { setUserPostData } from "../utils/DataServices";
 
+interface CardPostModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-const CreatePostForm = () => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+const OpenPostModal = ({isOpen, onClose}: CardPostModalProps ) => {
+  const [userId, setUserId] = useState<number | null>(null);
+  const [image, setImage] = useState<string | null>(null);
+  const [titleInput, setTitleInput] = useState<string>("");
+  const [descriptionInput, setDescriptionInput] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false); 
+  
+  // if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (!userId || !image || !titleInput || !descriptionInput) {
+      alert("Please fill out all fields and upload an image.");
+      return;
+    }
 
-    const newPost: IUserCardType = {
-      id: 0, // backend will assign
-      creatorId: 101, // from log in
-      imageUrl,
-      title,
-      description,
-      dateCreated: new Date().toISOString(),
-      isDeleted: false,
-      likes: [],
-      comments: [],
+    const inputFieldObj: InputField = {
+      creatorId: userId,
+      imageUrl: image,
+      title: titleInput,
+      description: descriptionInput,
+      IsDeleted: false,
     };
 
-    const response = await getUserPostData(newPost);
-    if (response?.success) {
-      alert("Post created!");
-      setTitle("");
-      setDescription("");
-      setImageUrl("");
-    } else {
-      alert("Failed to post");
+    const res = await setUserPostData(inputFieldObj);
+    console.log("Post created:", res);
+
+    setOpenModal(false); // Close modal after submit
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  useEffect(() => {
+    const storedId = localStorage.getItem("ID");
+    if (storedId) setUserId(Number(storedId));
+  }, []);
+
+  const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    try {
+      if (file && userId !== null) {
+        const imageRef = ref(storage, `gallerypicture/${userId}_${file.name}`);
+        await uploadBytes(imageRef, file);
+        const url = await getDownloadURL(imageRef);
+        setImage(url);
+        console.log("Uploaded profile picture URL:", url);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 bg-slate-500 rounded shadow">
-      <h2 className="text-white text-xl mb-4">New Ride Post</h2>
-      <input
-        type="text"
-        placeholder="Title"
-        className="w-full mb-2 p-2 rounded"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <textarea
-        placeholder="Description"
-        className="w-full mb-2 p-2 rounded"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Image URL"
-        className="w-full mb-2 p-2 rounded"
-        value={imageUrl}
-        onChange={(e) => setImageUrl(e.target.value)}
-      />
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-        Submit Post
-      </button>
-    </form>
+    <>
+      {/* Open Modal Button */}
+      <div className="flex justify-center mt-10">
+        <button
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
+          onClick={handleOpenModal}
+        >
+          + Add Ride Post
+        </button>
+      </div>
+
+      {/* Modal */}
+      {openModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
+          <div className="bg-white text-black p-6 rounded-xl w-full max-w-lg shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Create Ride Post</h2>
+            <input type="file" onChange={handleImagePost} className="mb-2 w-full" />
+            <input
+              type="text"
+              placeholder="Title"
+              className="w-full mb-2 p-2 rounded border"
+              value={titleInput}
+              onChange={(e) => setTitleInput(e.target.value)}
+            />
+            <textarea
+              placeholder="Description"
+              className="w-full mb-2 p-2 rounded border"
+              value={descriptionInput}
+              onChange={(e) => setDescriptionInput(e.target.value)}
+            />
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+                onClick={handleCloseModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-600 text-white px-4 py-2 rounded"
+                onClick={handleSubmit}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
-export default CreatePostForm;
+export default OpenPostModal;

@@ -75,6 +75,7 @@ export interface Coordinates {
 export interface IUserCardType {
     id: number;
     creatorId: number;
+    username: string;
     imageUrl: string;
     title: string;
     description: string;
@@ -93,4 +94,12 @@ export interface IUserCardType {
     text: string;
     createdAt: string;
 
+  }
+
+  export interface InputField {
+    creatorId: number;
+    imageUrl: string | null;
+    title: string;
+    description: string;
+    IsDeleted: boolean
   }

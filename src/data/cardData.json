@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "creatorId": 101,
+    "creatorId": 200,
     "imageUrl": "/assets/testImages/BikeTest1.jpg",
     "title": "Twilight Trail Ride",
     "description": "Caught the last light through the canyon. Silence, breeze, and dirt.",
@@ -40,6 +40,159 @@
         "createdAt": "2025-04-19"
       }
     ]
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/bikeTest3.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
   },
   {
     "id": 3,

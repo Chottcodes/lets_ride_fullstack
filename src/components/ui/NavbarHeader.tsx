@@ -29,6 +29,7 @@ const NavbarHeader = (prop: propTypes) => {
           width={1000}
           height={1000}
           className="h-40 w-80 mx-auto relative"
+          priority 
         />
       </div>
 
