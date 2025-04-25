@@ -7,12 +7,15 @@ import NavbarHeader from "@/components/ui/NavbarHeader";
 import UserCards from "@/components/ui/UserCards";
 import CardPostModal from "@/components/inputs/cardTestInput";
 import { IUserCardType } from "@/components/utils/Interface";
+import OpenPostModal from "@/components/inputs/cardTestInput";
+
 import cardData from "@/data/cardData.json";
 import cardRoute from "@/data/CardRoute.json";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
+import { getGalleryPosts, getUserPostData } from "@/components/utils/DataServices";
 
-const typedUserCards: IUserCardType[] = cardData;
-const typedUserRoutes: IUserCardType[] = cardRoute;
+// const typedUserCards: IUserCardType[] = cardData;
+// const typedUserRoutes: IUserCardType[] = cardRoute;
 
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,17 +28,19 @@ const Page = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
 
   // For Push Fetch
-  //   const [userCards, setUserCards] = useState<IUserCardType[]>([]);
+    const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
+  
+  // Data population
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const res = await getGalleryPosts();
+      const data = await res;
+      setUserCardsDataArr(data);
+    };
 
-  // useEffect(() => {
-  //   const fetchPosts = async () => {
-  //     const res = await fetch(url + "RideTables/GetGalleryPosts");
-  //     const data = await res.json();
-  //     setUserCards(data);
-  //   };
+    fetchPosts();
+  }, []);
 
-  //   fetchPosts();
-  // }, []);
 
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -63,21 +68,14 @@ const Page = () => {
           isMyRoutes={false}
         />
 
-        {/* Modal Trigger + Modal */}
-        <div className="ms-40">
-          <button
-            className="bg-blue-600 text-white px-6 py-2 rounded mb-4 cursor-pointer"
-            onClick={() => setIsModalOpen(true)}
-          >
-            + Add Ride Post
-          </button>
-
+        {/* Modal Trigger  */}
+        <div className="flex justify-start ms-40 pb-10">
+          
           {userId !== null && (
-            <CardPostModal
-              userId={userId}
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-            />
+            <OpenPostModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
           )}
         </div>
 
@@ -86,13 +84,13 @@ const Page = () => {
 
           <h1 className="text-[30px] pb-10 text-white">Recent Posted Routes</h1>
           <div className="overflow-x-auto custom-scrollbar mb-10">
-            <div className="flex gap-4 px-10 min-w-fit">
-              {typedUserRoutes.map((card, index) => (
+            {/* <div className="flex gap-4 px-10 min-w-fit">
+              {userCardsDataArr.map((card, index) => (
                 <div className="min-w-[350px] flex-shrink-0" key={index}>
                   <UserRoutesCard card={card} />
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
 
           <h1 className="text-[30px] pb-10 text-white">
@@ -100,9 +98,9 @@ const Page = () => {
           </h1>
           <div className="overflow-x-auto custom-scrollbar mb-10">
             <div className="flex gap-4 px-10 min-w-fit">
-              {typedUserCards.map((card, index) => (
+              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
                 <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards card={card} />
+                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
                 </div>
               ))}
             </div>

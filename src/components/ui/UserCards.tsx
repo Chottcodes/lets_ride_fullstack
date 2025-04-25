@@ -4,7 +4,21 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { IUserCardType } from "../utils/Interface";
 
-const UserCardsPost = ({ card }: { card: IUserCardType }) => {
+
+interface PopulationData
+{
+   imageUrl: string;
+    title: string;
+    description: string;
+    dateCreated: string;
+    likes?: number;
+    comments?: { text: string }[];
+    username: string
+}
+
+const UserCardsPost = (props: PopulationData ) => {
+
+const {imageUrl, title, description, dateCreated, likes, comments, username} = props
 
   // Model Card
   const [isModel, setIsModel] = useState(false);
@@ -19,7 +33,7 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
         <section className="transition-transform duration-300 hover:scale-102 ">
           <button onClick={() => setIsModel(true)}>
             <Image
-              src={card.imageUrl}
+              src={imageUrl}
               width={1000}
               height={1000}
               alt="User Image"
@@ -27,7 +41,7 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
               />
           </button>
         </section>
-            <h1 className="text-white text-[16px] mb-1">{card.title}</h1>
+            <h1 className="text-white text-[16px] mb-1">{title}</h1>
 
         {/* Info Container */}
         <div className="flex justify-between items-center px-4 py-2 text-white text-sm">
@@ -45,7 +59,7 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                     height={1000}
                     className={`w-6 h-6 ${isUserLiked ? "w-8 h-6 ps-1" : ""}`}
                   />
-                  <span className="text-lg font-medium">{card.likes.length}</span>
+                  <span className="text-lg font-medium">{likes == null ? 0: likes}</span>
                 </div>
               ) : (
                 // Default like
@@ -60,7 +74,8 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                     height={1000}
                     className="w-6 h-6"
                   />
-                  <span className="text-[18px] ps-1 ">{card.comments.length ?? 0}</span>
+                  <span className="text-[18px] ps-1 ">{comments == null ? 0 : comments.length}
+                  </span>
                 </button>
               )}
             </div>
@@ -76,11 +91,12 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                 alt="comments"
                 className="w-6 h-6 mt-1"
               />
-              <span className="text-xl ps-1">{card.comments.length}</span>
+              <span className="text-xl ps-1">{comments == null ? 0 : comments.length}
+              </span>
             </button>
           </div>
 
-          <span className="text-[18px]">{card.dateCreated}</span>
+          <span className="text-[18px]">{dateCreated}</span>
         </div>
       </main>
 
@@ -99,7 +115,7 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
           >
             {/* Zoomable Image */}
             <Image
-              src={card.imageUrl}
+              src={imageUrl}
               width={1000}
               height={1000}
               alt="Motorbike POV"
@@ -125,17 +141,17 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                     </Avatar>
                   </button>
                   <div>
-                    <h1 className="">{card.creatorId}</h1> 
-                    <h2 className="text-[24px] font-semibold self-end">{card.title}</h2>
+                    <h1 className="">{username}</h1> 
+                    <h2 className="text-[24px] font-semibold self-end">{title}</h2>
                   </div>
                 </div>
 
                 {/* Date */}
                 <div className="text-black space-y-2">
                   <p className="text-lg">
-                   {card.description}
+                   {description}
                   </p>
-                  <p className="text-gray-500">Date: {card.dateCreated}</p>
+                  <p className="text-gray-500">Date: {dateCreated}</p>
                 </div>
 
                 {/* Likes & Comments */}
@@ -149,7 +165,7 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                         alt="Like"
                         className="w-6 h-6 text-black"
                       />
-                      <span className="text-lg font-medium">{card.likes.length}</span>
+                      <span className="text-lg font-medium">{likes == null ? 0: likes}</span>
                     </button>
 
                     <button className="flex items-center space-x-2 text-gray-700">
@@ -160,19 +176,20 @@ const UserCardsPost = ({ card }: { card: IUserCardType }) => {
                         width={1000}
                         height={1000}
                       />
-                      <span className="text-lg font-medium">{card.comments.length} Comments</span>
+                      <span className="text-lg font-medium">{comments == null ? 0 : comments.length}
+                      Comments</span>
                     </button>
                   </div>
                   {/* Comments Section */}
-                  <div className="mt-4 space-y-2">
-                    {card.comments.map((comment, index) => 
+                  {/* <div className="mt-4 space-y-2">
+                    {comments.map((comment, index) => 
                     <div key={index} className="bg-gray-100 p-2 rounded">
                     <div className="text-sm">
                     <p key={index}>{comment.text}</p>
                     </div>
                   </div>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </>
             )}

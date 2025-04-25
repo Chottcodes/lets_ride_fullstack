@@ -1,5 +1,5 @@
 
-import { IUserCardType, IUserCreate, IUserInfo, UserProfileTypes} from "./Interface"
+import { InputField, IUserCardType, IUserCreate, IUserInfo, UserProfileTypes} from "./Interface"
 
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 
@@ -97,21 +97,53 @@ export const GetUserProfile = async(UserId:number) =>
 // ---------------------------- User Data For Cards ----------------------------
 
 export const getUserPostData = async (user: IUserCardType ) =>
-{
-    const res = await fetch(url + "RideTables/AddGalleryPost", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(user)
-    });
-
-    if(!res.ok)
     {
-        console.log("Error");
-        return null;
-    };
-    const data = await res.json();
-    return data;
-}
+        const res = await fetch(url + "RideTables/AddGalleryPost", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        });
+    
+        if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        };
+        const data = await res.json();
+        return data;
+    }
+    
+    export const getGalleryPosts = async () =>
+    {
+        const res = await fetch(url + "RideTables/GetGalleryPosts")
+    
+        if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        };
+        const data = await res.json();
+        return data;
+    }
 
+// ----------------------- Input Field -----------------------
+export const setUserPostData = async (user: InputField ) =>
+    {
+        const res = await fetch(url + "RideTables/AddGalleryPost", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(user)
+        });
+    
+        if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        };
+        const data = await res.json();
+        return data;
+    }
