@@ -10,7 +10,25 @@ body{
   /* overflow: hidden */
 }
 
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: white transparent;
+}
 
+.custom-scrollbar::-webkit-scrollbar {
+  height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
 @import "tailwindcss";
 @import "tw-animate-css";
 

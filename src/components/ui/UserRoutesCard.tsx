@@ -3,18 +3,9 @@
 import React, { useState } from 'react'
 import PrimaryButton from '../buttons/PrimaryButton'
 import Image from 'next/image'
+import { IUserCardType } from '../utils/Interface'
 
-// interface UserCard {
-//   userImage: string;
-//   userTitle: string;
-//   userLikes: number;
-//   userDate: string;
-//   userDescription: string;
-//   userName: string;
-//   userComments: string[];
-// }
-
-const UserRoutesCard = () => {
+const UserRoutesCard = ({ card }: { card: IUserCardType }) => {
   // Model Card
     const [isModel, setIsModel] = useState(false);
     const [isFullImage, setIsFullImage] = useState(false);
@@ -33,7 +24,8 @@ const UserRoutesCard = () => {
     
   return (
       <div>
-      <div className=" overflow-hidden shadow-md w-full rounded-md border-2 border-black ">
+      <main className='place-items-center'>
+      <section className=" overflow-hidden shadow-md w-full rounded-md border-2 border-black ">
         <Image src="/assets/testImages/ExampleMap.webp" width={1000} height={1000} alt="Motorbike POV" className="transition-transform duration-300 hover:scale-105 w-[465px] h-[386px] object-cover  rounded-md border-2 border-blue-500 cursor-pointer" />
       
         <div className="flex justify-between items-center px-4 py-2 text-white text-sm ">
@@ -55,13 +47,14 @@ const UserRoutesCard = () => {
           </div>
       
           <span className="text-[20px] text-gray-400">2/18/2025</span>
+        
         </div>
-        <div className="flex justify-center w-full py-4 ">
+      </section>
+        <div className=" w-[240px] h-[90px] pt-2 pb-10">
           <PrimaryButton buttonText={'Lets Ride'} isBackgroundDark={false} />
         </div>
 
-      </div>
-      
+    </main>
     </div>
   
   )

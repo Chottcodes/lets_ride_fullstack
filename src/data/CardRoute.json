@@ -1,56 +1,119 @@
 [
   {
     "id": 1,
-    "creatorId": 1001,
-    "imageUrl": "/assets/testImages/BikeTest1.jpg",
-    "title": "Shadow Canyon Drift",
-    "description": "Slid through the gravel under moonlight. Tires screamed, I laughed.",
+    "creatorId": 101,
+    "imageUrl": "/assets/testImages/ExampleMap.webp",
+    "title": "Twilight Trail Ride",
+    "description": "Caught the last light through the canyon. Silence, breeze, and dirt.",
     "dateCreated": "2025-04-18",
     "isDeleted": false,
     "likes": [
-      { "userId": 2001 },
-      { "userId": 2002 }
+      { "userId": 201 },
+      { "userId": 202 }
     ],
     "comments": [
       {
-        "userId": 3001,
-        "text": "I felt that last turn in my soul.",
+        "userId": 301,
+        "text": "This is straight out of a movie.",
         "createdAt": "2025-04-18"
       },
       {
-        "userId": 3002,
-        "text": "Do you just live on your bike?",
+        "userId": 302,
+        "text": "I need to ride here ASAP.",
         "createdAt": "2025-04-18"
       }
     ]
   },
   {
     "id": 2,
-    "creatorId": 1002,
-    "imageUrl": "/assets/testImages/bikeTest2.webp",
-    "title": "Storm Chaser",
-    "description": "Rode through the edge of a storm cloud. Thunder behind me, thrill ahead.",
+    "creatorId": 102,
+    "imageUrl": "/assets/testImages/ExampleMap.webp",
+    "title": "Fog Run",
+    "description": "Coasting through dense mist — headlights barely pierced the fog.",
     "dateCreated": "2025-04-19",
     "isDeleted": false,
     "likes": [],
     "comments": [
       {
-        "userId": 3003,
-        "text": "You ride like it’s the last day on Earth.",
+        "userId": 303,
+        "text": "This looks like a horror film intro and I'm here for it.",
         "createdAt": "2025-04-19"
       }
     ]
   },
   {
     "id": 3,
-    "creatorId": 1003,
-    "imageUrl": "/assets/testImages/bikeTest3.webp",
-    "title": "Urban Shadows",
-    "description": "Cruised empty city streets at 3am. Just me and neon reflections.",
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/ExampleMap.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
     "dateCreated": "2025-04-20",
     "isDeleted": false,
     "likes": [
-      { "userId": 2004 }
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
+    ],
+    "comments": []
+  },
+  {
+    "id": 1,
+    "creatorId": 101,
+    "imageUrl": "/assets/testImages/ExampleMap.webp",
+    "title": "Twilight Trail Ride",
+    "description": "Caught the last light through the canyon. Silence, breeze, and dirt.",
+    "dateCreated": "2025-04-18",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 201 },
+      { "userId": 202 }
+    ],
+    "comments": [
+      {
+        "userId": 301,
+        "text": "This is straight out of a movie.",
+        "createdAt": "2025-04-18"
+      },
+      {
+        "userId": 302,
+        "text": "I need to ride here ASAP.",
+        "createdAt": "2025-04-18"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "creatorId": 102,
+    "imageUrl": "/assets/testImages/ExampleMap.webp",
+    "title": "Fog Run",
+    "description": "Coasting through dense mist — headlights barely pierced the fog.",
+    "dateCreated": "2025-04-19",
+    "isDeleted": false,
+    "likes": [],
+    "comments": [
+      {
+        "userId": 303,
+        "text": "This looks like a horror film intro and I'm here for it.",
+        "createdAt": "2025-04-19"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "creatorId": 103,
+    "imageUrl": "/assets/testImages/ExampleMap.webp",
+    "title": "Downtown Drift",
+    "description": "Empty city at 2am. Lit only by neon and engine roars.",
+    "dateCreated": "2025-04-20",
+    "isDeleted": false,
+    "likes": [
+      { "userId": 204 },
+      { "userId": 205 },
+      { "userId": 206 },
+      { "userId": 207 },
+      { "userId": 208 }
     ],
     "comments": []
   }

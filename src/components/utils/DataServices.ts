@@ -114,3 +114,4 @@ export const getUserPostData = async (user: IUserCardType ) =>
     const data = await res.json();
     return data;
 }
+

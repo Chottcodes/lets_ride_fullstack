@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DesktopNavBar from "@/components/navbars/DesktopNavBar";
 import MobileNavBar from "@/components/navbars/MobileNavBar";
 import NavbarHeader from "@/components/ui/NavbarHeader";
@@ -8,12 +8,34 @@ import UserCards from "@/components/ui/UserCards";
 import CardPostModal from "@/components/inputs/cardTestInput";
 import { IUserCardType } from "@/components/utils/Interface";
 import cardData from "@/data/cardData.json";
+import cardRoute from "@/data/CardRoute.json";
+import UserRoutesCard from "@/components/ui/UserRoutesCard";
 
 const typedUserCards: IUserCardType[] = cardData;
+const typedUserRoutes: IUserCardType[] = cardRoute;
 
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
+
+  // Drag Scroll Wheel
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  // For Push Fetch
+  //   const [userCards, setUserCards] = useState<IUserCardType[]>([]);
+
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     const res = await fetch(url + "RideTables/GetGalleryPosts");
+  //     const data = await res.json();
+  //     setUserCards(data);
+  //   };
+
+  //   fetchPosts();
+  // }, []);
 
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -60,23 +82,34 @@ const Page = () => {
         </div>
 
         {/* Card Sections */}
-        <div className="mx-40 text-white">
-          <h1 className="text-[30px] pb-10">Recent Posted Routes</h1>
-          <div className="grid grid-cols-1 2xl:grid-cols-3 lg:grid-cols-2 gap-4 place-items-center mb-10 mx-40 sm:mx-20 max-w-full no-shrink">
-            {typedUserCards.map((card, index) => (
-              <UserCards key={index} card={card} />
-            ))}
+        <section className="mx-40 overflow-x-auto scroll-smooth scrollbar-hide mb-10">
+
+          <h1 className="text-[30px] pb-10 text-white">Recent Posted Routes</h1>
+          <div className="overflow-x-auto custom-scrollbar mb-10">
+            <div className="flex gap-4 px-10 min-w-fit">
+              {typedUserRoutes.map((card, index) => (
+                <div className="min-w-[350px] flex-shrink-0" key={index}>
+                  <UserRoutesCard card={card} />
+                </div>
+              ))}
+            </div>
           </div>
 
-          <hr />
-
-          <h1 className="text-[30px] pb-10">Recent Posted Pictures</h1>
-          <div className="grid grid-cols-1 2xl:grid-cols-3 lg:grid-cols-2 gap-4 place-items-center mb-10 mx-40 sm:mx-20 max-w-full no-shrink">
-            {typedUserCards.map((card, index) => (
-              <UserCards key={index} card={card} />
-            ))}
+          <h1 className="text-[30px] pb-10 text-white">
+            Recent Posted Pictures
+          </h1>
+          <div className="overflow-x-auto custom-scrollbar mb-10">
+            <div className="flex gap-4 px-10 min-w-fit">
+              {typedUserCards.map((card, index) => (
+                <div className="min-w-[350px] flex-shrink-0" key={index}>
+                  <UserCards card={card} />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* For Grid: grid grid-cols-1 2xl:grid-cols-3 lg:grid-cols-2 gap-4 place-items-center mb-10 mx-40 sm:mx-20 max-w-full no-shrink" */}
 
         {/* Bottom Mobile Nav */}
         <div>
