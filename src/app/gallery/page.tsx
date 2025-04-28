@@ -81,13 +81,13 @@ const Page = () => {
 
           <h1 className="text-[30px] pb-10 text-white">Recent Posted Routes</h1>
           <div className="overflow-x-auto custom-scrollbar mb-10">
-            {/* <div className="flex gap-4 px-10 min-w-fit">
+            <div className="flex gap-4 px-10 min-w-fit">
               {userCardsDataArr.map((card, index) => (
                 <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserRoutesCard card={card} />
+                  <UserRoutesCard LikesNumber={0} RouteName={""} RouteDate={undefined} ProfileName={""} RouteStartingPoint={undefined} TrailCoords={undefined} />
                 </div>
               ))}
-            </div> */}
+            </div>
           </div>
 
           <h1 className="text-[30px] pb-10 text-white">
