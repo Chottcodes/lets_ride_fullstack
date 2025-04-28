@@ -57,7 +57,7 @@ export interface UserProfileReturnTypes {
     profilePicture:string
 }
 export interface RoutePostTypes {
-    CreatorId:number
+    CreatorId:number,
     RouteName:string
     RouteDescription:string
     ImageUrl:string
@@ -71,3 +71,44 @@ export interface Coordinates {
     latitude: number;
     longitude: number;
   }
+ 
+  export interface RouteGetTypes {
+    id: number;
+    routeName: string;
+    routeDescription: string;
+    imageUrl: string;
+    cityName: string;
+    isPrivate: boolean;
+    isDeleted: boolean;
+    pathCoordinates: Coordinates[];
+    dateCreated: string;
+  }
+  export interface Coordinates {
+    latitude: number;
+    longitude: number;
+  }
+    export interface RouteGetForCardTypes {
+        id: number;
+        routeName: string;
+        creator:UserProfile
+        routeDescription: string;
+        imageUrl: string;
+        cityName: string;
+        isPrivate: boolean;
+        isDeleted: boolean;
+        pathCoordinates: Coordinates[];
+        dateCreated: string;
+    }
+
+    interface UserProfile {
+        id: number;
+        userId: number;
+        userName: string;
+        name: string;
+        location: string;
+        bikeType: string;
+        ridingExperience: string;
+        ridingPreference: string;
+        rideConsistency: string;
+        profilePicture: string;
+      }

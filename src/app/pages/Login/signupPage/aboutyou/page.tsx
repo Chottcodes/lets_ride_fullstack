@@ -5,7 +5,7 @@ import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import InputComponent from "@/components/inputs/InputComponent";
-import {ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { UserProfileTypes } from "@/components/utils/Interface";
 import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
@@ -87,14 +87,11 @@ const AboutYouPage = () => {
         };
         try {
           const sendProfileData = await UserProfileSetup(UserInfoObj);
-          console.log(sendProfileData);
-          console.log(userId);
-          push('/pages/profile')
-          if (sendProfileData){
+          push("/pages/profile");
+          if (sendProfileData) {
             console.log("success");
-            push("/home")
-          } 
-          else console.log("failed");
+            push("/home");
+          } else console.log("failed");
         } catch (error) {
           console.error(error);
         }
@@ -271,7 +268,9 @@ const AboutYouPage = () => {
             <PrimaryButton
               buttonText="submit"
               isBackgroundDark={false}
-              onClick={() => {handleSubmitButton()}}
+              onClick={() => {
+                handleSubmitButton();
+              }}
             />
           </div>
         </footer>

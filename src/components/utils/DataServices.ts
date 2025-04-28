@@ -95,6 +95,7 @@ export const GetUserProfile = async(UserId:number) =>
 }
 
 export const PostRoute = async (route:RoutePostTypes ) => {
+   console.log(route)
     const res = await fetch(url + "RideTables/AddRoute", {
         method: "POST",
         headers: {
@@ -109,3 +110,15 @@ export const PostRoute = async (route:RoutePostTypes ) => {
     const data = await res.json();
     return data;
 }
+export const GetRoute = async () => {
+    const res = await fetch(url + `RideTables/GetRoutes`)
+    const data = await res.json();
+    return data;
+}
+
+export const GetProfileById = async (id:number) => {
+    const res = await fetch(url + `RideTables/GetProfile/${id}`)
+    const data = await res.json();
+    return data;
+}
+

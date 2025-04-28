@@ -9,7 +9,7 @@ import RouteImageInput from "./inputs/RouteImageInput";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import PrimaryButton from "./buttons/PrimaryButton";
-import { PostRoute } from "./utils/DataServices";
+import { GetProfileById, PostRoute } from "./utils/DataServices";
 import { RoutePostTypes } from "./utils/Interface";
 
 const MapDisplay = () => {
@@ -158,9 +158,8 @@ const MapDisplay = () => {
 
   const handlePostRoute = async () => {
     try {
-      if(userId && image){
-        
-        const routeData:RoutePostTypes = {
+      if (userId && image) {
+        const routeData: RoutePostTypes = {
           CreatorId: userId,
           RouteName: routeName,
           RouteDescription: routeDescription,
@@ -171,7 +170,8 @@ const MapDisplay = () => {
           PathCoordinates: path.map(([lng, lat]) => ({
             latitude: lat,
             longitude: lng,
-          }))
+          })),
+
         };
         const response = await PostRoute(routeData);
         if (response) {
@@ -203,6 +203,13 @@ const MapDisplay = () => {
       `Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`
     );
   };
+  const getUserProfile = async (userId: number) => {
+    if (userId !== undefined) {
+      const res = await GetProfileById(userId);
+      console.log(res);
+      return res;
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -211,6 +218,7 @@ const MapDisplay = () => {
         setUserID(Number(userId));
       }
     }
+
     if (!mapContainerRef.current || mapRef.current) return;
 
     const map = new mapboxgl.Map({
@@ -316,14 +324,10 @@ const MapDisplay = () => {
   }, [latitude, longitude]);
 
   useEffect(() => {
-    console.log(path);
-  }, [path]);
-  useEffect(() => {
-    console.log("City Name: ", cityName);
-    console.log("Route Name: ", routeName);
-    console.log("Route Description: ", routeDescription);
-    console.log("Is Private: ", isPrivate);
-  }, [cityName, routeName, routeDescription, isPrivate]);
+    if (userId) {
+      getUserProfile(userId);
+    }  
+  }, [userId]);
 
   return (
     <div className="w-full h-full relative flex justify-center items-center text-white">
@@ -422,7 +426,11 @@ const MapDisplay = () => {
               />
             </div>
             <div className="w-[50%] h-[15%]">
-              <PrimaryButton buttonText={"Post"} isBackgroundDark={false} onClick={handlePostRoute} />
+              <PrimaryButton
+                buttonText={"Post"}
+                isBackgroundDark={false}
+                onClick={handlePostRoute}
+              />
             </div>
           </div>
         </div>
