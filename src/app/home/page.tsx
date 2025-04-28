@@ -1,4 +1,4 @@
-import UserRoutesCard from "@/components/ui/UserRoutesCard";
+
 import Image from "next/image";
 import React from "react";
 
@@ -13,11 +13,18 @@ const profile = () => {
           width={900}
           height={900}
         />
-        <div className="w-full h-[10%] flex justify-start items-start lg:text-2xl pl-10">
+        <div className="w-[90%] h-[10%] flex justify-start items-start lg:text-2xl pl-10">
           Recents
         </div>
       </header>
-      <h1>Home Page</h1>
+      <main className=" h-[80%] flex flex-col items-center text-white">
+        <section className="w-[90%] h-[50%] lg:w-[90%] lg:h-[60%] flex items-center overflow-x-auto whitespace-nowrap gap-5 custom-scrollbar pb-2">
+          <div className="w-[90%] h-full lg:w-[30%] lg:h-full flex-shrink-0">
+          
+          </div>
+         
+        </section>
+      </main>
     </div>
   );
 };

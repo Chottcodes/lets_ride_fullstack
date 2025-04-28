@@ -31,13 +31,11 @@ const LoginSectionPage = () => {
         const response:IToken = await logIn(userData);
         const { id, token } = response.result;
         if (token) {
-          console.log(token);
           if (typeof window !== "undefined") {
             localStorage.setItem("Token", token);
             localStorage.setItem("ID", id.toString());
            
           }
-          console.log("Login Successful");
           push("/home/profile");
         } else {
           setIsFieldEmpty(true);

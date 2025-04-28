@@ -1,10 +1,13 @@
 "use client";
 import MapDisplay from "@/components/mapDisplay";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
-import React, { useState } from "react";
+import { GetRoute } from "@/components/utils/DataServices";
+import { RouteGetForCardTypes,} from "@/components/utils/Interface";
+import React, { useEffect, useState } from "react";
 
 const MapPage = () => {
   const [isMapOn, setIsMapOn] = useState(true);
+  const [allRoutes, setAllRoutes] = useState<RouteGetForCardTypes[]>([]);
 
   const handleMapButton = () => {
     setIsMapOn(true);
@@ -12,6 +15,22 @@ const MapPage = () => {
   const handleCommunityButton = () => {
     setIsMapOn(false);
   };
+  useEffect(() => {
+    if (isMapOn === false) {
+      const getUsersRoutes = async () => {
+        try {
+          const res = await GetRoute();
+          setAllRoutes(res);
+        } catch (error) {
+          console.error("Error fetching routes:", error);
+        }
+      };
+      getUsersRoutes();
+    }
+  }, [isMapOn]);
+  useEffect(() => {
+    console.log(allRoutes);
+  },[allRoutes]);
 
   return (
     <div className="h-[100dvh] w-full relative overflow-hidden">
@@ -30,36 +49,47 @@ const MapPage = () => {
             isMapOn ? "text-white" : "text-blue-600"
           } cursor-pointer `}
         >
-
           Community routes
         </button>
       </header>
 
-
       <main className="w-full h-full relative">
-        <div className={`${isMapOn ? "block" : "hidden"} lg:hidden w-full h-[80%] `}>
-          <MapDisplay />
-        </div>
-
-        <section
+        <div
           className={`${
-            isMapOn ? "hidden" : "block"
-          } w-full h-[95%]`}
+            isMapOn ? "block" : "hidden"
+          } lg:hidden w-full h-[80%] `}
         >
-          <div className="h-[90%] w-full text-white ">
-            <title className="w-full h-[10%] flex items-center">
+          <MapDisplay />
+        </div> 
+
+        <section className={`${isMapOn ? "hidden" : "block"} w-full h-full flex justify-center items-center `}>
+          <div className="h-full w-full flex flex-col justify-center items-center">
+            <div className="w-[90%] h-[10%] text-white flex items-center ">
               <p>Recent</p>
-            </title> 
-            <div className="flex flex-col items-center overflow-y-auto gap-4 w-full h-[90%]">
-              <div className="flex-shrink-0 w-[90%] h-[65%]">
-                <UserRoutesCard />
+            </div>
+            <div className="flex flex-col items-center w-full h-[90%]">
+              <div className="w-[90%] h-full overflow-y-scroll flex flex-col gap-5 pb-32">
+                {allRoutes .filter(route => route.isPrivate === false).map((route, index) => {
+                  return (
+                    <div key={index} className="w-full h-[90%]">
+                      <UserRoutesCard
+                        key={index}
+                        LikesNumber={0}
+                        UserprofilePicture={route.creator.profilePicture}
+                        ProfileName={route.creator.userName}
+                        RouteImage={route.imageUrl}
+                        RouteName={route.routeName}
+                        RouteDate={route.dateCreated}
+                        RouteDescription={route.routeDescription} 
+                        RouteStartingPoint={[route.pathCoordinates[0].longitude, route.pathCoordinates[0].latitude]}
+                        TrailCoords={route.pathCoordinates.map(coord => [coord.longitude, coord.latitude])}                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         </section>
-
-
-
       </main>
     </div>
   );

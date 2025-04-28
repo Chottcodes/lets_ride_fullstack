@@ -57,7 +57,7 @@ export interface UserProfileReturnTypes {
     profilePicture:string
 }
 export interface RoutePostTypes {
-    CreatorId:number
+    CreatorId:number,
     RouteName:string
     RouteDescription:string
     ImageUrl:string
