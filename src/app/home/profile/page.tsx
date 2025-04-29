@@ -67,10 +67,11 @@ const ProfilePage = () => {
     fetchData();
   }, []);
   useEffect(() => {
-    if (isPost === false) {
+    if (isProfile === true) {
       const getUsersRoutes = async () => {
         try {
           const res = await GetRoute();
+          console.log(res)
           setUserRoutes(res);
         } catch (error) {
           console.error("Error fetching routes:", error);
@@ -78,7 +79,7 @@ const ProfilePage = () => {
       };
       getUsersRoutes();
     }
-  }, [isPost]);
+  }, [isProfile]);
 
   return (
     <div className="h-screen w-full relative">

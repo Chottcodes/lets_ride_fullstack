@@ -51,11 +51,10 @@ const Page = () => {
     <div className="">
       <div className="sm:w-full md:w-20 lg:w-full w-full">
         {/* Left Nav */}
-        <div className="fixed top-0 left-0 min-h-screen w-19">
+        {/* <div className="fixed top-0 left-0 min-h-screen w-19">
           <DesktopNavBar
-            
           />
-        </div>
+        </div> */}
 
         {/* Header */}
         <NavbarHeader

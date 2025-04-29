@@ -6,6 +6,34 @@ export interface IUserCreate
     Question:string
     Answer:string
 }
+export interface IUserCardType {
+    id: number;
+    creatorId: number;
+    username: string;
+    imageUrl: string;
+    title: string;
+    description: string;
+    dateCreated: string;
+    isDeleted: boolean;
+    likes: LikeModel[];
+    comments: CommentModel[];
+  }
+  export interface LikeModel {
+    userId: number;
+  }
+  export interface CommentModel {
+    userId: number;
+    text: string;
+    createdAt: string;
+  }
+  export interface InputField {
+    creatorId: number;
+    imageUrl: string | null;
+    title: string;
+    description: string;
+    IsDeleted: boolean
+  }
+  
 export interface IUserInfo
 {
     email: string
@@ -18,14 +46,12 @@ export interface CreateUserReturnOBJ
         token:string;
     }
 }
-
-// User Data 
+// User Data
 export interface IUserData
 {
     id: number
     username: string
 }
-
 // Token
 export interface IToken
 {
@@ -33,7 +59,6 @@ export interface IToken
         id:number;
         token:string;
     }
-
 }
 export interface UserProfileTypes {
     UserName:string
@@ -65,41 +90,47 @@ export interface RoutePostTypes {
     IsPrivate:boolean
     IsDeleted:boolean
     PathCoordinates:Coordinates[]
-
 }
 export interface Coordinates {
     latitude: number;
     longitude: number;
   }
-// --------------------- Card interfaces ---------------------
-export interface IUserCardType {
+  export interface RouteGetTypes {
     id: number;
-    creatorId: number;
-    username: string;
+    routeName: string;
+    routeDescription: string;
     imageUrl: string;
-    title: string;
-    description: string;
-    dateCreated: string;
+    cityName: string;
+    isPrivate: boolean;
     isDeleted: boolean;
-    likes: LikeModel[];
-    comments: CommentModel[];
+    pathCoordinates: Coordinates[];
+    dateCreated: string;
   }
-
-  export interface LikeModel {
-    userId: number;
+  export interface Coordinates {
+    latitude: number;
+    longitude: number;
   }
-  
-  export interface CommentModel {
-    userId: number;
-    text: string;
-    createdAt: string;
-
-  }
-
-  export interface InputField {
-    creatorId: number;
-    imageUrl: string | null;
-    title: string;
-    description: string;
-    IsDeleted: boolean
-  }
+    export interface RouteGetForCardTypes {
+        id: number;
+        routeName: string;
+        creator:UserProfile
+        routeDescription: string;
+        imageUrl: string;
+        cityName: string;
+        isPrivate: boolean;
+        isDeleted: boolean;
+        pathCoordinates: Coordinates[];
+        dateCreated: string;
+    }
+    interface UserProfile {
+        id: number;
+        userId: number;
+        userName: string;
+        name: string;
+        location: string;
+        bikeType: string;
+        ridingExperience: string;
+        ridingPreference: string;
+        rideConsistency: string;
+        profilePicture: string;
+      }
