@@ -36,7 +36,7 @@ const LoginSectionPage = () => {
             localStorage.setItem("ID", id.toString());
            
           }
-          push("/home/profile");
+          push("/home");
         } else {
           setIsFieldEmpty(true);
           setEmailTitle("Invalid Email or Password");
