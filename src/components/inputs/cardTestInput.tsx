@@ -4,20 +4,20 @@ import React, { useEffect, useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { InputField } from "../utils/Interface";
-import { setUserPostData } from "../utils/DataServices";
+import { getUserPostData } from "../utils/DataServices";
 
 interface CardPostModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const OpenPostModal = ({isOpen, onClose}: CardPostModalProps ) => {
+const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   const [userId, setUserId] = useState<number | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [titleInput, setTitleInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false); 
-  
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
   // if (!isOpen) return null;
 
   const handleSubmit = async () => {
@@ -34,7 +34,7 @@ const OpenPostModal = ({isOpen, onClose}: CardPostModalProps ) => {
       IsDeleted: false,
     };
 
-    const res = await setUserPostData(inputFieldObj);
+    const res = await getUserPostData(inputFieldObj);
     console.log("Post created:", res);
 
     setOpenModal(false); // Close modal after submit
@@ -76,7 +76,7 @@ const OpenPostModal = ({isOpen, onClose}: CardPostModalProps ) => {
           className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
           onClick={handleOpenModal}
         >
-          + Add Ride Post
+          + Upload Image
         </button>
       </div>
 
@@ -84,8 +84,12 @@ const OpenPostModal = ({isOpen, onClose}: CardPostModalProps ) => {
       {openModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
           <div className="bg-white text-black p-6 rounded-xl w-full max-w-lg shadow-xl">
-            <h2 className="text-xl font-bold mb-4">Create Ride Post</h2>
-            <input type="file" onChange={handleImagePost} className="mb-2 w-full" />
+            <h2 className="text-xl font-bold mb-4">Upload Image</h2>
+            <input
+              type="file"
+              onChange={handleImagePost}
+              className="mb-2 w-full"
+            />
             <input
               type="text"
               placeholder="Title"

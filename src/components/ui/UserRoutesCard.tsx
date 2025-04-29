@@ -37,7 +37,7 @@ const UserRoutesCard = (props: RTypes) => {
       <div
         className="w-full h-full shadow-md rounded-md border-2 border-blue-500 flex flex-col justify-start overflow-hidden"
       >
-        <section className="h-full lg:w-full lg:h-[70%]">
+        <section className="h-full lg:w-full lg:h-full">
           {RouteStartingPoint && (
             <MapsUserCards StartingPointcoordinates={RouteStartingPoint} zoom={10} trailCoordinates={TrailCoords}/>
           )}
@@ -56,7 +56,7 @@ const UserRoutesCard = (props: RTypes) => {
             <p>{ProfileName}</p>
           </div>
         </section>
-        <main className="h-[10%] w-full lg:w-full lg:h-[50%] flex justify-between items-center text-white text-sm ">
+        <main className="h-[10%] w-full lg:w-full lg:h-[20%]  flex justify-between items-center text-white text-sm">
           <section className="flex justify-center items-center gap-5 w-[25%] h-full">
             <div className="flex items-center gap-1 cursor-pointer">
               <button className="cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2">
@@ -92,8 +92,8 @@ const UserRoutesCard = (props: RTypes) => {
             <p className="lg:text-[15px] text-white">{RouteDate}</p>
           </section>
         </main>
-        <footer className="h-[30%] lg:w-full lg:h-[40%] rounded-xl flex justify-center items-center lg:pb-2 ">
-          <button onClick={() => setIsModalOpen(true)} className="h-[70%] w-[50%] lg:w-[40%] lg:h-full bg-blue-600 rounded-lg hover:bg-blue-800 text-lg text-white">
+        <footer className="h-[30%] lg:w-full lg:h-[25%] rounded-xl flex justify-center items-center lg:pb-2 ">
+          <button onClick={() => setIsModalOpen(true)} className="h-[70%] w-[50%] lg:w-[60%] lg:h-full bg-blue-600 rounded-lg hover:bg-blue-800 text-lg text-white">
             More
           </button>
         </footer>
@@ -106,7 +106,7 @@ const UserRoutesCard = (props: RTypes) => {
         <nav className="w-full h-10 flex justify-start items-center">
           <BackButtonComponent onClick={() => setIsModalOpen(false)} />
         </nav>
-        <header className="h-[50%] lg:w-full lg:h-[70%]">
+        <header className="h-[50%] lg:w-full lg:h-[40%]">
           <Image
             src={
               RouteImage && RouteImage !== ""

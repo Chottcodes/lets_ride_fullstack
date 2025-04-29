@@ -1,4 +1,4 @@
-import { IUserCardType, IUserCreate, IUserInfo, RoutePostTypes, UserProfileTypes} from "./Interface"
+import { InputField, IUserCardType, IUserCreate, IUserInfo, RoutePostTypes, UserProfileTypes} from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -122,7 +122,7 @@ export const getGalleryPosts = async () =>
         const data = await res.json();
         return data;
     }
-    export const getUserPostData = async (user: IUserCardType ) =>
+    export const getUserPostData = async (user: InputField ) =>
         {
             const res = await fetch(url + "RideTables/AddGalleryPost", {
                 method: "POST",
