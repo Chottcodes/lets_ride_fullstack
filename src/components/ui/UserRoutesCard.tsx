@@ -16,6 +16,9 @@ interface RTypes {
   RouteDescription?: string;
   RouteStartingPoint:[number, number] | undefined;
   TrailCoords:[number, number][] | undefined;
+  handleLike?: () => void;
+  handleDislike?: () => void;
+  isLiked?: boolean;
 }
 const UserRoutesCard = (props: RTypes) => {
   const {
@@ -27,10 +30,14 @@ const UserRoutesCard = (props: RTypes) => {
     ProfileName,
     RouteDescription,
     RouteStartingPoint,
-    TrailCoords
+    TrailCoords,
+    handleLike,
+    handleDislike,
+    isLiked,
 
   } = props;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  
 
   if (!isModalOpen)
     return (
@@ -59,9 +66,19 @@ const UserRoutesCard = (props: RTypes) => {
         <main className="h-[10%] w-full lg:w-full lg:h-[20%]  flex justify-between items-center text-white text-sm">
           <section className="flex justify-center items-center gap-5 w-[25%] h-full">
             <div className="flex items-center gap-1 cursor-pointer">
-              <button className="cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2">
+              <button onClick={handleLike} className={`${isLiked ? "hidden":"block"} cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2`}>
                 <Image
                   src="/assets/images/card/thumbs-up.png"
+                  width={900}
+                  height={900}
+                  alt="comments"
+                  className="w-full h-full"
+                />
+                {LikesNumber == null ? 0 : LikesNumber}
+              </button>
+              <button onClick={handleDislike} className={`${isLiked ? "block":"hidden"} cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2`}>
+                <Image
+                  src="/assets/images/thumbs-up-blue.png"
                   width={900}
                   height={900}
                   alt="comments"

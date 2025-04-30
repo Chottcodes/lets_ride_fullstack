@@ -27,6 +27,9 @@ const ProfilePage = () => {
   const [isPost, setIsPost] = useState<boolean>(false);
   const [isLikes, setIsLikes] = useState<boolean>(false);
   const [isProfile, setIsProfile] = useState<boolean>(true);
+
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  
   const [userRoutes, setUserRoutes] = useState<RouteGetForCardTypes[]>([]);
   const GetLocalStorageId = () => {
     const getId = localStorage.getItem("ID");
@@ -36,6 +39,12 @@ const ProfilePage = () => {
     localStorage.setItem("Token", "");
     localStorage.setItem("ID", "");
     push("/pages/Login/loginPage");
+  };
+  const handleLikes = () => {
+    setIsLiked(true);
+  };
+  const handleDislike = () => {
+    setIsLiked(false);
   };
   useEffect(() => {
     const getInfo = GetLocalStorageId();
@@ -192,6 +201,9 @@ const ProfilePage = () => {
           {userRoutes
             .filter((route) => route.creator.id === userId)
             .map((route, index) => {
+                
+
+
               return (
                 <div key={index} className="w-full h-full">
                   <UserRoutesCard
@@ -203,6 +215,8 @@ const ProfilePage = () => {
                     RouteName={route.routeName}
                     RouteDate={route.dateCreated}
                     RouteDescription={route.routeDescription}
+                    isLiked={isLiked}
+                    
                     RouteStartingPoint={[
                       route.pathCoordinates[0].longitude,
                       route.pathCoordinates[0].latitude,

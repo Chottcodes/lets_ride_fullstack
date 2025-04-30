@@ -134,3 +134,8 @@ export interface Coordinates {
         rideConsistency: string;
         profilePicture: string;
       }
+      export interface LikesModel{
+        UserId:number
+        PostId:number
+        IsDeleted:boolean
+      }

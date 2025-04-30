@@ -1,4 +1,4 @@
-import { InputField, IUserCardType, IUserCreate, IUserInfo, RoutePostTypes, UserProfileTypes} from "./Interface"
+import { InputField, IUserCardType, IUserCreate, IUserInfo, LikesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -139,3 +139,20 @@ export const getGalleryPosts = async () =>
             const data = await res.json();
             return data;
         }
+export const AddLike = async (Likes:LikesModel) => {
+    
+        const res = await fetch(url + "RideTables/AddLike", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(Likes)
+        });
+        if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+        return data;
+    }
