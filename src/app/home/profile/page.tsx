@@ -6,8 +6,9 @@ import ProfileDisplay from "@/components/ProfileDisplay";
 import ProfileWithDescription from "@/components/ProfileWithDescription";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { GetRoute, GetUserProfile } from "@/components/utils/DataServices";
+import { AddLike, GetRoute, GetUserProfile } from "@/components/utils/DataServices";
 import {
+  LikesRoutesModel,
   RouteGetForCardTypes,
   UserProfileReturnTypes,
 } from "@/components/utils/Interface";
@@ -15,6 +16,7 @@ import UserRoutesCard from "@/components/ui/UserRoutesCard";
 
 const ProfilePage = () => {
   const { push } = useRouter();
+
   const [name, setName] = useState<string>("");
   const [username, setUserName] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<string>("");
@@ -27,25 +29,14 @@ const ProfilePage = () => {
   const [isPost, setIsPost] = useState<boolean>(false);
   const [isLikes, setIsLikes] = useState<boolean>(false);
   const [isProfile, setIsProfile] = useState<boolean>(true);
+  
+  
+  
+  const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
 
-  const [isLiked, setIsLiked] = useState<boolean>(false);
   
   const [userRoutes, setUserRoutes] = useState<RouteGetForCardTypes[]>([]);
-  const GetLocalStorageId = () => {
-    const getId = localStorage.getItem("ID");
-    return Number(getId);
-  };
-  const handleLogOut = () => {
-    localStorage.setItem("Token", "");
-    localStorage.setItem("ID", "");
-    push("/pages/Login/loginPage");
-  };
-  const handleLikes = () => {
-    setIsLiked(true);
-  };
-  const handleDislike = () => {
-    setIsLiked(false);
-  };
+
   useEffect(() => {
     const getInfo = GetLocalStorageId();
     const fetchData = async () => {
@@ -75,6 +66,8 @@ const ProfilePage = () => {
     };
     fetchData();
   }, []);
+  
+
   useEffect(() => {
     if (isProfile === true) {
       const getUsersRoutes = async () => {
@@ -82,13 +75,56 @@ const ProfilePage = () => {
           const res = await GetRoute();
           console.log(res)
           setUserRoutes(res);
+
+          const likedByUser = new Set<number>();
+          res.forEach((route:RouteGetForCardTypes ) => {
+            route.likes.forEach(like => {
+              if (like.userId === userId && !like.isDeleted) {
+                likedByUser.add(route.id);
+              }
+            });
+          });
+          setLikedRoutes(likedByUser);
         } catch (error) {
           console.error("Error fetching routes:", error);
         }
       };
       getUsersRoutes();
     }
-  }, []);
+  }, [isProfile, userId]);
+
+
+
+  const GetLocalStorageId = () => {
+    const getId = localStorage.getItem("ID");
+    return Number(getId);
+  };
+  const handleLogOut = () => {
+    localStorage.setItem("Token", "");
+    localStorage.setItem("ID", "");
+    push("/pages/Login/loginPage");
+  };
+
+  const LikeRoute = async (routeId: number) => {
+    const likeObj: LikesRoutesModel = {
+      UserId: userId,
+      RouteId: routeId,
+      IsDeleted: false,
+    };
+    const response = await AddLike(likeObj);
+    if (response) {
+      console.log("Like added successfully");
+    } else {
+      console.error("Error adding like");
+    }
+  };
+
+  const handleLikes = (routeId: number) => {
+    LikeRoute(routeId);
+    setLikedRoutes((prev) => new Set(prev).add(routeId));
+  };
+  
+  
 
   return (
     <div className="h-screen w-full relative">
@@ -201,22 +237,32 @@ const ProfilePage = () => {
           {userRoutes
             .filter((route) => route.creator.id === userId)
             .map((route, index) => {
-                
+                const LikeRoute = async () => {
+                  let likeobj:LikesRoutesModel = {
+                    UserId: userId,
+                    RouteId: route.id,
+                    IsDeleted: false
+                  }
+                  const Likes = await AddLike(likeobj);
+                  if(Likes) console.log("Like added successfully")
+                  else console.log("Error adding like")
+                }
 
-
+               
               return (
                 <div key={index} className="w-full h-full">
                   <UserRoutesCard
                     key={index}
-                    LikesNumber={0}
+                    LikesNumber={route.likes.length}
                     UserprofilePicture={route.creator.profilePicture}
-                    ProfileName={route.creator.userName}
+                    ProfileName={`@${route.creator.userName}`}
                     RouteImage={route.imageUrl}
                     RouteName={route.routeName}
-                    RouteDate={route.dateCreated}
+                    RouteDate={new Date(route.dateCreated).toLocaleDateString("en-CA")}
                     RouteDescription={route.routeDescription}
-                    isLiked={isLiked}
-                    
+                    isLiked={likedRoutes.has(route.id)}
+                    handleLike={() => handleLikes(route.id)}
+
                     RouteStartingPoint={[
                       route.pathCoordinates[0].longitude,
                       route.pathCoordinates[0].latitude,
