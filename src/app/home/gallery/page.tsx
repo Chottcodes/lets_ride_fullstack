@@ -29,8 +29,8 @@ const Page = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
 
   // For Push Fetch
-    const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([cardData]);
-    const [userRoutesDataArr, setUserRoutesDataArr] = useState<RouteGetTypes[]>([cardRoute]);
+    const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
+    const [userRoutesDataArr, setUserRoutesDataArr] = useState<RouteGetTypes[]>([]);
 
   // Data population (commented out for dummy data)
   // useEffect(() => {
