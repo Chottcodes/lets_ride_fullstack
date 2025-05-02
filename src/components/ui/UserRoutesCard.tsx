@@ -20,6 +20,12 @@ interface RTypes {
   handleLike?: () => void;
   handleDislike?: () => void;
   isLiked?: boolean;
+  comments?: CommentType[];
+}
+interface CommentType {
+  CommentText?: string;
+  CreatedAt?: string;
+  User: [UserName: string, ProfilePicture: string];
 }
 const UserRoutesCard = (props: RTypes) => {
   const {
@@ -35,10 +41,11 @@ const UserRoutesCard = (props: RTypes) => {
     handleLike,
     handleDislike,
     isLiked,
+    comments,
   } = props;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
-  const [isCommentsOpen,setIsCommentsOpen] = useState<boolean>(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
 
   if (!isModalOpen)
     return (
@@ -135,7 +142,7 @@ const UserRoutesCard = (props: RTypes) => {
 
   if (isModalOpen)
     return (
-      <article className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 z-50 flex justify-center items-center">
+      <article className="fixed top-0 left-0 w-screen h-[90%] bg-black bg-opacity-80 z-50 flex justify-center items-center">
         <div className="w-[90%] h-[80%]  shadow-md rounded-md border-2 border-blue-500 flex flex-col overflow-hidden pl-2">
           <nav className="w-full h-10 flex justify-start items-center">
             <BackButtonComponent onClick={() => setIsModalOpen(false)} />
@@ -155,7 +162,7 @@ const UserRoutesCard = (props: RTypes) => {
             />
             {isImageOpen && (
               <div
-                className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-90 flex justify-center items-center z-50"
+                className="fixed top-0 left-0  w-screen h-[100dvh] bg-black bg-opacity-90 flex justify-center items-start z-50"
                 onClick={() => setIsImageOpen(false)}
               >
                 <Image
@@ -167,13 +174,17 @@ const UserRoutesCard = (props: RTypes) => {
                   width={1200}
                   height={800}
                   alt="Full Image"
-                  className="max-w-[90%] max-h-[90%] object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
             )}
           </header>
           <main className="h-[90%] w-full flex flex-col justify-center items-center">
-            <header className="w-full h-[30%] flex justify-evenly items-center gap-2">
+            <header
+              className={`${
+                isCommentsOpen ? "hidden" : "block"
+              } w-full h-[30%] flex justify-evenly items-center gap-2`}
+            >
               <div className="w-[50%] flex justify-start items-center">
                 <div className="w-[50px] h-[50px] rounded-full overflow-hidden pl-5">
                   <Avatar>
@@ -221,7 +232,11 @@ const UserRoutesCard = (props: RTypes) => {
                 </button>
               </div>
             </header>
-            <section className="w-[90%] h-[50%] flex flex-col justify-start items-start gap-2 text-white">
+            <section
+              className={`${
+                isCommentsOpen ? "hidden" : "block"
+              } w-[90%] h-[50%] flex flex-col justify-start items-start gap-2 text-white`}
+            >
               <div className="w-full h-[15%] flex justify-center items-center text-2xl">
                 {RouteName}
               </div>
@@ -229,9 +244,82 @@ const UserRoutesCard = (props: RTypes) => {
                 {RouteDescription}
               </div>
             </section>
-            <section className="w-[90%] h-[20%]">Comments</section>
+            <section
+              onClick={() => setIsCommentsOpen(!isCommentsOpen)}
+              className={`${
+                isCommentsOpen ? "h-[100%] w-full" : "w-[90%] h-[20%]"
+              }  cursor-pointer `}
+            >
+              {isCommentsOpen ? "Back" : `Comments ${comments?.length}`}
+              {isCommentsOpen && (
+                <section className=" w-full h-full relative">
+                  <main className="overflow-y-auto max-h-[80%] px-4 py-2 text-white space-y-3">
+                    {comments && comments.length > 0 ? (
+                      comments.map((comment, index) => (
+                        <div key={index} className="flex items-start gap-2">
+                          <Avatar>
+                            <AvatarImage
+                              src={comment.User[1]}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                            <AvatarFallback>{comment.User[0]}</AvatarFallback>
+                          </Avatar>
+                          <div className="bg-gray-700 px-3 py-2 rounded-lg max-w-[80%]">
+                            <p className="text-sm font-semibold">
+                              {comment.User[0]}
+                            </p>
+                            <p className="text-sm">{comment.CommentText}</p>
+                            <p className="text-xs text-gray-400">
+                              {comment.CreatedAt
+                                ? new Date(
+                                    comment.CreatedAt
+                                  ).toLocaleDateString("en-CA")
+                                : "Unknown Date"}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-400 text-sm">No comments yet.</p>
+                    )}
+                  </main>
+
+                  <footer className="w-full h-[20%] bottom-5 absolute flex justify-evenly items-center gap-1 pl-5">
+                    <div className="w-[25px] h-[25px] flex justify-center items-center rounded-full overflow-hidden bg-gray-600 ">
+                      <Avatar>
+                        <AvatarImage
+                          src={UserprofilePicture}
+                          className="object-contain w-full h-full"
+                        />
+                        <AvatarFallback>User Profile</AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div className="w-[80%] h-[80%] bg-gray-500 rounded-lg">
+                      <input
+                        className="w-full h-full  pl-2 text-white"
+                        placeholder="Comment..."
+                        type="text"
+                      />
+                    </div>
+                    <div className="w-[10%] h-[10%] flex justify-center items-center">
+                      <Image
+                        src="/assets/images/send.png"
+                        className="object-contain"
+                        alt="send icon"
+                        width={100}
+                        height={100}
+                      />
+                    </div>
+                  </footer>
+                </section>
+              )}
+            </section>
           </main>
-          <footer className="h-[20%] lg:w-full lg:h-[40%] rounded-xl flex justify-center items-center lg:pb-2">
+          <footer
+            className={`${
+              isCommentsOpen ? "hidden" : "block"
+            } h-[20%]  lg:w-full lg:h-[40%] rounded-xl flex justify-center items-center pb-2 lg:pb-2`}
+          >
             <button className="h-full w-[50%] bg-blue-600 rounded-lg hover:bg-blue-800 text-lg text-white">
               Lets Ride
             </button>

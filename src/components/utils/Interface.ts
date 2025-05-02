@@ -120,7 +120,9 @@ export interface Coordinates {
         isPrivate: boolean;
         isDeleted: boolean;
         pathCoordinates: Coordinates[];
-        likes: Likes[]
+        likes: Likes[];
+        comments:comments[]
+
         dateCreated: string;
     }
     interface Likes{
@@ -128,6 +130,14 @@ export interface Coordinates {
       userId:1
       isDeleted:boolean
       createdAt:string
+    }
+    interface comments{
+      CommentText?:string;
+  CreatedAt?:string;
+  User:[
+    UserName:string,
+    ProfilePicture:string,
+  ]
     }
     interface UserProfile {
         id: number;

@@ -127,7 +127,7 @@ const ProfilePage = () => {
   
 
   return (
-    <div className="h-screen w-full relative">
+    <div className="h-[100dvh] w-full relative">
       <header className="absolute w-full h-[10%] flex justify-between items-center lg:hidden">
         <button onClick={handleLogOut} className="pl-5 text-white">
           Log Out
@@ -190,7 +190,7 @@ const ProfilePage = () => {
       <main
         className={`${
           isProfile ? "block" : "hidden"
-        } m-auto w-[80%] h-[60%] flex flex-col lg:flex-wrap lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto pb-30`}
+        } m-auto w-[80%] h-[60%] flex flex-col lg:flex-wrap lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto pb-10`}
       >
         <section className=" h-[20%] w-full lg:w-[40%]">
           <ProfileDisplay
@@ -262,7 +262,7 @@ const ProfilePage = () => {
                     RouteDescription={route.routeDescription}
                     isLiked={likedRoutes.has(route.id)}
                     handleLike={() => handleLikes(route.id)}
-
+                    comments={route.comments}
                     RouteStartingPoint={[
                       route.pathCoordinates[0].longitude,
                       route.pathCoordinates[0].latitude,
