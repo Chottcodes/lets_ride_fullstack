@@ -4,20 +4,11 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 
-interface propTypes {
-  isRoutes: boolean;
-  isYourLikes: boolean;
-  isMyPictures: boolean;
-  isMyRoutes: boolean;
-}
 
-const NavbarHeader = (prop: propTypes) => {
-  const { isYourLikes, isMyPictures, isMyRoutes } = prop;
-  const { push } = useRouter();
-
+const NavbarHeader = () => {
   return (
     <div className="w-full ">
-      <nav className="text-white mt-10 mb-15">
+      <nav className="text-white">
         <div className="flex flex-col gap-6 mb-10 lg:mx-10 mx-6">
           <div>
             <Image
