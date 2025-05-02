@@ -28,6 +28,7 @@ const AboutYouPage = () => {
   const [ridingFrequency, setRidingFrequency] = useState<string>("");
   const { push } = useRouter();
 
+
   const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
