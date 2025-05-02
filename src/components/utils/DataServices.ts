@@ -1,4 +1,4 @@
-import { InputField, IUserCardType, IUserCreate, IUserInfo, LikesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
+import { InputField, IUserCardType, IUserCreate, IUserInfo, LikesRoutesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -17,12 +17,10 @@ export const createAccount = async (user:IUserCreate) =>{
             return data.success;
         }
     const data = await response.json();
-    console.log(data);
     return data;
 }
 //Login
 export const logIn = async (user: IUserInfo) =>{
-    console.log(user)
     const response = await fetch(url + "User/Login", {
         method: "POST",
         headers: {
@@ -63,7 +61,7 @@ export const resetPassword = async (user:IUserCreate) => {
 }  
 export const UserProfileSetup = async (user: UserProfileTypes) => {
    
-        console.log(user)
+   
         const res = await fetch(url + "RideTables/AddUserProfile", {
             method: "POST",
             headers: {
@@ -86,7 +84,7 @@ export const GetUserProfile = async(UserId:number) =>
     return data;
 }
 export const PostRoute = async (route:RoutePostTypes ) => {
-   console.log(route)
+   
     const res = await fetch(url + "RideTables/AddRoute", {
         method: "POST",
         headers: {
@@ -139,7 +137,7 @@ export const getGalleryPosts = async () =>
             const data = await res.json();
             return data;
         }
-export const AddLike = async (Likes:LikesModel) => {
+export const AddLike = async (Likes:LikesRoutesModel) => {
     
         const res = await fetch(url + "RideTables/AddLike", {
             method: "POST",

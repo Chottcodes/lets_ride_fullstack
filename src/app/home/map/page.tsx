@@ -20,6 +20,7 @@ const MapPage = () => {
       const getUsersRoutes = async () => {
         try {
           const res = await GetRoute();
+          console.log(res);
           setAllRoutes(res);
         } catch (error) {
           console.error("Error fetching routes:", error);

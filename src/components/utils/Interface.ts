@@ -120,7 +120,24 @@ export interface Coordinates {
         isPrivate: boolean;
         isDeleted: boolean;
         pathCoordinates: Coordinates[];
+        likes: Likes[];
+        comments:comments[]
+
         dateCreated: string;
+    }
+    interface Likes{
+      routeId:number
+      userId:1
+      isDeleted:boolean
+      createdAt:string
+    }
+    interface comments{
+      CommentText?:string;
+  CreatedAt?:string;
+  User:[
+    UserName:string,
+    ProfilePicture:string,
+  ]
     }
     interface UserProfile {
         id: number;
@@ -134,8 +151,8 @@ export interface Coordinates {
         rideConsistency: string;
         profilePicture: string;
       }
-      export interface LikesModel{
+      export interface LikesRoutesModel{
         UserId:number
-        PostId:number
+        RouteId:number
         IsDeleted:boolean
       }
