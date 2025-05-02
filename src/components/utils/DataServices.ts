@@ -146,6 +146,7 @@ export const AddLike = async (Likes:LikesRoutesModel) => {
             },
             body: JSON.stringify(Likes)
         });
+        
         if(!res.ok)
         {
             console.log("Error");

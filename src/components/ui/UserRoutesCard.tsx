@@ -143,7 +143,7 @@ const UserRoutesCard = (props: RTypes) => {
   if (isModalOpen)
     return (
       <article className="fixed top-0 left-0 w-screen h-[90%] bg-black bg-opacity-80 z-50 flex justify-center items-center">
-        <div className="w-[90%] h-[80%]  shadow-md rounded-md border-2 border-blue-500 flex flex-col overflow-hidden pl-2">
+        <div className="w-[90%] h-[90%]  shadow-md rounded-md border-2 border-blue-500 flex flex-col overflow-hidden pl-2">
           <nav className="w-full h-10 flex justify-start items-center">
             <BackButtonComponent onClick={() => setIsModalOpen(false)} />
           </nav>
