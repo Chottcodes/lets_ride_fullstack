@@ -60,6 +60,7 @@ export interface IToken
         token:string;
     }
 }
+
 export interface UserProfileTypes {
     UserName:string
     UserId:number
@@ -155,4 +156,13 @@ export interface Coordinates {
         UserId:number
         RouteId:number
         IsDeleted:boolean
+      }
+
+      export interface AddGalleryPost
+      {
+        ImageUrl: string;
+        Title: string;
+        Description: string;
+       
+        IsDeleted: boolean;
       }

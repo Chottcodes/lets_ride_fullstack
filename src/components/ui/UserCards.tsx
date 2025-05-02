@@ -1,8 +1,10 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { IUserCardType } from "../utils/Interface";
+import { storage } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
 interface PopulationData
@@ -24,6 +26,37 @@ const {imageUrl, title, description, dateCreated, likes, comments, username} = p
   const [isModel, setIsModel] = useState(false);
   const [isFullImage, setIsFullImage] = useState(false);
   const [isUserLiked, setIsUserLiked] = useState(false);
+  const [userId, setUserId] = useState<number>()
+
+  const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    try {
+      if (file) {
+        const imageRef = ref(storage, `galleryPicture/${userId}_${file?.name}`);
+        await uploadBytes(imageRef, file);
+        const url = await getDownloadURL(imageRef);
+        setImage(url);
+        setIsImageFilled(true);
+        console.log("Uploaded gallery Post:", url);
+      } else {
+        uploadDefaultPicture();
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  useEffect(() =>
+  {
+    const userId = localStorage.getItem("ID")
+    if (userId)
+    {
+      setUserId( Number(userId) )
+    }
+
+  }, []) 
+  
 
   return (
     <>
@@ -201,3 +234,15 @@ const {imageUrl, title, description, dateCreated, likes, comments, username} = p
 };
 
 export default UserCardsPost;
+function setImage(url: string) {
+  throw new Error("Function not implemented.");
+}
+
+function setIsImageFilled(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+
+function uploadDefaultPicture() {
+  throw new Error("Function not implemented.");
+}
+
