@@ -1,18 +1,15 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import DesktopNavBar from "@/components/navbars/DesktopNavBar";
-import MobileNavBar from "@/components/navbars/MobileNavBar";
+import React, { useEffect, useState } from "react";
+
 import NavbarHeader from "@/components/ui/NavbarHeader";
 import UserCards from "@/components/ui/UserCards";
-import CardPostModal from "@/components/inputs/cardTestInput";
-import { IUserCardType, RouteGetTypes } from "@/components/utils/Interface";
+
+import { IUserCardType} from "@/components/utils/Interface";
 import OpenPostModal from "@/components/inputs/cardTestInput";
 
-import cardData from "@/data/cardData.json";
-import cardRoute from "@/data/CardRoute.json";
-import UserRoutesCard from "@/components/ui/UserRoutesCard";
-import { getGalleryPosts, getUserPostData } from "@/components/utils/DataServices";
+import cardData from "@/data/cardData.json" assert { type: "json" };
+
 
 // const typedUserCards: IUserCardType[] = cardData;
 // const typedUserRoutes: IUserCardType[] = cardRoute;
@@ -23,14 +20,13 @@ const Page = () => {
   
 
   // Drag Scroll Wheel 
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+
 
   // For Push Fetch
-    const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([cardData]);
-    const [userRoutesDataArr, setUserRoutesDataArr] = useState<RouteGetTypes[]>([cardRoute]);
+    const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
+    useEffect(()=>{
+      setUserCardsDataArr(cardData as IUserCardType[])
+    },[])
 
   // Data population (commented out for dummy data)
   // useEffect(() => {

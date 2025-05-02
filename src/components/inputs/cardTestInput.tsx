@@ -18,7 +18,8 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   const [titleInput, setTitleInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
-
+  console.log(isOpen)
+  console.log(onClose)
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));

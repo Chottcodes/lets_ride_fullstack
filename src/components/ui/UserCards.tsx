@@ -2,7 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import React, { useState } from "react";
-import { IUserCardType } from "../utils/Interface";
+
 
 
 interface PopulationData

@@ -237,18 +237,7 @@ const ProfilePage = () => {
           {userRoutes
             .filter((route) => route.creator.id === userId)
             .map((route, index) => {
-                const LikeRoute = async () => {
-                  let likeobj:LikesRoutesModel = {
-                    UserId: userId,
-                    RouteId: route.id,
-                    IsDeleted: false
-                  }
-                  const Likes = await AddLike(likeobj);
-                  if(Likes) console.log("Like added successfully")
-                  else console.log("Error adding like")
-                }
-
-               
+                
               return (
                 <div key={index} className="w-full h-full">
                   <UserRoutesCard
