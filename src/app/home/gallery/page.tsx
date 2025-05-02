@@ -52,7 +52,7 @@ const Page = () => {
 
   return (
     <div className="mt-10 ">
-      <div className="sm:w-full lg:w-full w-full ">
+      <div className="sm:w-full lg:w-full w-full h-dvh">
         {/* Left Nav */}
         {/* <div className="fixed top-0 left-0 min-h-screen w-19">
           <DesktopNavBar
