@@ -3,8 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
-import { InputField } from "../utils/Interface";
-import { getUserPostData } from "../utils/DataServices";
+import { AddGalleryPost } from "../utils/Interface";
+import { addGalleryPost } from "../utils/DataServices";
+
+
+
 
 interface CardPostModalProps {
   isOpen: boolean;
@@ -45,23 +48,25 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
     }
   };
 
+  // if (!userId || !image || !titleInput || !descriptionInput) {
+  //   alert("Please fill out all fields and upload an image.");
+
+  //   return;
+  // }
   const handleSubmit = async () => {
-    if (!userId || !image || !titleInput || !descriptionInput) {
-      alert("Please fill out all fields and upload an image.");
-      return;
+
+    if(image)
+    {
+    const inputFieldObj: AddGalleryPost = {
+      ImageUrl: image,
+      Title: titleInput,
+      Description: descriptionInput,
+      IsDeleted: false
+      
     }
-
-    const inputFieldObj: InputField = {
-      creatorId: userId,
-      imageUrl: image,
-      title: titleInput,
-      description: descriptionInput,
-      IsDeleted: false,
-    };
-
-    const res = await getUserPostData(inputFieldObj);
-    console.log("Post created:", res);
-
+      const res = await addGalleryPost(inputFieldObj);
+      if(res) console.log("Post created:", res);
+    }
     resetModal();
   };
 
@@ -108,10 +113,10 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
             )}
 
             <input
-  type="file"
-  onChange={handleImagePost}
-  className="mb-2 w-full cursor-pointer file:cursor-pointer file:rounded file:border file:border-gray-300 file:px-4 file:py-2 file:bg-white file:hover:bg-blue-50 file:text-sm file:text-gray-700 transition"
-/>
+              type="file"
+              onChange={handleImagePost}
+              className="mb-2 w-full cursor-pointer file:cursor-pointer file:rounded file:border file:border-gray-300 file:px-4 file:py-2 file:bg-white file:hover:bg-blue-50 file:text-sm file:text-gray-700 transition"
+            />
 
 
             <input

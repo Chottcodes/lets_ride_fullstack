@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
+import React, { useEffect, useState, useRef } from "react";
 import NavbarHeader from "@/components/ui/NavbarHeader";
 import UserCards from "@/components/ui/UserCards";
-
-import { IUserCardType} from "@/components/utils/Interface";
+import { IUserCardType, RouteGetTypes } from "@/components/utils/Interface";
 import OpenPostModal from "@/components/inputs/cardTestInput";
 
-import cardData from "@/data/cardData.json" assert { type: "json" };
 
+import UserRoutesCard from "@/components/ui/UserRoutesCard";
+import { getGalleryPosts } from "@/components/utils/DataServices";
 
 // const typedUserCards: IUserCardType[] = cardData;
 // const typedUserRoutes: IUserCardType[] = cardRoute;
@@ -24,21 +23,19 @@ const Page = () => {
 
   // For Push Fetch
     const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
-    useEffect(()=>{
-      setUserCardsDataArr(cardData as IUserCardType[])
-    },[])
+    const [userRoutesDataArr, setUserRoutesDataArr] = useState<RouteGetTypes[]>([]);
 
   // Data population (commented out for dummy data)
-  // useEffect(() => {
-  //   const fetchPosts = async () => {
-  //     const res = await getGalleryPosts();
-  //     const data = await res;
-  //     console.log(data);
-  //     setUserCardsDataArr(data);
-  //   };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const res = await getGalleryPosts();
+      const data = await res;
+      console.log(data);
+      setUserCardsDataArr(data);
+    };
 
-  //   fetchPosts();
-  // }, []);
+    fetchPosts();
+  }, []);
 
 
   useEffect(() => {
@@ -48,12 +45,7 @@ const Page = () => {
 
   return (
     <div className="mt-10 ">
-      <div className="sm:w-full lg:w-full w-full ">
-        {/* Left Nav */}
-        {/* <div className="fixed top-0 left-0 min-h-screen w-19">
-          <DesktopNavBar
-          />
-        </div> */}
+      <div className="sm:w-full lg:w-full w-full h-dvh">
 
         {/* Header */}
         <NavbarHeader/>
@@ -75,69 +67,22 @@ const Page = () => {
           {/* Cards Section*/}
         <section className="sm:mx-40 mx-0 grid grid-rows-1 sm:grid-rows-2 md:grid-rows-2 overflow-x-auto custom-scrollbar">
           <div className="flex gap-4 sm:px-10 px-0 min-w-fit">
-            {/* <div className="flex gap-4 px-10 min-w-fit">
-              {userCardsDataArr.map((card, index) => (
+
+            <div className="flex gap-4 px-10 min-w-fit">
+              {/* {userCardsDataArr.map((card, index) => (
                 <div className="min-w-[350px] flex-shrink-0" key={index}>
                   <UserRoutesCard card={card} />
                 </div>
-              ))}
-            </div> */}
+              ))} */}
+            </div>
+            <div>
             {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
                 <div className="min-w-[300px] flex-shrink-0" key={index}>
                   <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
                 </div>
               ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-            
-          </div>
-          
-          <div className="">
-            <div className="flex gap-4 sm:px-10 px-0 min-w-fit">
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-              {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
             </div>
+              
           </div>
         </section>
             

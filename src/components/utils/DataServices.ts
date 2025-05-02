@@ -1,4 +1,4 @@
-import { InputField, IUserCreate, IUserInfo, LikesRoutesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
+import { AddGalleryPost, InputField, IUserCardType, IUserCreate, IUserInfo, LikesRoutesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -109,17 +109,52 @@ export const GetProfileById = async (id:number) => {
     const data = await res.json();
     return data;
 }
-export const getGalleryPosts = async () =>
-    {
-        const res = await fetch(url + "RideTables/GetGalleryPosts")
-        if(!res.ok)
-        {
-            console.log("Error");
-            return null;
-        };
+
+// ------------------- Gallery Page ---------------------------------
+export const getGalleryPosts = async () => {
+    try {
+      const res = await fetch(url + "RideTables/GetGallery");
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error("Fetch failed:", res.status, errText);
+        return null;
+      }
+  
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Network error:", err);
+      return null;
+    }
+  };
+
+ export const addGalleryPost = async (galleryPost: AddGalleryPost) =>
+ {
+    console.log(galleryPost)
+    try {
+        const res = await fetch(url + "RideTables/AddGalleryPost", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(galleryPost)
+        });
+
+        if (!res.ok) {
+          const errText = await res.json();
+          console.error("Fetch failed:", res.status, errText);
+          return null;
+        }
+    
         const data = await res.json();
         return data;
-    }
+      } catch (err) {
+        console.error("Network error:", err);
+        return null;
+      }
+ }
+
+
     export const getUserPostData = async (user: InputField ) =>
         {
             const res = await fetch(url + "RideTables/AddGalleryPost", {
