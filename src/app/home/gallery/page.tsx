@@ -6,8 +6,6 @@ import UserCards from "@/components/ui/UserCards";
 import { IUserCardType, RouteGetTypes } from "@/components/utils/Interface";
 import OpenPostModal from "@/components/inputs/cardTestInput";
 
-
-import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import { getGalleryPosts } from "@/components/utils/DataServices";
 
 // const typedUserCards: IUserCardType[] = cardData;
@@ -16,14 +14,12 @@ import { getGalleryPosts } from "@/components/utils/DataServices";
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
-  
 
-  // Drag Scroll Wheel 
-
+  // Drag Scroll Wheel
 
   // For Push Fetch
-    const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
-    const [userRoutesDataArr, setUserRoutesDataArr] = useState<RouteGetTypes[]>([]);
+  const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
+ 
 
   // Data population (commented out for dummy data)
   useEffect(() => {
@@ -37,65 +33,48 @@ const Page = () => {
     fetchPosts();
   }, []);
 
-
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));
   }, []);
 
   return (
-    <div className="mt-10 ">
-      <div className="sm:w-full lg:w-full w-full h-dvh">
-
-        {/* Header */}
-        <NavbarHeader/>
-
-        {/* Upload*/}
-          <section className="flex justify-between sm:mx-40 mx-0 pb-10">
-            <h1 className="text-[30px] text-white ">Recent Post</h1>
-          {/* Modal */}
+    <div className="h-[100dvh] w-full">
+      <header>
+        <NavbarHeader />
+      </header>
+        <section className="w-[90%] h-[10%] m-auto flex justify-between items-center">
+          <h1 className="text-[30px] text-white ">Gallery</h1>
           <div className="hidden lg:flex">
-          {userId !== null && (
-            <OpenPostModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
-          )}
-        </div>
-          </section>
-          
-          {/* Cards Section*/}
-        <section className="sm:mx-40 mx-0 grid grid-rows-1 sm:grid-rows-2 md:grid-rows-2 overflow-x-auto custom-scrollbar">
-          <div className="flex gap-4 sm:px-10 px-0 min-w-fit">
-
-            <div className="flex gap-4 px-10 min-w-fit">
-              {/* {userCardsDataArr.map((card, index) => (
-                <div className="min-w-[350px] flex-shrink-0" key={index}>
-                  <UserRoutesCard card={card} />
-                </div>
-              ))} */}
-            </div>
-            <div>
-            {Array.isArray(userCardsDataArr) && userCardsDataArr.map((card, index) => (
-                <div className="min-w-[300px] flex-shrink-0" key={index}>
-                  <UserCards imageUrl={card.imageUrl} title={card.title} description={card.description} dateCreated={card.dateCreated} username={card.username}/>
-                </div>
-              ))}
-            </div>
-              
+            {userId !== null && (
+              <OpenPostModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+              />
+            )}
           </div>
         </section>
-            
-
-        <div className="mb-20 flex lg:hidden">
-          {userId !== null && (
-            <OpenPostModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
-          )}
-        </div>
-      </div>
+      <main className="sm:w-full lg:w-full lg:h-full flex justify-center">
+        <section className="w-[90%] h-[50%]">
+          <div className="w-[30%] flex flex-row gap-2 ">
+            {
+              userCardsDataArr.map((card, index) => (
+                <div className="w-[90%] h-[50%] flex-shrink-0" key={index}>
+                  <UserCards
+                    imageUrl={card.imageUrl}
+                    UserprofilePicture={card.creator.profilePicture}
+                    title={card.title}
+                    // description={card.description}
+                    description='sdfgggggggggggggggggggggggggggggggggggfgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg'
+                    dateCreated={new Date(
+                      card.dateCreated
+                    ).toLocaleDateString("en-CA")}
+                    UserProfileName={card.creator.userName} username={""}                  />
+                </div>
+              ))}
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

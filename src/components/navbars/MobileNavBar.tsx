@@ -35,7 +35,7 @@ const MobileNavBar = () => {
     setIsLocationOn(false);
     setIsGalleryOn(true);
     setIsProfileOn(false);
-    push("/home/map");
+    push("/home/gallery");
   };
   const handleProfileButton = () => {
     setIsHomeOn(false);

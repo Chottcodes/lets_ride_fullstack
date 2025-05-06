@@ -1,4 +1,4 @@
-import { AddGalleryPost, InputField, IUserCardType, IUserCreate, IUserInfo, LikesRoutesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
+import { AddGalleryPost, CommentsModelRoute, InputField, IUserCardType, IUserCreate, IUserInfo, LikesRoutesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -102,6 +102,7 @@ export const PostRoute = async (route:RoutePostTypes ) => {
 export const GetRoute = async () => {
     const res = await fetch(url + `RideTables/GetRoutes`)
     const data = await res.json();
+    console.log(data)
     return data;
 }
 export const GetProfileById = async (id:number) => {
@@ -181,7 +182,7 @@ export const AddLike = async (Likes:LikesRoutesModel) => {
             },
             body: JSON.stringify(Likes)
         });
-        
+
         if(!res.ok)
         {
             console.log("Error");
@@ -190,3 +191,19 @@ export const AddLike = async (Likes:LikesRoutesModel) => {
         const data = await res.json();
         return data;
     }
+export const AddCommentRoute=async (comment:CommentsModelRoute) => {
+    const res = await fetch(url + "RideTables/AddComment",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },body: JSON.stringify(comment)
+    });
+    if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+        return data;
+
+}

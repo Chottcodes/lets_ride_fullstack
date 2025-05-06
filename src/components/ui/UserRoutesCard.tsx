@@ -7,11 +7,13 @@ import MapsUserCards from "../mapsUserCards";
 import "mapbox-gl/dist/mapbox-gl.css";
 interface RTypes {
   LikesNumber: number;
+  onCommentSubmit?: (comment: string) => void;
   RouteName: string;
   RouteDate: string | undefined;
   RouteComments?: number;
   RouteLikes?: number;
   RouteImage?: string | undefined;
+  commentNumbers:number
   UserprofilePicture?: string;
   ProfileName: string;
   RouteDescription?: string;
@@ -23,9 +25,13 @@ interface RTypes {
   comments?: CommentType[];
 }
 interface CommentType {
-  CommentText?: string;
+  commentText?: string;
   CreatedAt?: string;
-  User: [UserName: string, ProfilePicture: string];
+  user: {
+    userName: string;
+    profilePicture: string;
+   
+  };
 }
 const UserRoutesCard = (props: RTypes) => {
   const {
@@ -42,10 +48,13 @@ const UserRoutesCard = (props: RTypes) => {
     handleDislike,
     isLiked,
     comments,
+    commentNumbers,
   } = props;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
+
+  const [commentText, setCommentText] = useState<string>("");
 
   if (!isModalOpen)
     return (
@@ -117,7 +126,7 @@ const UserRoutesCard = (props: RTypes) => {
                   alt="comments"
                   className="w-full h-full"
                 />
-                {LikesNumber == null ? 0 : LikesNumber}
+                {commentNumbers == null ? 0 : commentNumbers}
               </button>
             </div>
           </section>
@@ -142,8 +151,8 @@ const UserRoutesCard = (props: RTypes) => {
 
   if (isModalOpen)
     return (
-      <article className="fixed top-0 left-0 w-screen h-[90%] bg-black bg-opacity-80 z-50 flex justify-center items-center">
-        <div className="w-[90%] h-[90%]  shadow-md rounded-md border-2 border-blue-500 flex flex-col overflow-hidden pl-2">
+      <article className="h-[90%] w-screen fixed top-0 left-0 z-50 flex justify-center items-center">
+        <div className="w-[95%] h-[95%] shadow-md rounded-md border-2 border-blue-500 bg-black flex flex-col overflow-hidden pl-2  lg:w-[50%] lg:h-[80%] lg:fixed lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2">
           <nav className="w-full h-10 flex justify-start items-center">
             <BackButtonComponent onClick={() => setIsModalOpen(false)} />
           </nav>
@@ -162,7 +171,7 @@ const UserRoutesCard = (props: RTypes) => {
             />
             {isImageOpen && (
               <div
-                className="fixed top-0 left-0  w-screen h-[100dvh] bg-black bg-opacity-90 flex justify-center items-start z-50"
+                className="fixed top-0 left-0  w-screen h-[100dvh] lg:w-full lg:h-full bg-black bg-opacity-90 flex justify-center items-start  z-50"
                 onClick={() => setIsImageOpen(false)}
               >
                 <Image
@@ -171,8 +180,8 @@ const UserRoutesCard = (props: RTypes) => {
                       ? RouteImage
                       : "/assets/images/card/motorbike.png"
                   }
-                  width={1200}
-                  height={800}
+                  width={1000}
+                  height={1000}
                   alt="Full Image"
                   className="w-full h-full object-contain"
                 />
@@ -204,7 +213,7 @@ const UserRoutesCard = (props: RTypes) => {
                   onClick={handleLike}
                   className={`${
                     isLiked ? "hidden" : "block"
-                  } cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2`}
+                  } cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2 text-white`}
                 >
                   <Image
                     src="/assets/images/card/thumbs-up.png"
@@ -219,7 +228,7 @@ const UserRoutesCard = (props: RTypes) => {
                   onClick={handleDislike}
                   className={`${
                     isLiked ? "block" : "hidden"
-                  } cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2`}
+                  } cursor-pointer h-[15px] w-[15px] flex justify-center items-center gap-2 text-white`}
                 >
                   <Image
                     src="/assets/images/thumbs-up-blue.png"
@@ -248,27 +257,28 @@ const UserRoutesCard = (props: RTypes) => {
               onClick={() => setIsCommentsOpen(!isCommentsOpen)}
               className={`${
                 isCommentsOpen ? "h-[100%] w-full" : "w-[90%] h-[20%]"
-              }  cursor-pointer `}
+              }  cursor-pointer text-white`}
             >
               {isCommentsOpen ? "Back" : `Comments ${comments?.length}`}
               {isCommentsOpen && (
-                <section className=" w-full h-full relative">
+                <section
+                  className=" w-full h-full relative"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <main className="overflow-y-auto max-h-[80%] px-4 py-2 text-white space-y-3">
                     {comments && comments.length > 0 ? (
                       comments.map((comment, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                        <div key={index} className="flex items-center gap-2">
                           <Avatar>
                             <AvatarImage
-                              src={comment.User[1]}
+                              src={comment.user.profilePicture}
                               className="w-8 h-8 rounded-full object-cover"
                             />
-                            <AvatarFallback>{comment.User[0]}</AvatarFallback>
+                            <AvatarFallback>{comment.user.userName}</AvatarFallback>
                           </Avatar>
-                          <div className="bg-gray-700 px-3 py-2 rounded-lg max-w-[80%]">
-                            <p className="text-sm font-semibold">
-                              {comment.User[0]}
-                            </p>
-                            <p className="text-sm">{comment.CommentText}</p>
+                          <p>{`@${comment.user.userName}`}</p>
+                          <div className="bg-gray-700 px-3 py-2 rounded-lg max-w-[60%] flex justify-between items-center gap-5">
+                            <p className="text-sm">{comment.commentText}</p>
                             <p className="text-xs text-gray-400">
                               {comment.CreatedAt
                                 ? new Date(
@@ -294,21 +304,32 @@ const UserRoutesCard = (props: RTypes) => {
                         <AvatarFallback>User Profile</AvatarFallback>
                       </Avatar>
                     </div>
-                    <div className="w-[80%] h-[80%] bg-gray-500 rounded-lg">
+                    <div className="w-[80%] h-[60%] bg-gray-500 rounded-lg overflow-hidden">
                       <input
-                        className="w-full h-full  pl-2 text-white"
+                        className="w-full h-full pl-2 text-white"
                         placeholder="Comment..."
                         type="text"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
                       />
                     </div>
                     <div className="w-[10%] h-[10%] flex justify-center items-center">
-                      <Image
-                        src="/assets/images/send.png"
-                        className="object-contain"
-                        alt="send icon"
-                        width={100}
-                        height={100}
-                      />
+                      <button
+                        onClick=
+                        {() => {
+                          if (commentText.trim() !== "") {
+                            props.onCommentSubmit?.(commentText); 
+                            setCommentText("");
+                          }
+                        }}>
+                        <Image
+                          src="/assets/images/send.png"
+                          className="object-contain"
+                          alt="send icon"
+                          width={100}
+                          height={100}
+                        />
+                      </button>
                     </div>
                   </footer>
                 </section>

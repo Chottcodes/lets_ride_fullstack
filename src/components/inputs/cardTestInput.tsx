@@ -21,8 +21,6 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   const [titleInput, setTitleInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
-  console.log(isOpen)
-  console.log(onClose)
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));
@@ -55,17 +53,16 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   // }
   const handleSubmit = async () => {
 
-    if(image)
-    {
-    const inputFieldObj: AddGalleryPost = {
-      ImageUrl: image,
-      Title: titleInput,
-      Description: descriptionInput,
-      IsDeleted: false
-      
-    }
+    if (image && userId !== null) {
+      const inputFieldObj: AddGalleryPost = {
+        ImageUrl: image,
+        CreatorId: userId,
+        Title: titleInput,
+        Description: descriptionInput,
+        IsDeleted: false
+      };
       const res = await addGalleryPost(inputFieldObj);
-      if(res) console.log("Post created:", res);
+      if (res) console.log("Post created:", res);
     }
     resetModal();
   };
@@ -81,7 +78,7 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   return (
     <>
       {/* Open Modal Button */}
-      <div className="flex justify-center mt-10">
+      <div className="flex justify-center">
         <button
           className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
           onClick={() => setOpenModal(true)}

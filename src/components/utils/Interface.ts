@@ -9,7 +9,10 @@ export interface IUserCreate
 export interface IUserCardType {
     id: number;
     creatorId: number;
-    username: string;
+    creator: {
+    profilePicture: string;
+    userName: string;
+    };
     imageUrl: string;
     title: string;
     description: string;
@@ -133,13 +136,14 @@ export interface Coordinates {
       createdAt:string
     }
     interface comments{
-      CommentText?:string;
-  CreatedAt?:string;
-  User:[
-    UserName:string,
-    ProfilePicture:string,
-  ]
-    }
+        commentText?: string;
+        createdAt?: string;
+        user: {
+          userName: string;
+          profilePicture: string;
+        };
+      }
+    
     interface UserProfile {
         id: number;
         userId: number;
@@ -161,8 +165,15 @@ export interface Coordinates {
       export interface AddGalleryPost
       {
         ImageUrl: string;
+        CreatorId:number;
         Title: string;
         Description: string;
-       
         IsDeleted: boolean;
+      }
+      export interface CommentsModelRoute
+      {
+        UserId:number;
+        RouteId:number;
+        CommentText:string;
+        IsDeleted:boolean;
       }
