@@ -1,10 +1,9 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-import { storage } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 
 interface PopulationData {
   imageUrl: string;
@@ -13,7 +12,6 @@ interface PopulationData {
   dateCreated: string;
   likes?: number;
   comments?: { text: string }[];
-  username: string;
   UserprofilePicture: string;
   UserProfileName: string;
 }
@@ -26,7 +24,7 @@ const UserCardsPost = (props: PopulationData) => {
     dateCreated,
     likes,
     comments,
-    username,
+   
     UserprofilePicture,
     UserProfileName,
   } = props;
@@ -35,34 +33,7 @@ const UserCardsPost = (props: PopulationData) => {
   const [isModel, setIsModel] = useState(false);
   const [isFullImage, setIsFullImage] = useState(false);
   const [isUserLiked, setIsUserLiked] = useState(false);
- 
-
-  const [userId, setUserId] = useState<number>();
-
-
-  const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-
-    try {
-      if (file) {
-        const imageRef = ref(storage, `galleryPicture/${userId}_${file?.name}`);
-        await uploadBytes(imageRef, file);
-        const url = await getDownloadURL(imageRef);
-       
-
-        console.log("Uploaded gallery Post:", url);
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-
-  useEffect(() => {
-    const userId = localStorage.getItem("ID");
-    if (userId) {
-      setUserId(Number(userId));
-    }
-  }, []);
+  
 
   return (
     <>
@@ -213,29 +184,29 @@ const UserCardsPost = (props: PopulationData) => {
                 </div>
 
                 {/* Likes & Comments */}
-                <div className="w-full border-t bg-red-500">
+                <div className="w-full border-t">
                   <div className="flex items-center gap-5">
-                    <button className="flex items-center space-x-2 text-gray-700">
+                    <button className="flex items-center space-x-2 text-white">
                       <Image
                         src="/assets/images/card/thumbs-up.png"
                         width={1000}
                         height={1000}
                         alt="Like"
-                        className="w-6 h-6 text-black"
+                        className="w-6 h-6 text-black cursor-pointer"
                       />
                       <p className="text-[18px]">{likes == null ? 0 : likes}</p>
                     </button>
 
-                    <button className="flex items-center space-x-2 text-gray-700">
+                    <button className="w-[90%] flex items-center space-x-2 text-white">
                       <Image
                         src="/assets/images/card/coment.png"
                         alt="Comment"
-                        className="w-6 h-6 mt-1 opacity-70"
+                        className="w-6 h-6 mt-1 cursor-pointer"
                         width={1000}
                         height={1000}
                       />
-                      <div className="text-lg flex gap-3 ">
-                        Comments
+                      <div className="w-[15%] text-lg flex gap-2">
+                        <p>Comments</p>
                         {comments == null ? 0 : comments.length}
                       </div>
                     </button>

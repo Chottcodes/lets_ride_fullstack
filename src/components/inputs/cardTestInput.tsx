@@ -5,9 +5,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { AddGalleryPost } from "../utils/Interface";
 import { addGalleryPost } from "../utils/DataServices";
-
-
-
+import { Switch } from "../ui/switch";
 
 interface CardPostModalProps {
   isOpen: boolean;
@@ -20,7 +18,8 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [titleInput, setTitleInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [isImage, setIsImage] = useState<boolean>(false);
+  const [isVideo, setIsVideo] = useState<boolean>(false);
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));
@@ -29,11 +28,12 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const previewUrl = URL.createObjectURL(file);
-    setImagePreview(previewUrl);
+    if (previewUrl) {
+      setImagePreview(previewUrl);
+    }
 
-    if (userId !== null) {
+    if (userId !== null && isImage) {
       try {
         const imageRef = ref(storage, `gallerypicture/${userId}_${file.name}`);
         await uploadBytes(imageRef, file);
@@ -52,14 +52,14 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   //   return;
   // }
   const handleSubmit = async () => {
-
+    setIsImage(true);
     if (image && userId !== null) {
       const inputFieldObj: AddGalleryPost = {
         ImageUrl: image,
         CreatorId: userId,
         Title: titleInput,
         Description: descriptionInput,
-        IsDeleted: false
+        IsDeleted: false,
       };
       const res = await addGalleryPost(inputFieldObj);
       if (res) console.log("Post created:", res);
@@ -68,12 +68,20 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   };
 
   const resetModal = () => {
-    setOpenModal(false);
+    onClose();
     setImage(null);
     setImagePreview(null);
     setTitleInput("");
     setDescriptionInput("");
   };
+  useEffect(()=>{
+    if(isVideo)
+    {
+      console.log("video")
+    }else{
+      console.log("image")
+    }
+  },[isVideo])
 
   return (
     <>
@@ -81,14 +89,14 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
       <div className="flex justify-center">
         <button
           className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
-          onClick={() => setOpenModal(true)}
+          
         >
-          + Upload Image / Route
+          Upload Image
         </button>
       </div>
 
       {/* Modal */}
-      {openModal && (
+      {isOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center"
           onClick={resetModal}
@@ -104,7 +112,7 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  className="w-full h-[250px] object-cover rounded border"
+                  className="w-full h-[250px] object-contain rounded border"
                 />
               </div>
             )}
@@ -114,7 +122,6 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
               onChange={handleImagePost}
               className="mb-2 w-full cursor-pointer file:cursor-pointer file:rounded file:border file:border-gray-300 file:px-4 file:py-2 file:bg-white file:hover:bg-blue-50 file:text-sm file:text-gray-700 transition"
             />
-
 
             <input
               type="text"
@@ -130,6 +137,13 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
               value={descriptionInput}
               onChange={(e) => setDescriptionInput(e.target.value)}
             />
+            <div className="w-full h-[20%] flex items-center gap-2 ">
+              <Switch
+                checked={isVideo}
+                onCheckedChange={(checked: boolean) => setIsVideo(checked)}
+              />
+              {isVideo ? "Video" : "Image"}
+            </div>
 
             <div className="flex justify-end gap-4 mt-4">
               <button

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState} from "react";
 import NavbarHeader from "@/components/ui/NavbarHeader";
 import UserCards from "@/components/ui/UserCards";
-import { IUserCardType, RouteGetTypes } from "@/components/utils/Interface";
+import { IUserCardType } from "@/components/utils/Interface";
 import OpenPostModal from "@/components/inputs/cardTestInput";
 
 import { getGalleryPosts } from "@/components/utils/DataServices";
@@ -64,12 +64,11 @@ const Page = () => {
                     imageUrl={card.imageUrl}
                     UserprofilePicture={card.creator.profilePicture}
                     title={card.title}
-                    // description={card.description}
-                    description='sdfgggggggggggggggggggggggggggggggggggfgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg'
+                    description={card.description}
                     dateCreated={new Date(
                       card.dateCreated
                     ).toLocaleDateString("en-CA")}
-                    UserProfileName={card.creator.userName} username={""}                  />
+                    UserProfileName={card.creator.userName}                />
                 </div>
               ))}
           </div>
