@@ -3,10 +3,10 @@
 import React, { useEffect, useState} from "react";
 import NavbarHeader from "@/components/ui/NavbarHeader";
 import UserCards from "@/components/ui/UserCards";
-import { IUserCardType } from "@/components/utils/Interface";
+import { IUserCardType, LikesGalleryModel } from "@/components/utils/Interface";
 import OpenPostModal from "@/components/inputs/cardTestInput";
 
-import { getGalleryPosts } from "@/components/utils/DataServices";
+import { AddGalleryLike, getGalleryPosts } from "@/components/utils/DataServices";
 
 // const typedUserCards: IUserCardType[] = cardData;
 // const typedUserRoutes: IUserCardType[] = cardRoute;
@@ -14,12 +14,30 @@ import { getGalleryPosts } from "@/components/utils/DataServices";
 const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
+   const [likedGallery, setLikedGallery] = useState<Set<number>>(new Set());
 
   // Drag Scroll Wheel
 
   // For Push Fetch
   const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
- 
+  
+ const LikeGalleryPost = async (GalleryId: number) => {
+     if (userId === null) {
+       console.error("UserId is null. Cannot add like.");
+       return;
+     }
+     const likeObj: LikesGalleryModel = {
+       UserId: userId,
+       GalleryPostId: GalleryId,
+       IsDeleted: false,
+     };
+     const response = await AddGalleryLike(likeObj);
+     if (response) {
+       console.log("Like added successfully");
+     } else {
+       console.error("Error adding like");
+     }
+   };
 
   // Data population (commented out for dummy data)
   useEffect(() => {
@@ -48,8 +66,6 @@ const Page = () => {
           <div className="hidden lg:flex">
             {userId !== null && (
               <OpenPostModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
               />
             )}
           </div>
@@ -63,12 +79,17 @@ const Page = () => {
                   <UserCards
                     imageUrl={card.imageUrl}
                     UserprofilePicture={card.creator.profilePicture}
+                    likes={card.likes.map((like, index) => ({ id: index, ...like }))}
+                    comments={card.comments}
+                    isLiked={likedGallery.has(card.id)}
                     title={card.title}
                     description={card.description}
                     dateCreated={new Date(
                       card.dateCreated
                     ).toLocaleDateString("en-CA")}
-                    UserProfileName={card.creator.userName}                />
+                    UserProfileName={card.creator.userName} 
+                    handleLike={() => LikeGalleryPost(card.id)}
+                    />
                 </div>
               ))}
           </div>

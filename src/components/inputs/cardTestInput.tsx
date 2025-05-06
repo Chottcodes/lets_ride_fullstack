@@ -7,18 +7,14 @@ import { AddGalleryPost } from "../utils/Interface";
 import { addGalleryPost } from "../utils/DataServices";
 import { Switch } from "../ui/switch";
 
-interface CardPostModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
 
-const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
+const OpenPostModal = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [titleInput, setTitleInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
-  const [isImage, setIsImage] = useState<boolean>(false);
   const [isVideo, setIsVideo] = useState<boolean>(false);
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -33,7 +29,7 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
       setImagePreview(previewUrl);
     }
 
-    if (userId !== null && isImage) {
+    if (userId !== null) {
       try {
         const imageRef = ref(storage, `gallerypicture/${userId}_${file.name}`);
         await uploadBytes(imageRef, file);
@@ -52,7 +48,7 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   //   return;
   // }
   const handleSubmit = async () => {
-    setIsImage(true);
+    
     if (image && userId !== null) {
       const inputFieldObj: AddGalleryPost = {
         ImageUrl: image,
@@ -68,7 +64,7 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
   };
 
   const resetModal = () => {
-    onClose();
+    setIsOpen(false)
     setImage(null);
     setImagePreview(null);
     setTitleInput("");
@@ -89,7 +85,7 @@ const OpenPostModal = ({ isOpen, onClose }: CardPostModalProps) => {
       <div className="flex justify-center">
         <button
           className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
-          
+          onClick={() => setIsOpen(true)}
         >
           Upload Image
         </button>

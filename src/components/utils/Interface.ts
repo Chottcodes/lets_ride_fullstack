@@ -161,6 +161,11 @@ export interface Coordinates {
         RouteId:number
         IsDeleted:boolean
       }
+      export interface LikesGalleryModel{
+        UserId:number
+        GalleryPostId:number
+        IsDeleted:boolean
+      }
 
       export interface AddGalleryPost
       {

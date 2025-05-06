@@ -3,17 +3,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
 import React, { useState } from "react";
 
-
-
 interface PopulationData {
   imageUrl: string;
   title: string;
   description: string;
   dateCreated: string;
-  likes?: number;
+  isLiked: boolean;
+  likes?: Likes[];
   comments?: { text: string }[];
   UserprofilePicture: string;
   UserProfileName: string;
+  handleLike: () => void;
+}
+interface Likes {
+  id: number;
 }
 
 const UserCardsPost = (props: PopulationData) => {
@@ -24,16 +27,16 @@ const UserCardsPost = (props: PopulationData) => {
     dateCreated,
     likes,
     comments,
-   
     UserprofilePicture,
     UserProfileName,
+    isLiked,
+    handleLike,
   } = props;
 
   // Model Card
-  const [isModel, setIsModel] = useState(false);
-  const [isFullImage, setIsFullImage] = useState(false);
-  const [isUserLiked, setIsUserLiked] = useState(false);
-  
+  const [isModel, setIsModel] = useState<boolean>(false);
+  const [isFullImage, setIsFullImage] = useState<boolean>(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
 
   return (
     <>
@@ -45,7 +48,7 @@ const UserCardsPost = (props: PopulationData) => {
               width={1000}
               height={1000}
               alt="User Image"
-              className=" w-[465px] h-[250px] object-cover cursor-pointer"
+              className=" w-[465px] h-[250px] object-contain cursor-pointer"
             />
           </button>
         </section>
@@ -70,40 +73,29 @@ const UserCardsPost = (props: PopulationData) => {
           <div className="flex justify-center items-center space-x-4 ">
             <div className="flex justify-center items-center gap-2">
               {/* If liked */}
-              {isUserLiked ? (
-                <button
-                  onClick={() => setIsUserLiked(false)}
-                  className="w-[50%] h-[35%] flex items-center  cursor-pointer"
-                >
+              {isLiked ? (
+                <button className={"flex items-center space-x-2 text-white"}>
                   <Image
-                    src={
-                      isUserLiked
-                        ? "/assets/images/card/like (1).png"
-                        : "/assets/images/card/thumbs-up.png"
-                    }
-                    alt="Liked"
+                    src="/assets/images/thumbs-up-blue.png"
                     width={1000}
                     height={1000}
-                    className="w-[20px] h-[20px] object-contain"
+                    alt="Like"
+                    className="w-6 h-6 text-black cursor-pointer"
                   />
-                  <p className="text-lg font-medium">
-                    {likes == null ? 0 : likes}
-                  </p>
+                  <p className="text-[18px]">{likes?.length}</p>
                 </button>
               ) : (
                 // Default like
-                <button
-                  onClick={() => setIsUserLiked(true)}
-                  className="w-[50%] h-[20%] flex items-center gap-2 cursor-pointer"
-                >
+                <button className={"flex items-center space-x-2 text-white"}>
                   <Image
+                    onClick={handleLike}
                     src="/assets/images/card/thumbs-up.png"
-                    alt="Like"
                     width={1000}
                     height={1000}
-                    className="object-contain w-[20px] h-[20px]"
+                    alt="Like"
+                    className="w-6 h-6 text-black cursor-pointer"
                   />
-                  <p className="text-[18px]">{likes == null ? 0 : likes}</p>
+                  <p className="text-[18px]">{likes?.length}</p>
                 </button>
               )}
             </div>
@@ -179,26 +171,71 @@ const UserCardsPost = (props: PopulationData) => {
                 </div>
 
                 {/* Description */}
-                <div className="h-[15%] text-white text-lg overflow-auto break-words whitespace-pre-wrap">
-                <p className="indent-8 text-lg">{description}</p>
+                <div
+                  className={`${
+                    isCommentsOpen ? "h-[50%]" : "h-[15%]"
+                  } w-full h-[15%] text-white text-lg overflow-auto break-words whitespace-pre-wrap`}
+                >
+                  {isCommentsOpen ? (
+                    <div className="text-lg relative">
+                      {comments?.map((comment, index) => (
+                        <p key={index}>{comment.text}</p>
+                      ))}
+                      <div className="w-full h-full flex items-center bg-gray-600">
+                        <div className="h-[35px] w-[35px] rounded-full">
+                          <Avatar>
+                            <AvatarImage
+                              src={UserprofilePicture}
+                              className="object-contain w-full h-full"
+                            />
+                            <AvatarFallback>User Profile</AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <input type="text" placeholder="Comment..." className="w-[90%] h-full text-sm pl-2" />
+                        <div className="">
+                          <Image src={'/assets/images/send.png'} width={500} height={500} alt={"send icon"} className="object-contain h-[20px] w-[20px]"/>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="indent-8 text-lg">{description}</p>
+                  )}
                 </div>
 
                 {/* Likes & Comments */}
                 <div className="w-full border-t">
                   <div className="flex items-center gap-5">
-                    <button className="flex items-center space-x-2 text-white">
-                      <Image
-                        src="/assets/images/card/thumbs-up.png"
-                        width={1000}
-                        height={1000}
-                        alt="Like"
-                        className="w-6 h-6 text-black cursor-pointer"
-                      />
-                      <p className="text-[18px]">{likes == null ? 0 : likes}</p>
-                    </button>
+                    {isLiked ? (
+                      <button
+                        className={"flex items-center space-x-2 text-white"}
+                      >
+                        <Image
+                          src="/assets/images/thumbs-up-blue.png"
+                          width={1000}
+                          height={1000}
+                          alt="Like"
+                          className="w-6 h-6 text-black cursor-pointer"
+                        />
+                        <p className="text-[18px]">{likes?.length}</p>
+                      </button>
+                    ) : (
+                      <button
+                        className={"flex items-center space-x-2 text-white"}
+                      >
+                        <Image
+                          src="/assets/images/card/thumbs-up.png"
+                          width={1000}
+                          height={1000}
+                          alt="Like"
+                          className="w-6 h-6 text-black cursor-pointer"
+                        />
+                        <p className="text-[18px]">{likes?.length}</p>
+                      </button>
+                    )}
 
                     <button className="w-[90%] flex items-center space-x-2 text-white">
                       <Image
+                        onClick={() => setIsCommentsOpen(!isCommentsOpen)}
                         src="/assets/images/card/coment.png"
                         alt="Comment"
                         className="w-6 h-6 mt-1 cursor-pointer"

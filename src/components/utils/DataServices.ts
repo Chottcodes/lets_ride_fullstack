@@ -1,4 +1,4 @@
-import { AddGalleryPost, CommentsModelRoute, InputField, IUserCreate, IUserInfo, LikesRoutesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
+import { AddGalleryPost, CommentsModelRoute, InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes} from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -34,7 +34,7 @@ export const logIn = async (user: IUserInfo) =>{
         const message = data.message;
         console.log(message);
        
-        return null;
+          return false;
     }
     const data = await response.json();
     return data;
@@ -144,14 +144,11 @@ export const getGalleryPosts = async () => {
         if (!res.ok) {
           const errText = await res.json();
           console.error("Fetch failed:", res.status, errText);
-          return null;
         }
-    
         const data = await res.json();
         return data;
       } catch (err) {
         console.error("Network error:", err);
-        return null;
       }
  }
 
@@ -174,6 +171,24 @@ export const getGalleryPosts = async () => {
             return data;
         }
 export const AddLike = async (Likes:LikesRoutesModel) => {
+    
+        const res = await fetch(url + "RideTables/AddLike", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(Likes)
+        });
+
+        if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+        return data;
+    }
+export const AddGalleryLike = async (Likes:LikesGalleryModel) => {
     
         const res = await fetch(url + "RideTables/AddLike", {
             method: "POST",
