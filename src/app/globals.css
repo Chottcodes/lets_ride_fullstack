@@ -7,24 +7,24 @@ body{
   font-family: 'Antonio-Regular';
   background-color: black;
   height: 100%;
-  overflow: hidden
+  overflow: hidden;
 }
 .custom-scrollbar::-webkit-scrollbar {
   height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #000000; /* Tailwind gray-800 */
+  background: gray; 
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d5d3f7; /* Tailwind indigo-600 */
+  background: white; 
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #3474ff; /* Tailwind indigo-500 */
+  background: #3474ff; 
 }
 
 @import "tailwindcss";

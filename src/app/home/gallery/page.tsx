@@ -1,45 +1,22 @@
 "use client";
 
-import React, { useEffect, useState} from "react";
-import NavbarHeader from "@/components/ui/NavbarHeader";
+import React, { useEffect, useState } from "react";
+
 import UserCards from "@/components/ui/UserCards";
-import { IUserCardType, LikesGalleryModel } from "@/components/utils/Interface";
+import { IUserCardType, VideoGet } from "@/components/utils/Interface";
 import OpenPostModal from "@/components/inputs/cardTestInput";
+import Image from "next/image";
+import { getGalleryPosts, GetVideo } from "@/components/utils/DataServices";
 
-import { AddGalleryLike, getGalleryPosts } from "@/components/utils/DataServices";
-
-// const typedUserCards: IUserCardType[] = cardData;
-// const typedUserRoutes: IUserCardType[] = cardRoute;
+import VideoComponet from "@/components/VideoComponet";
+import VideoModal from "@/components/VideoModal";
 
 const Page = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userId, setUserId] = useState<number | null>(null);
-   const [likedGallery, setLikedGallery] = useState<Set<number>>(new Set());
-
-  // Drag Scroll Wheel
-
-  // For Push Fetch
   const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
-  
- const LikeGalleryPost = async (GalleryId: number) => {
-     if (userId === null) {
-       console.error("UserId is null. Cannot add like.");
-       return;
-     }
-     const likeObj: LikesGalleryModel = {
-       UserId: userId,
-       GalleryPostId: GalleryId,
-       IsDeleted: false,
-     };
-     const response = await AddGalleryLike(likeObj);
-     if (response) {
-       console.log("Like added successfully");
-     } else {
-       console.error("Error adding like");
-     }
-   };
-
-  // Data population (commented out for dummy data)
+  const [userVideoData, setUserVideoData] = useState<VideoGet[]>([]);
+  const [isImagePosted, setIsImagePosted] = useState<boolean>(false);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [videoId,setVideoId]=useState<number>()
   useEffect(() => {
     const fetchPosts = async () => {
       const res = await getGalleryPosts();
@@ -47,54 +24,86 @@ const Page = () => {
       console.log(data);
       setUserCardsDataArr(data);
     };
-
+    const fetchVideos = async () => {
+      const res = await GetVideo();
+      const data = await res;
+      console.log("Refetched Video:", data);
+      setUserVideoData(data);
+    };
+    fetchVideos();
     fetchPosts();
   }, []);
-
   useEffect(() => {
-    const storedId = localStorage.getItem("ID");
-    if (storedId) setUserId(Number(storedId));
-  }, []);
+    if (isImagePosted) {
+      const fetchPosts = async () => {
+        const res = await getGalleryPosts();
+        const data = await res;
+        console.log("Refetched Images:", data);
+        setUserCardsDataArr(data);
+      };
+      const fetchVideos = async () => {
+        const res = await GetVideo();
+        const data = await res;
+        console.log("Refetched Video:", data);
+        setUserVideoData(data);
+      };
+      fetchVideos();
+      fetchPosts();
+      setIsImagePosted(false);
+    }
+  }, [isImagePosted]);
 
   return (
-    <div className="h-[100dvh] w-full">
-      <header>
-        <NavbarHeader />
+    <div className="h-[100dvh] w-full flex flex-col relative ">
+      <header className="w-full h-[20%] flex flex-col items-center text-white">
+        <Image
+          className="w-full h-[80%] object-contain"
+          src="/assets/images/Logo.png"
+          alt="Description of image"
+          width={900}
+          height={900}
+        />
       </header>
-        <section className="w-[90%] h-[10%] m-auto flex justify-between items-center">
-          <h1 className="text-[30px] text-white ">Gallery</h1>
-          <div className="hidden lg:flex">
-            {userId !== null && (
-              <OpenPostModal
-              />
-            )}
+      <section className="w-full h-[10%] m-auto flex justify-between items-center">
+        <h1 className="text-[30px] text-white pl-5">Gallery</h1>
+        <div className="hidden lg:flex pr-10">
+          {userCardsDataArr !== null && (
+            <OpenPostModal
+              isPosted={(value: boolean) => setIsImagePosted(value)}
+            />
+          )}
+        </div>
+      </section>
+      <main className="sm:w-full lg:w-full lg:h-full flex flex-col justify-start">
+        <section className="w-full h-[50%]">
+          <div className="w-full flex flex-row gap-2 overflow-x-auto custom-scrollbar pl-3">
+            {userCardsDataArr.map((card, index) => (
+              <div className="w-[30%] h-[50%] flex-shrink-0" key={index}>
+                <UserCards {...card} />
+              </div>
+            ))}
           </div>
         </section>
-      <main className="sm:w-full lg:w-full lg:h-full flex justify-center">
-        <section className="w-[90%] h-[50%]">
-          <div className="w-[30%] flex flex-row gap-2 ">
-            {
-              userCardsDataArr.map((card, index) => (
-                <div className="w-[90%] h-[50%] flex-shrink-0" key={index}>
-                  <UserCards
-                    imageUrl={card.imageUrl}
-                    UserprofilePicture={card.creator.profilePicture}
-                    likes={card.likes.map((like, index) => ({ id: index, ...like }))}
-                    comments={card.comments}
-                    isLiked={likedGallery.has(card.id)}
-                    title={card.title}
-                    description={card.description}
-                    dateCreated={new Date(
-                      card.dateCreated
-                    ).toLocaleDateString("en-CA")}
-                    UserProfileName={card.creator.userName} 
-                    handleLike={() => LikeGalleryPost(card.id)}
-                    />
-                </div>
-              ))}
+        <section className="w-full h-[10%] flex items-center">
+          <h1 className="text-[30px] text-white pl-5">Videos</h1>
+        </section>
+        <section className="w-full h-[70%]">
+          <div className="w-full h-[95%] flex flex-row gap-2 overflow-x-auto custom-scrollbar pl-3">
+            {userVideoData.map((videos, index) => (
+              <div className="w-[20%] h-full flex-shrink-0" key={index}>
+                <VideoComponet {...videos} onClick={() => { setSelectedVideo(videos.videoUrl); setVideoId(videos.id); }} />
+              </div>
+            ))}
           </div>
         </section>
       </main>
+      {selectedVideo && (
+        <VideoModal
+          videoUrl={selectedVideo}
+          videoId={videoId? videoId:0}
+          onClose={() => setSelectedVideo(null)}
+        />
+      )}
     </div>
   );
 };

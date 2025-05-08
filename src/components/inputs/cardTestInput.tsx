@@ -3,18 +3,22 @@
 import React, { useEffect, useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
-import { AddGalleryPost } from "../utils/Interface";
-import { addGalleryPost } from "../utils/DataServices";
+import { AddGalleryPost, AddVideoTypes } from "../utils/Interface";
+import { addGalleryPost, AddVideo } from "../utils/DataServices";
 import { Switch } from "../ui/switch";
+interface OpenPostModalProps {
+  isPosted: (value: boolean) => void;
+}
 
-
-const OpenPostModal = () => {
+const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
-  const [image, setImage] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [url, setURL] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
   const [titleInput, setTitleInput] = useState<string>("");
   const [descriptionInput, setDescriptionInput] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
   const [isVideo, setIsVideo] = useState<boolean>(false);
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -24,21 +28,27 @@ const OpenPostModal = () => {
   const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // const isImageFile = file.type.startsWith("image/");
+    // const isVideoFile = file.type.startsWith("video/");
+
+    // if (isVideo && !isVideoFile) {
+    //   alert("Please upload a valid video file.");
+    //   return;
+    // }
+
+    // if (!isVideo && !isImageFile) {
+    //   alert("Please upload a valid image file.");
+    //   return;
+    // }
+    const maxFileSize = 20 * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      alert("File size must be under 20MB.");
+      return;
+    }
     const previewUrl = URL.createObjectURL(file);
     if (previewUrl) {
-      setImagePreview(previewUrl);
-    }
-
-    if (userId !== null) {
-      try {
-        const imageRef = ref(storage, `gallerypicture/${userId}_${file.name}`);
-        await uploadBytes(imageRef, file);
-        const url = await getDownloadURL(imageRef);
-        setImage(url);
-        console.log("Uploaded image URL:", url);
-      } catch (error) {
-        console.error("Error uploading image:", error);
-      }
+      setPreview(previewUrl);
+      setFile(file);
     }
   };
 
@@ -48,36 +58,57 @@ const OpenPostModal = () => {
   //   return;
   // }
   const handleSubmit = async () => {
-    
-    if (image && userId !== null) {
-      const inputFieldObj: AddGalleryPost = {
-        ImageUrl: image,
-        CreatorId: userId,
-        Title: titleInput,
-        Description: descriptionInput,
-        IsDeleted: false,
-      };
-      const res = await addGalleryPost(inputFieldObj);
-      if (res) console.log("Post created:", res);
+    if (file && userId !== null) {
+      try {
+        const uploadRef = isVideo
+          ? ref(storage, `galleryvideos/${userId}_${file.name}`)
+          : ref(storage, `gallerypicture/${userId}_${file.name}`);
+        await uploadBytes(uploadRef, file);
+        const downloadURL = await getDownloadURL(uploadRef);
+        if (isVideo) {
+          
+          const inputFieldObj: AddVideoTypes = {
+            VideoUrl: downloadURL,
+            CreatorId: userId,
+            Title: titleInput,
+            IsDeleted: false,
+          };
+          const res = await AddVideo(inputFieldObj);
+          if (res) {
+            console.log("Video post created:", res);
+            isPosted(true);
+          }
+        } else {
+          const inputFieldObj: AddGalleryPost = {
+            ImageUrl: downloadURL,
+            CreatorId: userId,
+            Title: titleInput,
+            Description: descriptionInput,
+            IsDeleted: false,
+          };
+          const res = await addGalleryPost(inputFieldObj);
+          if (res) {
+            console.log("Image post created:", res);
+            isPosted(true);
+          }
+        }
+  
+        resetModal();
+      } catch (error) {
+        console.error("Error uploading file or posting:", error);
+      }
+    } else {
+      alert("Missing file or user ID");
     }
-    resetModal();
   };
 
   const resetModal = () => {
-    setIsOpen(false)
-    setImage(null);
-    setImagePreview(null);
+    setIsOpen(false);
+    setURL(null);
+    setPreview(null);
     setTitleInput("");
     setDescriptionInput("");
   };
-  useEffect(()=>{
-    if(isVideo)
-    {
-      console.log("video")
-    }else{
-      console.log("image")
-    }
-  },[isVideo])
 
   return (
     <>
@@ -87,7 +118,7 @@ const OpenPostModal = () => {
           className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition"
           onClick={() => setIsOpen(true)}
         >
-          Upload Image
+          Upload
         </button>
       </div>
 
@@ -103,13 +134,21 @@ const OpenPostModal = () => {
           >
             <h2 className="text-xl font-bold mb-4">Upload Image or Route</h2>
 
-            {imagePreview && (
+            {preview && (
               <div className="mb-4">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-[250px] object-contain rounded border"
-                />
+                {isVideo ? (
+                  <video
+                    controls
+                    src={preview}
+                    className="w-full h-[250px] object-contain rounded border"
+                  />
+                ) : (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-[250px] object-contain rounded border"
+                  />
+                )}
               </div>
             )}
 

@@ -135,7 +135,7 @@ export interface Coordinates {
       isDeleted:boolean
       createdAt:string
     }
-    interface comments{
+   interface comments{
         commentText?: string;
         createdAt?: string;
         user: {
@@ -143,7 +143,7 @@ export interface Coordinates {
           profilePicture: string;
         };
       }
-    
+      
     interface UserProfile {
         id: number;
         userId: number;
@@ -181,4 +181,35 @@ export interface Coordinates {
         RouteId:number;
         CommentText:string;
         IsDeleted:boolean;
+      }
+      export interface CommentsModelGallery
+      {
+        UserId:number;
+        GalleryPostId:number;
+        CommentText:string;
+        IsDeleted:boolean;
+      }
+     export interface GalleryComments{
+        commentText?: string;
+        createdAt?: string;
+        user: {
+          userName: string;
+          profilePicture: string;
+        };
+      }
+      export interface AddVideoTypes{
+        CreatorId:number;
+        VideoUrl:string;
+        Title:string;
+        IsDeleted:boolean;
+      }
+      export interface VideoGet{
+        id:number
+        creator:UserProfile;
+        videoUrl:string;
+        title:string;
+        isDeleted:boolean;
+        createdAt:string
+        likes:Likes[];
+        comments:comments[]
       }
