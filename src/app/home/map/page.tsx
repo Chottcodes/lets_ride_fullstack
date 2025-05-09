@@ -85,6 +85,9 @@ const MapPage = () => {
 
   return (
     <div className="h-[100dvh] w-full relative overflow-hidden">
+      <div className="w-full h-[10%] fixed bottom-0 flex justify-end items-center text-gray-500">
+        <p className="pe-30">Route creation is only available on mobile</p>
+      </div>
       <header className="bg-blue-700/5 backdrop-blur-2xl w-full h-[10%] flex justify-evenly items-center">
         <button
           onClick={handleMapButton}

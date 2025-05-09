@@ -81,11 +81,11 @@ const Page = () => {
         </div>
       </section>
       <main className="w-full h-screen lg:h-full flex flex-col justify-start overflow-y-scroll ">
-        <section className="w-full min-h-[350px] lg:min-h-[350px]">
-          <div className="w-full  lg:h-full flex flex-row gap-4 overflow-x-auto custom-scrollbar pl-3 pr-3">
+        <section className="w-full mb-5 min-h-[350px] lg:min-h-[350px]">
+          <div className="w-full  lg:h-full flex flex-row gap-4 overflow-x-auto custom-scrollbar pl-3 pr-3 ">
             {userCardsDataArr.map((card, index) => (
               <div
-                className="w-[350px] lg:min-w-[400px] flex-shrink-0"
+                className="w-[350px] pb-5 lg:min-w-[300px] flex-shrink-0"
                 key={index}
               >
                 <UserCards {...card} />
