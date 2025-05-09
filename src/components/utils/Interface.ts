@@ -129,9 +129,9 @@ export interface Coordinates {
 
         dateCreated: string;
     }
-    interface Likes{
+    export interface Likes{
       routeId:number
-      userId:1
+      userId:number
       isDeleted:boolean
       createdAt:string
     }
@@ -166,6 +166,11 @@ export interface Coordinates {
         GalleryPostId:number
         IsDeleted:boolean
       }
+      export interface LikesVideoModel{
+        UserId:number
+        VideoId:number
+        IsDeleted:boolean
+      }
 
       export interface AddGalleryPost
       {
@@ -186,6 +191,13 @@ export interface Coordinates {
       {
         UserId:number;
         GalleryPostId:number;
+        CommentText:string;
+        IsDeleted:boolean;
+      }
+      export interface CommentsModelVideo
+      {
+        UserId:number;
+        VideoId:number;
         CommentText:string;
         IsDeleted:boolean;
       }

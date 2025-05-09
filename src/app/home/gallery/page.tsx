@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import UserCards from "@/components/ui/UserCards";
-import { IUserCardType, VideoGet } from "@/components/utils/Interface";
+import { IUserCardType, Likes, VideoGet } from "@/components/utils/Interface";
 import OpenPostModal from "@/components/inputs/cardTestInput";
 import Image from "next/image";
 import { getGalleryPosts, GetVideo } from "@/components/utils/DataServices";
@@ -14,9 +14,11 @@ import VideoModal from "@/components/VideoModal";
 const Page = () => {
   const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
   const [userVideoData, setUserVideoData] = useState<VideoGet[]>([]);
+  const [likesCount,setLikesCount] = useState<number>()
   const [isImagePosted, setIsImagePosted] = useState<boolean>(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [videoId,setVideoId]=useState<number>()
+  const [videoLikes,setVideoLikes]=useState< Likes[]>([])
   useEffect(() => {
     const fetchPosts = async () => {
       const res = await getGalleryPosts();
@@ -30,6 +32,9 @@ const Page = () => {
       console.log("Refetched Video:", data);
       setUserVideoData(data);
     };
+    const setValue=()=>{
+      
+    }
     fetchVideos();
     fetchPosts();
   }, []);
@@ -55,7 +60,7 @@ const Page = () => {
 
   return (
     <div className="h-[100dvh] w-full flex flex-col relative ">
-      <header className="w-full h-[20%] flex flex-col items-center text-white">
+      <header className="w-full h-[15%] lg:h-[20%]  flex flex-col items-center text-white">
         <Image
           className="w-full h-[80%] object-contain"
           src="/assets/images/Logo.png"
@@ -64,7 +69,7 @@ const Page = () => {
           height={900}
         />
       </header>
-      <section className="w-full h-[10%] m-auto flex justify-between items-center">
+      <section className="w-full h-[10%] m-auto flex justify-between items-center ">
         <h1 className="text-[30px] text-white pl-5">Gallery</h1>
         <div className="hidden lg:flex pr-10">
           {userCardsDataArr !== null && (
@@ -74,24 +79,24 @@ const Page = () => {
           )}
         </div>
       </section>
-      <main className="sm:w-full lg:w-full lg:h-full flex flex-col justify-start">
-        <section className="w-full h-[50%]">
-          <div className="w-full flex flex-row gap-2 overflow-x-auto custom-scrollbar pl-3">
+      <main className="w-full h-screen lg:h-full flex flex-col justify-start overflow-y-scroll ">
+        <section className="w-full min-h-[350px] lg:min-h-[350px]">
+          <div className="w-full  lg:h-full flex flex-row gap-2 overflow-x-auto custom-scrollbar pl-3">
             {userCardsDataArr.map((card, index) => (
-              <div className="w-[30%] h-[50%] flex-shrink-0" key={index}>
+              <div className="w-[350px] lg:min-w-[400px] flex-shrink-0" key={index}>
                 <UserCards {...card} />
               </div>
             ))}
           </div>
         </section>
-        <section className="w-full h-[10%] flex items-center">
+        <section className="w-full h-[10%] flex items-center"> 
           <h1 className="text-[30px] text-white pl-5">Videos</h1>
         </section>
-        <section className="w-full h-[70%]">
-          <div className="w-full h-[95%] flex flex-row gap-2 overflow-x-auto custom-scrollbar pl-3">
+        <section className="w-full min-h-[450px] lg:h-[70%]">
+          <div className="w-full h-[80%] lg:h-[95%] flex flex-row gap-3 overflow-x-auto custom-scrollbar pl-3">
             {userVideoData.map((videos, index) => (
-              <div className="w-[20%] h-full flex-shrink-0" key={index}>
-                <VideoComponet {...videos} onClick={() => { setSelectedVideo(videos.videoUrl); setVideoId(videos.id); }} />
+              <div className="w-[50%] lg:w-[20%] h-full flex-shrink-0" key={index}>
+                <VideoComponet {...videos} onClick={() => { setSelectedVideo(videos.videoUrl); setVideoId(videos.id);setLikesCount(videos.likes.length);setVideoLikes(videos.likes) }} />
               </div>
             ))}
           </div>
@@ -101,6 +106,8 @@ const Page = () => {
         <VideoModal
           videoUrl={selectedVideo}
           videoId={videoId? videoId:0}
+          videoLikes={likesCount ?? 0}
+          videoLikeArr={videoLikes}
           onClose={() => setSelectedVideo(null)}
         />
       )}

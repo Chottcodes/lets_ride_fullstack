@@ -1,4 +1,4 @@
-import { AddGalleryPost, CommentsModelGallery, CommentsModelRoute, InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes } from "./Interface"
+import { AddGalleryPost, CommentsModelGallery, CommentsModelRoute, InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo } from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -206,7 +206,41 @@ export const AddGalleryLike = async (Likes:LikesGalleryModel) => {
         const data = await res.json();
         return data;
     }
+export const AddVideoLike = async (Likes:LikesVideoModel) => {
+    
+        const res = await fetch(url + "RideTables/AddLike", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(Likes)
+        });
+
+        if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+        return data;
+    }
+    
 export const AddCommentRoute=async (comment:CommentsModelRoute) => {
+    const res = await fetch(url + "RideTables/AddComment",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },body: JSON.stringify(comment)
+    });
+    if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+        return data;
+}
+export const AddCommentVideo=async (comment: CommentsModelVideo) => {
     const res = await fetch(url + "RideTables/AddComment",{
         method: "POST",
         headers: {
@@ -239,6 +273,16 @@ export const AddCommentGallery=async (comment:CommentsModelGallery) => {
 }
 export const GetGalleryComments=async(GalleryId:number)=>{
     const res = await fetch(url + `RideTables/GetGalleryComments/${GalleryId}`)
+    if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+        return data;
+}
+export const GetVideoComments=async(VideoId:number)=>{
+    const res = await fetch(url + `RideTables/GetVideoComments/${VideoId}`)
     if(!res.ok)
         {
             console.log("Error");

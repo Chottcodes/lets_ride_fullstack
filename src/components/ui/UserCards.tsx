@@ -24,6 +24,10 @@ const UserCardsPost = (props: IUserCardType) => {
   const [userComment, setUsercomment] = useState<string>("");
   const [userId, setUserId] = useState<number>();
   const [comments, setComments] = useState<GalleryComments[]>([]);
+  const [likesCount, setLikesCount] = useState<number>(
+    props.likes?.length || 0
+  );
+
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));
@@ -42,7 +46,7 @@ const UserCardsPost = (props: IUserCardType) => {
       };
       const response = await AddCommentGallery(CommentsOBj);
       if (response) {
-        
+        setIsCommentPosted(true);
         setUsercomment("");
         const updatedComments = await GetGalleryComments(GalleryId);
         setComments(updatedComments);
@@ -55,11 +59,20 @@ const UserCardsPost = (props: IUserCardType) => {
       const getGalleryPosts = await GetGalleryComments(props.id);
       if (getGalleryPosts) {
         setComments(getGalleryPosts);
-        setUsercomment('')
+        setUsercomment("");
       }
     };
     GetPost();
   }, [isCommentPosted]);
+
+  useEffect(() => {
+    if (
+      userId !== undefined &&
+      props.likes?.some((like) => like.userId === userId)
+    ) {
+      setIsliked(true);
+    }
+  }, [userId, props.likes]);
 
   const LikeGalleryPost = async (GalleryId: number) => {
     if (userId === null) {
@@ -75,6 +88,8 @@ const UserCardsPost = (props: IUserCardType) => {
       const response = await AddGalleryLike(likeObj);
       if (response) {
         console.log("Like added successfully");
+        setIsliked(true);
+        setLikesCount((prev) => prev + 1);
       } else {
         console.error("Error adding like");
       }
@@ -82,16 +97,18 @@ const UserCardsPost = (props: IUserCardType) => {
   };
   return (
     <>
-      <main className="max-w-[1570px] h-full overflow-hidden shadow-md rounded-md border-2 border-blue-500 pb-5">
-        <section className="transition-transform duration-300 hover:scale-102">
-          <button onClick={() => setIsModel(true)}>
-            <Image
-              src={props.imageUrl}
-              width={1000}
-              height={1000}
-              alt="User Image"
-              className=" w-[465px] h-[250px] object-contain cursor-pointer"
-            />
+      <main className="w-full max-w-[1570px] h-full overflow-hidden shadow-md rounded-md border-2 border-blue-500 pb-5">
+        {/* Card image section */}
+        <section className="transition-transform duration-300 hover:scale-102 w-full">
+          <button onClick={() => setIsModel(true)} className="w-full">
+            <div className="w-full h-auto aspect-[3/2] relative">
+              <Image
+                src={props.imageUrl}
+                alt="User Image"
+                fill 
+                className="object-contain w-full h-full rounded-t-md cursor-pointer" 
+              />
+            </div>
           </button>
         </section>
         <section className="w-full h-[10%] flex items-center justify-evenly">
@@ -218,9 +235,7 @@ const UserCardsPost = (props: IUserCardType) => {
                 {/* Description */}
                 <div
                   className={`w-full text-white text-lg break-words whitespace-pre-wrap ${
-                    isCommentsOpen
-                      ? "h-[50%]"
-                      : "h-[15%]"
+                    isCommentsOpen ? "h-[50%]" : "h-[15%]"
                   } transition-all duration-300 ease-in-out`}
                 >
                   {isCommentsOpen ? (
@@ -325,6 +340,7 @@ const UserCardsPost = (props: IUserCardType) => {
                       >
                         <Image
                           src="/assets/images/card/thumbs-up.png"
+                          onClick={() => LikeGalleryPost(props.id)}
                           width={1000}
                           height={1000}
                           alt="Like"

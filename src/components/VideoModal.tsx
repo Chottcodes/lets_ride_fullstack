@@ -1,48 +1,97 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  AddCommentVideo,
+  AddGalleryLike,
+  AddVideoLike,
+  GetVideoComments,
+} from "./utils/DataServices";
+import {
+  CommentsModelVideo,
+  GalleryComments,
+  Likes,
+  LikesVideoModel,
+} from "./utils/Interface";
+import Image from "next/image";
 
 interface VideoModalProps {
   videoUrl: string;
-  videoId: number|null; 
+  videoId: number | null;
+  videoLikes: number;
+  videoLikeArr: Likes[];
   onClose: () => void;
 }
 
-interface Comment {
-  id: number;
-  text: string;
-  likes: number;
-}
-
-const VideoModal = ({ videoUrl, videoId, onClose }: VideoModalProps) => {
-  const [comments, setComments] = useState<Comment[]>([]);
+const VideoModal = ({
+  videoUrl,
+  videoId,
+  videoLikes,
+  videoLikeArr,
+  onClose,
+}: VideoModalProps) => {
+  const [comments, setComments] = useState<GalleryComments[]>([]);
   const [newComment, setNewComment] = useState<string>("");
-  const [likes, setLikes] = useState<number>(0);
-  const [showComments, setShowComments] = useState<boolean>(false);
+  const [userId, setUserId] = useState<number>(0);
+  const [likes, setLikes] = useState<number>(videoLikes);
+  const [videoLikesArr, setVideoLikeArr] = useState<Likes[]>(videoLikeArr);
+  const [isAlreadyLikes, setIsAlreadyLike] = useState<boolean>(true);
 
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      setComments([
-        ...comments,
-        { id: comments.length + 1, text: newComment, likes: 0 },
-      ]);
-      setNewComment(""); 
+  const LikeVideoPost = async (VideoId: number) => {
+    if (userId === null) {
+      console.error("UserId is null. Cannot add like.");
+      return;
+    }
+    setLikes((prevLikes) => prevLikes + 1);
+    console.log(likes);
+
+    if (userId && videoId) {
+      const likeObj: LikesVideoModel = {
+        UserId: userId,
+        VideoId: videoId,
+        IsDeleted: false,
+      };
+      const response = await AddVideoLike(likeObj);
+      if (response) {
+        console.log("Like added successfully");
+      } else {
+        console.error("Error adding like");
+      }
+    }
+  };
+  const handleCommentSubmit = async (commentText: string, VideoId: number) => {
+    if (commentText && userId && videoId) {
+      const CommentsOBj: CommentsModelVideo = {
+        UserId: userId,
+        VideoId: videoId,
+        CommentText: newComment,
+        IsDeleted: false,
+      };
+      const response = await AddCommentVideo(CommentsOBj);
+      if (response) {
+        const updatedComments = await GetVideoComments(VideoId);
+        setComments(updatedComments);
+      }
     }
   };
 
-  const handleLikeComment = (id: number) => {
-    setComments(
-      comments.map((comment) =>
-        comment.id === id
-          ? { ...comment, likes: comment.likes + 1 }
-          : comment
-      )
-    );
-  };
+  useEffect(() => {
+    const GetId = localStorage.getItem("ID");
+    if (GetId) setUserId(Number(GetId));
+    if(videoLikesArr.some((like) => like.userId === userId))
+        {
+            setIsAlreadyLike(true)
+        }
+  }, []);
 
-  const handleVideoLike = () => {
-    setLikes(likes + 1); // Increment video like count
-    // You could send the like to the backend for storage here
-  };
+  useEffect(() => {
+    const vidComents = async () => {
+      if (videoId !== null) {
+        const updatedComments = await GetVideoComments(videoId);
+        setComments(updatedComments);
+      }
+    };
+    vidComents();
+  }, [videoId]);
 
   return (
     <div
@@ -50,7 +99,7 @@ const VideoModal = ({ videoUrl, videoId, onClose }: VideoModalProps) => {
       onClick={onClose}
     >
       <div
-        className="w-[90vw] h-[90vh] max-w-[600px] relative bg-white rounded-lg p-4"
+        className="w-[90vw] h-[90vh] max-w-[600px] relative bg-black rounded-lg p-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Fullscreen video */}
@@ -71,51 +120,85 @@ const VideoModal = ({ videoUrl, videoId, onClose }: VideoModalProps) => {
         {/* Video Like Button */}
         <div className="mt-4 flex justify-between items-center">
           <button
-            onClick={handleVideoLike}
-            className="p-2 bg-blue-500 text-white rounded-md"
-          >
-            👍 {likes} Likes
+            onClick={() => videoId !== null && LikeVideoPost(videoId)}
+            className={`${isAlreadyLikes?"hidden":"block"} p-2 bg-blue-500 text-white rounded-md flex justify-center items-center gap-2`}>
+            <Image
+              src={"/assets/images/card/thumbs-up.png"}
+              width={100}
+              height={100}
+              alt={"Thumbs up"}
+              className="w-[15px] h-[15px]"
+            />
+            {videoLikes}
           </button>
           <button
-            onClick={() => setShowComments(!showComments)}
-            className="p-2 bg-green-500 text-white rounded-md"
+           
+            className={`${isAlreadyLikes?"block":"hidden"} p-2 bg-blue-500 text-white rounded-md flex justify-center items-center gap-2`}
           >
-            💬 Comments
+            <Image
+              src={"/assets/images/card/like (1).png"}
+              width={100}
+              height={100}
+              alt={"Thumbs up"}
+              className="w-[15px] h-[15px]"
+            />
+            {videoLikes}
+          </button>
+          <button className="p-2 bg-green-500 text-white rounded-md flex justify-center items-center gap-2 text-sm">
+            <Image
+              src={"/assets/images/card/coment.png"}
+              width={100}
+              height={100}
+              alt={"comments logo"}
+              className="h-[15px] w-[15px]"
+            />
+            {comments.length}
           </button>
         </div>
 
-        {/* Comment Section */}
-        {showComments && (
-          <div className="mt-4">
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-            <button
-              onClick={handleAddComment}
-              className="mt-2 p-2 bg-blue-500 text-white rounded-md"
+        {/* Comments List */}
+        <div className="mt-2 flex flex-col justify-evenly gap-2 overflow-y-auto custom-scrollbar">
+          {comments.map((comment, index) => (
+            <div
+              className="flex justify-between items-center text-white"
+              key={index}
             >
-              Post Comment
-            </button>
-
-            {/* Comments List */}
-            <div className="mt-4 space-y-3">
-              {comments.map((comment) => (
-                <div key={comment.id} className="flex justify-between items-center">
-                  <p className="text-sm">{comment.text}</p>
-                  <button
-                    onClick={() => handleLikeComment(comment.id)}
-                    className="text-blue-500 text-sm"
-                  >
-                    👍 {comment.likes}
-                  </button>
-                </div>
-              ))}
+              <div className="w-[20%] h-[10%] flex gap-2">
+                <Image
+                  src={comment.user.profilePicture}
+                  width={500}
+                  height={500}
+                  alt={"profile"}
+                  className="w-[25px] h-[25px] rounded-full"
+                />
+                <p className="text-sm">{comment.user.userName}</p>
+              </div>
+              <p className="text-sm">{comment.commentText}</p>
+              <p className="text-sm">
+                {comment.createdAt
+                  ? new Date(comment.createdAt).toLocaleDateString("en-CA")
+                  : "N/A"}
+              </p>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
+        {/* Comment Section */}
+        <div className="mt-4">
+          <input
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add a comment..."
+            className="w-full p-2 border  rounded-md text-white"
+          />
+          <button
+            onClick={() =>
+              videoId !== null && handleCommentSubmit(newComment, videoId)
+            }
+            className="mt-2 p-2 bg-blue-500 text-white rounded-md"
+          >
+            Post Comment
+          </button>
+        </div>
       </div>
     </div>
   );
