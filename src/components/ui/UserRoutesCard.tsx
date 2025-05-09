@@ -141,7 +141,7 @@ const UserRoutesCard = (props: RTypes) => {
         <footer className="h-[30%] lg:w-full lg:h-[25%] rounded-xl flex justify-center items-center lg:pb-2 ">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="h-[70%] w-[50%] lg:w-[60%] lg:h-full bg-blue-600 rounded-lg hover:bg-blue-800 text-lg text-white"
+            className="h-[70%] w-[50%] lg:w-[60%] lg:h-[70%] bg-blue-600 rounded-lg hover:bg-blue-800 text-lg text-white"
           >
             More
           </button>
@@ -324,7 +324,7 @@ const UserRoutesCard = (props: RTypes) => {
                         }}>
                         <Image
                           src="/assets/images/send.png"
-                          className="object-contain"
+                          className="object-contain w-[20px] h-[20px] lg:w-[25px] lg:h-[25px]"
                           alt="send icon"
                           width={100}
                           height={100}

@@ -1,9 +1,17 @@
 "use client";
 import MapDisplay from "@/components/mapDisplay";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
-import { AddCommentRoute, AddLike, GetRoute } from "@/components/utils/DataServices";
+import {
+  AddCommentRoute,
+  AddLike,
+  GetRoute,
+} from "@/components/utils/DataServices";
 import { GetLocalStorageId } from "@/components/utils/helperFunctions";
-import { CommentsModelRoute, LikesRoutesModel, RouteGetForCardTypes } from "@/components/utils/Interface";
+import {
+  CommentsModelRoute,
+  LikesRoutesModel,
+  RouteGetForCardTypes,
+} from "@/components/utils/Interface";
 import React, { useEffect, useState } from "react";
 
 const MapPage = () => {
@@ -18,19 +26,19 @@ const MapPage = () => {
   const handleCommunityButton = () => {
     setIsMapOn(false);
   };
- const LikeRoute = async (routeId: number) => {
-     const likeObj: LikesRoutesModel = {
-       UserId: userId,
-       RouteId: routeId,
-       IsDeleted: false,
-     };
-     const response = await AddLike(likeObj);
-     if (response) {
-       console.log("Like added successfully");
-     } else {
-       console.error("Error adding like");
-     }
-   }; 
+  const LikeRoute = async (routeId: number) => {
+    const likeObj: LikesRoutesModel = {
+      UserId: userId,
+      RouteId: routeId,
+      IsDeleted: false,
+    };
+    const response = await AddLike(likeObj);
+    if (response) {
+      console.log("Like added successfully");
+    } else {
+      console.error("Error adding like");
+    }
+  };
 
   const handleLikes = (routeId: number) => {
     LikeRoute(routeId);
@@ -38,19 +46,19 @@ const MapPage = () => {
   };
   useEffect(() => {
     const getInfo = GetLocalStorageId();
-    if(getInfo) setUserId(getInfo); 
+    if (getInfo) setUserId(getInfo);
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setIsMapOn(false);
       } else {
-        setIsMapOn(true); 
+        setIsMapOn(true);
       }
     };
-    handleResize(); 
-    window.addEventListener("resize", handleResize); 
+    handleResize();
+    window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
   useEffect(() => {
     if (!isMapOn && userId !== 0) {
       const getUsersRoutes = async () => {
@@ -73,8 +81,7 @@ const MapPage = () => {
       };
       getUsersRoutes();
     }
-  }, [isMapOn,userId]);
- 
+  }, [isMapOn, userId]);
 
   return (
     <div className="h-[100dvh] w-full relative overflow-hidden">
@@ -111,30 +118,29 @@ const MapPage = () => {
             isMapOn ? "hidden" : "block"
           } w-full h-full flex justify-center items-center `}
         >
-          <div className="h-full w-full flex flex-col justify-center items-center">
-            <div className="w-[90%] h-[10%] text-white flex items-center ">
-              <p>Recent</p>
-            </div>
-            <div className="flex flex-col items-center w-full h-[90%]">
-              <div className="w-[90%] h-full overflow-y-auto flex justify-center overflow-x-auto gap-5 pb-32">
+          <div className="h-full w-full flex flex-col justify-center items-center ">
+            <div className="flex flex-col items-center w-full h-[90%] overflow-y-scroll ">
+              <div className="w-[90%]  flex flex-1 flex-col lg:flex-row justify-center lg:overflow-x-auto gap-5 pb-32 ">
                 {allRoutes
                   .filter((route) => route.isPrivate === false)
                   .map((route, index) => {
-                     const handleCommentSubmit = async (commentText: string) => {
-                                   
-                                    if (commentText) {
-                                      const CommentsOBj: CommentsModelRoute = {
-                                        UserId: userId,
-                                        RouteId: route.id,
-                                        CommentText: commentText,
-                                        IsDeleted: false,
-                                      };
-                                      const response = await AddCommentRoute(CommentsOBj);
-                                      console.log(response);
-                                    }
-                                  };
+                    const handleCommentSubmit = async (commentText: string) => {
+                      if (commentText) {
+                        const CommentsOBj: CommentsModelRoute = {
+                          UserId: userId,
+                          RouteId: route.id,
+                          CommentText: commentText,
+                          IsDeleted: false,
+                        };
+                        const response = await AddCommentRoute(CommentsOBj);
+                        console.log(response);
+                      }
+                    };
                     return (
-                      <div key={index} className="w-full h-[90%] lg:w-[25%] lg:h-[70%] ">
+                      <div
+                        key={index}
+                        className="w-full min-h-[350px] lg:w-[25%] lg:h-[70%] "
+                      >
                         <UserRoutesCard
                           key={index}
                           LikesNumber={route.likes.length}
