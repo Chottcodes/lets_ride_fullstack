@@ -24,9 +24,6 @@ const UserCardsPost = (props: IUserCardType) => {
   const [userComment, setUsercomment] = useState<string>("");
   const [userId, setUserId] = useState<number>();
   const [comments, setComments] = useState<GalleryComments[]>([]);
-  const [likesCount, setLikesCount] = useState<number>(
-    props.likes?.length || 0
-  );
 
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -89,7 +86,6 @@ const UserCardsPost = (props: IUserCardType) => {
       if (response) {
         console.log("Like added successfully");
         setIsliked(true);
-        setLikesCount((prev) => prev + 1);
       } else {
         console.error("Error adding like");
       }
@@ -105,8 +101,8 @@ const UserCardsPost = (props: IUserCardType) => {
               <Image
                 src={props.imageUrl}
                 alt="User Image"
-                fill 
-                className="object-contain w-full h-full rounded-t-md cursor-pointer" 
+                fill
+                className="object-contain w-full h-full rounded-t-md cursor-pointer"
               />
             </div>
           </button>
@@ -183,7 +179,7 @@ const UserCardsPost = (props: IUserCardType) => {
       {/* Expanded View / Modal */}
       {isModel && (
         <div
-          className="w-[80%] h-[90%] m-auto fixed inset-0 z-50 flex justify-center items-center bg-black border-2 "
+          className="w-full h-[80%] lg:h-[90%] m-auto fixed inset-0 z-50 flex justify-center items-center bg-black border-2 "
           onClick={() => {
             setIsModel(false);
             setIsFullImage(false);
@@ -193,6 +189,13 @@ const UserCardsPost = (props: IUserCardType) => {
             className="h-full bg-black rounded-xl shadow-xl max-w-4xl w-full p-6 relative overflow-y-auto custom-scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              onClick={() => setIsModel(false)}
+              className="absolute top-4 right-4 text-white text-3xl font-bold z-50 hover:text-red-500 transition"
+              aria-label="Close modal"
+            >
+              &times;
+            </button>
             {/* Zoomable Image */}
             <Image
               src={props.imageUrl}
@@ -210,25 +213,21 @@ const UserCardsPost = (props: IUserCardType) => {
             {!isFullImage && (
               <>
                 {/* User Name Account */}
-                <div className="w-full flex text-white relative">
-                  <button className="w-[20%] flex justify-center items-center rounded-full overflow-hidden cursor-pointer">
-                    <Avatar className="w-[55px] h-[55px] lg:h-[60px] lg:w-[60px] rounded-full">
-                      <AvatarImage
-                        src={props.creator.profilePicture} // Profile picture
-                        className="object-contain w-full h-full"
-                      />
-                      <AvatarFallback>Profile Picture</AvatarFallback>
-                    </Avatar>
-                    <p>{`@${props.creator.userName}`}</p>
+                <div className="w-full h-[10%] flex text-white relative bg-green-500">
+                  <button className="w-[35%] lg:w-[20%] flex justify-start items-center  overflow-hidden cursor-pointer bg-red-500">
+                    <Image
+                      src={props.creator.profilePicture} 
+                      className="object-contain w-[25px] h-[25px] rounded-full"
+                      alt={""}
+                      height={100}
+                      width={100}
+                    />
+
+                    <p>{`${props.creator.userName}`}</p>
                   </button>
 
                   <div className="w-full h-full flex items-center justify-center absolute">
                     {props.title}
-                  </div>
-                  <div className="w-full h-full flex items-center justify-end absolute">
-                    <p className="pr-3">
-                      {new Date(props.dateCreated).toLocaleDateString("en-CA")}
-                    </p>
                   </div>
                 </div>
 
@@ -244,7 +243,7 @@ const UserCardsPost = (props: IUserCardType) => {
                         {comments.map((comment, index) => (
                           <div
                             key={index}
-                            className="flex items-start gap-3 bg-gray-800 px-4 py-3 rounded-lg shadow-md w-[50%] "
+                            className="flex items-start gap-3 bg-gray-800 px-4 py-3 rounded-lg shadow-md w-[90%] lg:w-[50%] "
                           >
                             {/* Avatar */}
                             <Avatar className="w-[30px] h-[30px] rounded-full overflow-hidden">
@@ -283,13 +282,14 @@ const UserCardsPost = (props: IUserCardType) => {
 
                       <section className="w-full h-[25%] flex justify-center items-center absolute bottom-0">
                         <div className="w-full h-[50%] flex items-center ">
-                          <div className="h-[55px] w-[55px] rounded-full ">
-                            <Avatar>
-                              <AvatarImage
-                                src={props.creator.profilePicture}
-                                className="object-contain w-full h-full"
-                              />
-                            </Avatar>
+                          <div className="h-[25px] w-[25px] lg:h-[55px] lg:w-[55px] rounded-full ">
+                            <Image
+                              src={props.creator.profilePicture}
+                              className="object-contain w-full h-full rounded-full"
+                              alt={"Profile picture"}
+                              height={200}
+                              width={200}
+                            />
                           </div>
                           <input
                             type="text"

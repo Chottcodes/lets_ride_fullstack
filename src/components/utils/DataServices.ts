@@ -131,7 +131,7 @@ export const getGalleryPosts = async () => {
 
  export const addGalleryPost = async (galleryPost: AddGalleryPost) =>
  {
-    console.log(galleryPost)
+ 
     try {
         const res = await fetch(url + "RideTables/AddGalleryPost", {
         method: "POST",

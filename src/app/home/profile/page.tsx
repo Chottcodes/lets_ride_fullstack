@@ -227,9 +227,9 @@ const ProfilePage = () => {
       <main
         className={`${
           isPost ? "block" : "hidden"
-        } m-auto w-[80%] h-[60%] flex flex-col lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto pb-30 lg:pb-5`}
+        } lg:m-auto w-full h-[60%] flex flex-col lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto pb-30 lg:pb-5`}
       >
-        <div className="w-full h-full lg:w-[40%]">
+        <div className="w-full h-full lg:w-[40%] bg-amber-300">
           {userRoutes
             .filter((route) => route.creator.id === userId)
             .map((route, index) => {

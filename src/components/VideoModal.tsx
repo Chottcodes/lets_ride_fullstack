@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import {
   AddCommentVideo,
-  AddGalleryLike,
+ 
   AddVideoLike,
   GetVideoComments,
 } from "./utils/DataServices";
@@ -32,27 +32,31 @@ const VideoModal = ({
   const [comments, setComments] = useState<GalleryComments[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [userId, setUserId] = useState<number>(0);
-  const [likes, setLikes] = useState<number>(videoLikes);
   const [videoLikesArr, setVideoLikeArr] = useState<Likes[]>(videoLikeArr);
-  const [isAlreadyLikes, setIsAlreadyLike] = useState<boolean>(true);
+  const [isAlreadyLikes, setIsAlreadyLike] = useState<boolean>(false);
 
   const LikeVideoPost = async (VideoId: number) => {
     if (userId === null) {
       console.error("UserId is null. Cannot add like.");
       return;
     }
-    setLikes((prevLikes) => prevLikes + 1);
-    console.log(likes);
+   
+   
 
-    if (userId && videoId) {
+    if (userId && VideoId) {
       const likeObj: LikesVideoModel = {
         UserId: userId,
-        VideoId: videoId,
+        VideoId: VideoId,
         IsDeleted: false,
       };
       const response = await AddVideoLike(likeObj);
       if (response) {
         console.log("Like added successfully");
+        setVideoLikeArr((prevArr) => [
+          ...prevArr,
+          { userId, routeId: 0, isDeleted: false, createdAt: new Date().toISOString() },
+        ]);
+        setIsAlreadyLike(true);
       } else {
         console.error("Error adding like");
       }
@@ -73,15 +77,17 @@ const VideoModal = ({
       }
     }
   };
-
   useEffect(() => {
     const GetId = localStorage.getItem("ID");
     if (GetId) setUserId(Number(GetId));
+  }, []);
+  useEffect(() => {
+    
     if(videoLikesArr.some((like) => like.userId === userId))
         {
             setIsAlreadyLike(true)
         }
-  }, []);
+  }, [userId,videoLikeArr]);
 
   useEffect(() => {
     const vidComents = async () => {
@@ -121,7 +127,7 @@ const VideoModal = ({
         <div className="mt-4 flex justify-between items-center">
           <button
             onClick={() => videoId !== null && LikeVideoPost(videoId)}
-            className={`${isAlreadyLikes?"hidden":"block"} p-2 bg-blue-500 text-white rounded-md flex justify-center items-center gap-2`}>
+            className={`${isAlreadyLikes?"hidden":"block"} p-2 bg-blue-500 text-white rounded-md flex justify-center items-center gap-2 cursor-pointer`}>
             <Image
               src={"/assets/images/card/thumbs-up.png"}
               width={100}

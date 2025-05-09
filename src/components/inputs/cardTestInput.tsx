@@ -13,7 +13,6 @@ interface OpenPostModalProps {
 const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
-  const [url, setURL] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
   const [titleInput, setTitleInput] = useState<string>("");
@@ -104,7 +103,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
 
   const resetModal = () => {
     setIsOpen(false);
-    setURL(null);
+    
     setPreview(null);
     setTitleInput("");
     setDescriptionInput("");
