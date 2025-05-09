@@ -116,7 +116,7 @@ const MapPage = () => {
               <p>Recent</p>
             </div>
             <div className="flex flex-col items-center w-full h-[90%]">
-              <div className="w-[90%] h-full overflow-y-auto flex flex-col gap-5 pb-32">
+              <div className="w-[90%] h-full overflow-y-auto flex justify-center overflow-x-auto gap-5 pb-32">
                 {allRoutes
                   .filter((route) => route.isPrivate === false)
                   .map((route, index) => {
@@ -134,7 +134,7 @@ const MapPage = () => {
                                     }
                                   };
                     return (
-                      <div key={index} className="w-full h-[90%] lg:w-[25%] lg:h-[70%]">
+                      <div key={index} className="w-full h-[90%] lg:w-[25%] lg:h-[70%] ">
                         <UserRoutesCard
                           key={index}
                           LikesNumber={route.likes.length}
