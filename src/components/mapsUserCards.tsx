@@ -46,7 +46,7 @@ const MapsUserCards = (props: MapProps) => {
           "line-cap": "round",
         },
         paint: {
-          "line-color": "#1e90ff",
+          "line-color": "#90EE90",
           "line-width": 4,
         },
       });
