@@ -176,6 +176,7 @@ const MapDisplay = () => {
         const response = await PostRoute(routeData);
         if (response) {
           alert("Route posted successfully!");
+          setStoppedRecording(false)
         } else {
           alert("Failed to post route.");
         }
