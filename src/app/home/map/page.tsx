@@ -10,7 +10,6 @@ const MapPage = () => {
   const [isMapOn, setIsMapOn] = useState(true);
   const [allRoutes, setAllRoutes] = useState<RouteGetForCardTypes[]>([]);
   const [userId, setUserId] = useState<number>(0);
-   const [newComment, setNewComment] = useState<string>("");
   const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
 
   const handleMapButton = () => {
@@ -122,12 +121,12 @@ const MapPage = () => {
                   .filter((route) => route.isPrivate === false)
                   .map((route, index) => {
                      const handleCommentSubmit = async (commentText: string) => {
-                                    setNewComment(commentText);
+                                   
                                     if (commentText) {
                                       const CommentsOBj: CommentsModelRoute = {
                                         UserId: userId,
                                         RouteId: route.id,
-                                        CommentText: newComment,
+                                        CommentText: commentText,
                                         IsDeleted: false,
                                       };
                                       const response = await AddCommentRoute(CommentsOBj);
