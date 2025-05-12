@@ -61,7 +61,7 @@ export const resetPassword = async (user:IUserCreate) => {
 }  
 export const UserProfileSetup = async (user: UserProfileTypes) => {
    
-   
+    console.log(user)
         const res = await fetch(url + "RideTables/AddUserProfile", {
             method: "POST",
             headers: {
@@ -71,7 +71,9 @@ export const UserProfileSetup = async (user: UserProfileTypes) => {
         });
         if(!res.ok)
         {
-            console.log("Error");
+            const errorText = await res.text();
+            console.log(errorText)
+          
             return null;
         };
         const data = await res.json();

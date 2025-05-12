@@ -2,14 +2,14 @@
 import MapDisplay from "@/components/mapDisplay";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import {
-  AddCommentRoute,
-  AddLike,
+  
+  // AddLike,
   GetRoute,
 } from "@/components/utils/DataServices";
 import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 import {
-  CommentsModelRoute,
-  LikesRoutesModel,
+
+  // LikesRoutesModel,
   RouteGetForCardTypes,
 } from "@/components/utils/Interface";
 import React, { useEffect, useState } from "react";
@@ -19,31 +19,31 @@ const MapPage = () => {
   const [allRoutes, setAllRoutes] = useState<RouteGetForCardTypes[]>([]);
   const [userId, setUserId] = useState<number>(0);
   const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
-
+  console.log(likedRoutes)
   const handleMapButton = () => {
     setIsMapOn(true);
   };
   const handleCommunityButton = () => {
     setIsMapOn(false);
   };
-  const LikeRoute = async (routeId: number) => {
-    const likeObj: LikesRoutesModel = {
-      UserId: userId,
-      RouteId: routeId,
-      IsDeleted: false,
-    };
-    const response = await AddLike(likeObj);
-    if (response) {
-      console.log("Like added successfully");
-    } else {
-      console.error("Error adding like");
-    }
-  };
+  // const LikeRoute = async (routeId: number) => {
+  //   const likeObj: LikesRoutesModel = {
+  //     UserId: userId,
+  //     RouteId: routeId,
+  //     IsDeleted: false,
+  //   };
+  //   const response = await AddLike(likeObj);
+  //   if (response) {
+  //     console.log("Like added successfully");
+  //   } else {
+  //     console.error("Error adding like");
+  //   }
+  // };
 
-  const handleLikes = (routeId: number) => {
-    LikeRoute(routeId);
-    setLikedRoutes((prev) => new Set(prev).add(routeId));
-  };
+  // const handleLikes = (routeId: number) => {
+  //   LikeRoute(routeId);
+  //   setLikedRoutes((prev) => new Set(prev).add(routeId));
+  // };
   useEffect(() => {
     const getInfo = GetLocalStorageId();
     if (getInfo) setUserId(getInfo);
@@ -127,18 +127,18 @@ const MapPage = () => {
                 {allRoutes
                   .filter((route) => route.isPrivate === false)
                   .map((route, index) => {
-                    const handleCommentSubmit = async (commentText: string) => {
-                      if (commentText) {
-                        const CommentsOBj: CommentsModelRoute = {
-                          UserId: userId,
-                          RouteId: route.id,
-                          CommentText: commentText,
-                          IsDeleted: false,
-                        };
-                        const response = await AddCommentRoute(CommentsOBj);
-                        console.log(response);
-                      }
-                    };
+                    // const handleCommentSubmit = async (commentText: string) => {
+                    //   if (commentText) {
+                    //     const CommentsOBj: CommentsModelRoute = {
+                    //       UserId: userId,
+                    //       RouteId: route.id,
+                    //       CommentText: commentText,
+                    //       IsDeleted: false,
+                    //     };
+                    //     const response = await AddCommentRoute(CommentsOBj);
+                    //     console.log(response);
+                    //   }
+                    // };
                     return (
                       <div
                         key={index}
@@ -146,35 +146,7 @@ const MapPage = () => {
                       >
                         <UserRoutesCard
                           key={index}
-                          LikesNumber={route.likes.length}
-                          UserprofilePicture={route.creator.profilePicture}
-                          ProfileName={`@${route.creator.userName}`}
-                          onCommentSubmit={handleCommentSubmit}
-                          RouteImage={route.imageUrl}
-                          RouteName={route.routeName}
-                          RouteDate={new Date(
-                            route.dateCreated
-                          ).toLocaleDateString("en-CA")}
-                          RouteDescription={route.routeDescription}
-                          isLiked={likedRoutes.has(route.id)}
-                          handleLike={() => handleLikes(route.id)}
-                          comments={route.comments.map((comment) => ({
-                            commentText: comment.commentText,
-                            CreatedAt: comment.createdAt,
-                            user: {
-                              userName: comment.user.userName,
-                              profilePicture: comment.user.profilePicture,
-                            },
-                          }))}
-                          commentNumbers={route.comments.length}
-                          RouteStartingPoint={[
-                            route.pathCoordinates[0].longitude,
-                            route.pathCoordinates[0].latitude,
-                          ]}
-                          TrailCoords={route.pathCoordinates.map((coord) => [
-                            coord.longitude,
-                            coord.latitude,
-                          ])}
+                          {...route}
                         />
                       </div>
                     );

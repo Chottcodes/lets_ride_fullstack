@@ -11,7 +11,7 @@ export default function HomeLayout({
     <div className="h-screen overflow-hidden">
       <div className="flex h-full relative">
         {/* Desktop Sidebar - will only show on lg screens */}
-        <div className="hidden lg:block w-[5%] h-full ">
+        <div className="hidden lg:block">
           <DesktopNavBar />
         </div>
         

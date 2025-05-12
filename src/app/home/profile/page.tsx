@@ -7,14 +7,12 @@ import ProfileWithDescription from "@/components/ProfileWithDescription";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  AddCommentRoute,
-  AddLike,
+ 
   GetRoute,
   GetUserProfile,
 } from "@/components/utils/DataServices";
 import {
-  CommentsModelRoute,
-  LikesRoutesModel,
+  
   RouteGetForCardTypes,
   UserProfileReturnTypes,
 } from "@/components/utils/Interface";
@@ -41,7 +39,7 @@ const ProfilePage = () => {
   const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
 
   const [userRoutes, setUserRoutes] = useState<RouteGetForCardTypes[]>([]);
-
+console.log(likedRoutes)
   useEffect(() => {
     const getInfo = GetLocalStorageId();
     const fetchData = async () => {
@@ -77,7 +75,7 @@ const ProfilePage = () => {
       const getUsersRoutes = async () => {
         try {
           const res = await GetRoute();
-          console.log(res);
+          
           setUserRoutes(res);
 
           const likedByUser = new Set<number>();
@@ -103,24 +101,7 @@ const ProfilePage = () => {
     push("/pages/Login/loginPage");
   };
 
-  const LikeRoute = async (routeId: number) => {
-    const likeObj: LikesRoutesModel = {
-      UserId: userId,
-      RouteId: routeId,
-      IsDeleted: false,
-    };
-    const response = await AddLike(likeObj);
-    if (response) {
-      console.log("Like added successfully");
-    } else {
-      console.error("Error adding like");
-    }
-  };
 
-  const handleLikes = (routeId: number) => {
-    LikeRoute(routeId);
-    setLikedRoutes((prev) => new Set(prev).add(routeId));
-  };
 
   return (
     <div className="h-[100dvh] w-full relative">
@@ -229,57 +210,17 @@ const ProfilePage = () => {
           isPost ? "block" : "hidden"
         } lg:m-auto w-full h-[60%] flex flex-col justify-center items-center lg:justify-start lg:items-center lg:w-[65%] lg:h-[50%] gap-10 text-white overflow-y-auto pb-30 lg:pb-5`}
       >
-        <div className="w-[80%] h-full lg:w-[40%] ">
+        <div className="w-[80%] h-full lg:w-[40%]">
           {userRoutes
             .filter((route) => route.creator.id === userId)
             .map((route, index) => {
-              const handleCommentSubmit = async (commentText: string) => {
-                if (commentText) {
-                  const CommentsOBj: CommentsModelRoute = {
-                    UserId: userId,
-                    RouteId: route.id,
-                    CommentText: commentText,
-                    IsDeleted: false,
-                  };
-                  const response = await AddCommentRoute(CommentsOBj);
-                  console.log(response);
-                }
-              };
+             
 
               return (
                 <div key={index} className="w-full h-full">
                   <UserRoutesCard
                     key={index}
-                    LikesNumber={route.likes.length}
-                    UserprofilePicture={route.creator.profilePicture}
-                    ProfileName={`@${route.creator.userName}`}
-                    
-                    onCommentSubmit={handleCommentSubmit}
-                    RouteImage={route.imageUrl}
-                    RouteName={route.routeName}
-                    RouteDate={new Date(route.dateCreated).toLocaleDateString(
-                      "en-CA"
-                    )}
-                    RouteDescription={route.routeDescription}
-                    isLiked={likedRoutes.has(route.id)}
-                    handleLike={() => handleLikes(route.id)}
-                    comments={route.comments.map((comment) => ({
-                      commentText: comment.commentText,
-                      CreatedAt: comment.createdAt,
-                      user: {
-                        userName: comment.user.userName,
-                        profilePicture: comment.user.profilePicture,
-                      },
-                    }))}
-                    commentNumbers={route.comments.length}
-                    RouteStartingPoint={[
-                      route.pathCoordinates[0].longitude,
-                      route.pathCoordinates[0].latitude,
-                    ]}
-                    TrailCoords={route.pathCoordinates.map((coord) => [
-                      coord.longitude,
-                      coord.latitude,
-                    ])}
+                    {...route}
                   />
                 </div>
               );

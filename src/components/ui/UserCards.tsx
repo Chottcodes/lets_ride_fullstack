@@ -90,6 +90,8 @@ const UserCardsPost = (props: IUserCardType) => {
         console.error("Error adding like");
       }
     }
+
+   
   };
   return (
     <>
@@ -216,7 +218,7 @@ const UserCardsPost = (props: IUserCardType) => {
                 <div className="w-full h-[10%] flex text-white relative">
                   <button className="w-[35%] lg:w-[20%] flex justify-start items-center  overflow-hidden cursor-pointer ">
                     <Image
-                      src={props.creator.profilePicture} 
+                      src={props.creator.profilePicture}
                       className="object-contain w-[25px] h-[25px] rounded-full"
                       alt={""}
                       height={100}

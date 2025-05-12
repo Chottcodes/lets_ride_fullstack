@@ -9,13 +9,17 @@ interface propTypes {
 
 const HandleFileInput = (props: propTypes) => {
   const { onChange, isFileUploaded, imageURL } = props;
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("File selected:", e.target.files); // Check if files are being selected
+    onChange(e); // Call the passed onChange handler
+  };
   return (
     <div className="w-full h-full  flex justify-center items-center rounded-full">
       <input
         type="file"
         id="upload-File"
         className="hidden h-full w-full"
-        onChange={onChange}
+        onChange={handleFileChange}
       />
       <label
         htmlFor="upload-File"
