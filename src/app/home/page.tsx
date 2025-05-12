@@ -5,7 +5,9 @@ import React, { useEffect, useState } from "react";
 import UserCards from "@/components/ui/UserCards";
 import { IUserCardType, Likes, VideoGet } from "@/components/utils/Interface";
 
-import { getGalleryPosts, GetVideo } from "@/components/utils/DataServices";
+import { getGalleryPosts,  GetVideo } from "@/components/utils/DataServices";
+
+
 
 
 import VideoComponet from "@/components/VideoComponet";
@@ -20,6 +22,7 @@ const Page = () => {
   const [videoId, setVideoId] = useState<number>();
   const [videoLikes, setVideoLikes] = useState<Likes[]>([]);
   useEffect(() => {
+   
     const fetchPosts = async () => {
       const res = await getGalleryPosts();
       const data = await res;
@@ -42,6 +45,7 @@ const Page = () => {
     };
     fetchVideos();
     fetchPosts();
+   
   }, []);
   useEffect(() => {
     if (isImagePosted) {
