@@ -160,7 +160,7 @@ const Page = () => {
   }, [isImagePosted]);
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-zinc-900">
+    <div className="min-h-screen w-full flex flex-col bg-gradient-to-b from-gray-800 to-black">
       {/* Hero Section */}
       <section className="relative w-full h-[40vh] md:h-[60vh] lg:h-[80vh] overflow-hidden">
         <video

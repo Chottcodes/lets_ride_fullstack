@@ -74,9 +74,9 @@ const Page = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-zinc-900 to-black text-white">
+    <div className="min-h-screen w-full bg-gradient-to-b from-gray-800 to-black text-white">
       {/* Header with motorcycle-themed logo */}
-      <header className="w-full py-4 px-6 flex items-center justify-between bg-black/30 backdrop-blur-sm sticky top-0 z-10 ">
+      <header className="w-full py-4 px-6 flex items-center justify-between bg-gray-800/25 backdrop-blur-sm sticky top-0 z-10 ">
         <div className="flex items-center gap-3" onClick={() => router.push("/home")}>
           <Image
             src="/assets/images/Logo.png"

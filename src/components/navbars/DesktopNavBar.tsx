@@ -23,11 +23,11 @@ const DesktopNavBar = () => {
 
 
   return (
-    <nav className="w-full h-[10%] hidden lg:flex justify-between items-center backdrop-blur-lg fixed z-10 px-10">
+    <nav className="w-full h-[10%] hidden lg:flex justify-between items-center backdrop-blur-lg fixed z-10 px-10 bg-gray-800">
       <Image
         onClick={() => router.push("/home")}
         className="w-[50px] h-[50px] object-contain cursor-pointer"
-        src="/assets/images/letsrideicon.png"
+        src="/assets/images/Logo.png"
         alt="Logo"
         width={300}
         height={300}
