@@ -93,7 +93,7 @@ const MobileNavBar = () => {
         <Image
           className="h-[30px] w-[30px]"
           src={
-            profilePicture ? profilePicture : "/assets/images/defaultUserPicture.png"
+            profilePicture ? profilePicture : "/assets/images/defaultPicture.png"
           }
           width={30}
           height={30}

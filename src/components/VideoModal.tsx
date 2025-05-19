@@ -171,7 +171,7 @@ const VideoModal = ({
             >
               <div className="w-[20%] h-[10%] flex gap-2">
                 <Image
-                  src={comment.user.profilePicture}
+                  src={comment.user?.profilePicture || "/assets/images/defaultPicture.png"}
                   width={500}
                   height={500}
                   alt={"profile"}

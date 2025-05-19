@@ -186,6 +186,7 @@ export interface Coordinates {
         RouteId:number;
         CommentText:string;
         IsDeleted:boolean;
+       
       }
       export interface CommentsModelGallery
       {
@@ -225,3 +226,27 @@ export interface Coordinates {
         likes:Likes[];
         comments:comments[]
       }
+   export interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface GetRoutes {
+  id: number;
+  title: string;
+  isPrivate: boolean;
+  creatorName: string;
+  likeCount:number;
+  isLikedByCurrentUser:boolean;
+  profilePicture: string | null;
+  dateCreated: string; 
+  routeDescription: string | null;
+  commentCount:number;
+  pathCoordinates: Coordinate[];
+}
+export interface RouteComment {
+  commentText: string;
+  username: string;
+  profilePictureUrl: string;
+  dateCreated: string | Date;
+}

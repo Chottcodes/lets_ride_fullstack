@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { GetRoute, GetUserProfile } from "@/components/utils/DataServices";
 import {
+  GetRoutes,
   RouteGetForCardTypes,
 
 } from "@/components/utils/Interface";
@@ -35,7 +36,8 @@ const ProfilePage = () => {
 
   const [activeTab, setActiveTab] = useState("profile");
   const [likedRoutes, setLikedRoutes] = useState(new Set());
-  const [userRoutes, setUserRoutes] = useState<RouteGetForCardTypes[]>([]);
+  const [userRoutes, setUserRoutes] = useState<GetRoutes[]>([]);
+  const [userId, setUserId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
 
@@ -44,6 +46,8 @@ const ProfilePage = () => {
     if (!id) {
       push("/pages/Login/loginPage");
       return;
+    }else{
+      setUserId(id);
     }
 
     const fetchUserData = async () => {
@@ -87,7 +91,7 @@ const ProfilePage = () => {
     if (userData.userId) {
       const fetchRoutes = async () => {
         try {
-          const routes = await GetRoute();
+          const routes = await GetRoute(userId);
           setUserRoutes(routes);
 
           const liked = new Set();
@@ -114,7 +118,7 @@ const ProfilePage = () => {
 
   const filteredRoutes =
     activeTab === "post"
-      ? userRoutes.filter((route) => route.creator?.id === userData.userId)
+      ? userRoutes.filter((route) => route.isPrivate === false && route.creatorName === userData.username)
       : activeTab === "likes"
       ? userRoutes.filter((route) => likedRoutes.has(route.id))
       : [];
@@ -274,8 +278,8 @@ const ProfilePage = () => {
           </div>
         ) : filteredRoutes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredRoutes.map((route, index) => (
-              <UserRoutesCard key={index} {...route} />
+            {filteredRoutes.map((route) => (
+              <UserRoutesCard key={route.id} {...route} />
             ))}
           </div>
         ) : (

@@ -20,7 +20,7 @@ const MapsUserCards = (props: MapProps) => {
       container: mapContainerRef.current,
       style: "mapbox://styles/chott1/cm82q157o00aq01sjhffp707j",
       center: StartingPointcoordinates || [-122.4194, 47.2529],
-      zoom: 12,
+      zoom: zoom,
       attributionControl: false,
     });
 

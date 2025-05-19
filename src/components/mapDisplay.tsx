@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import PrimaryButton from "./buttons/PrimaryButton";
 import { GetProfileById, PostRoute } from "./utils/DataServices";
-import { RoutePostTypes } from "./utils/Interface";
+import {  RoutePostTypes } from "./utils/Interface";
 
 const MapDisplay = () => {
   const [latitude, setLatitude] = useState<number>(37.7749);
@@ -86,8 +86,10 @@ const MapDisplay = () => {
                       properties: {},
                       geometry: {
                         type: "LineString",
+                        
                         coordinates: updatedPath,
                       },
+                      
                     });
                   }
 
@@ -207,7 +209,6 @@ const MapDisplay = () => {
   const getUserProfile = async (userId: number) => {
     if (userId !== undefined) {
       const res = await GetProfileById(userId);
-      console.log(res);
       return res;
     }
   };
@@ -254,7 +255,7 @@ const MapDisplay = () => {
           "line-cap": "round",
         },
         paint: {
-          "line-color": "#FFFFFF",
+         "line-color": "#FF3B30",
           "line-width": 4,
         },
       });
@@ -344,7 +345,7 @@ const MapDisplay = () => {
         <button
           className={`${
             isRecording ? "hidden" : "block"
-          } rounded-full h-15 w-15`}
+          } rounded-full h-15 w-15 lg:hidden`}
           onClick={startRecord}
         >
           <Image

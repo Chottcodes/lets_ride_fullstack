@@ -13,40 +13,77 @@ import MapsUserCards from "../mapsUserCards";
 import "mapbox-gl/dist/mapbox-gl.css";
 import {
   CommentsModelRoute,
+  GetRoutes,
   LikesRoutesModel,
-  RouteGetForCardTypes,
+  RouteComment,
 } from "../utils/Interface";
-import { AddCommentRoute, AddLike } from "../utils/DataServices";
+import {
+  AddCommentRoute,
+  AddLike,
+  GetRouteComment,
+  RemoveRouteLike,
+} from "../utils/DataServices";
+import { useProfilePicture } from "@/hooks/useProfilePicture";
+import { useRouter } from "next/navigation";
+import { Heart, MessageSquareMore } from "lucide-react";
+
 
 const UserRoutesCard = ({
   id,
-  routeName,
+  title,
   routeDescription,
+  likeCount,
   dateCreated,
-  imageUrl,
-  creator,
-  likes,
-  comments,
+  creatorName,
   pathCoordinates,
-}: RouteGetForCardTypes) => {
+  profilePicture,
+  isLikedByCurrentUser,
+  commentCount,
+}: GetRoutes) => {
   // State management
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isImageOpen, setIsImageOpen] = useState<boolean>(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
+  const [showTooltip, setShowTooltip] = useState<boolean>(false);
+  const [showCToolTip, setShowCToolTip] = useState<boolean>(false);
+
   const [commentText, setCommentText] = useState<string>("");
   const [userId, setUserId] = useState<number>(0);
+  const [likedCount, setLikedCount] = useState<number>(0);
   const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
+  const [localComments, setLocalComments] = useState<RouteComment[]>([]);
+  const { push } = useRouter();
 
-  // Check if route is liked by current user
   const isLiked = useMemo(() => likedRoutes.has(id), [likedRoutes, id]);
 
-  // Format date once
+  const profilePictures = useProfilePicture();
+
+  const getComments = async () => {
+    try {
+      const comments: RouteComment[] = await GetRouteComment(id);
+      setLocalComments(comments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      getComments();
+    }
+  }, [isModalOpen]);
+  useEffect(() => {
+    setLikedCount(likeCount);
+    if (isLikedByCurrentUser) {
+      setLikedRoutes(new Set([id]));
+    }
+  }, [id, isLikedByCurrentUser, likeCount]);
+
   const formattedDate = useMemo(
     () => new Date(dateCreated).toLocaleDateString("en-CA"),
     [dateCreated]
   );
 
-  // Get trail coordinates for map
   const trailCoordinates = useMemo(
     () =>
       pathCoordinates.map(
@@ -55,136 +92,127 @@ const UserRoutesCard = ({
     [pathCoordinates]
   );
 
-  // Get starting point for map
   const startingPoint: [number, number] = useMemo(
     () => [pathCoordinates[0].longitude, pathCoordinates[0].latitude],
     [pathCoordinates]
   );
 
-  // Load user ID from localStorage only once on component mount
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));
   }, []);
 
-  // Handle likes with improved error handling
   const handleLike = useCallback(async () => {
+    if (userId === 0) {
+      setShowTooltip(true);
+      setTimeout(() => setShowTooltip(false), 3000);
+      return;
+    }
     try {
       const likeObj: LikesRoutesModel = {
         UserId: userId,
         RouteId: id,
         IsDeleted: false,
       };
-
-      if (userId === 0) {
-        console.error("User not logged in");
-        return;
-      }
-
-      const response = await AddLike(likeObj);
-
-      if (response) {
-        setLikedRoutes((prev) => {
-          const newSet = new Set(prev);
-          newSet.add(id);
-          return newSet;
-        });
+      if (isLiked) {
+        const response = await RemoveRouteLike(userId, id);
+        if (response) {
+          setLikedRoutes((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(id);
+            return newSet;
+          });
+          setLikedCount((prev) => prev - 1);
+        }
+      } else {
+        const response = await AddLike(likeObj);
+        if (response) {
+          setLikedRoutes((prev) => {
+            const newSet = new Set(prev);
+            newSet.add(id);
+            return newSet;
+          });
+          setLikedCount((prev) => prev + 1);
+        }
       }
     } catch (error) {
       console.error("Error adding like:", error);
     }
-  }, [userId, id]);
+  }, [userId, id, isLiked]);
 
-  // State for comments and loading states
-  const [localComments, setLocalComments] = useState(comments || []);
+  const HandleRemoveRouteLike = async () => {
+    if (userId) {
+      try {
+        const res = await RemoveRouteLike(userId, id);
+        if (res) {
+          console.log("success");
+          setLikedRoutes((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(id);
+            return newSet;
+          });
+
+          setLikedCount((prev) => prev - 1);
+        } else {
+          console.log("failed");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
 
-  // Ref for comments container to scroll to bottom on new comments
   const commentsEndRef = useRef<HTMLDivElement>(null);
 
-  // Update local comments when props change
-  useEffect(() => {
-    setLocalComments(comments || []);
-  }, [comments]);
-
-  // Auto-scroll to the newest comment when comments change
   const scrollToBottom = useCallback(() => {
     commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  // Scroll to bottom when comments are added
-  useEffect(() => {
-    if (localComments.length > 0 && isCommentsOpen) {
-      scrollToBottom();
-    }
-  }, [localComments.length, isCommentsOpen, scrollToBottom]);
-
-  // Handle comment submission with improved validation, error handling, and local state update
   const handleCommentSubmit = useCallback(async () => {
-    if (!commentText?.trim()) return;
+    if (userId <= 0) {
+      setShowCToolTip(true);
+      setTimeout(() => setShowCToolTip(false), 3000);
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      if (userId === 0) {
-        setSubmitError("You must be logged in to comment");
-        return;
-      }
-
-      setIsSubmitting(true);
-      setSubmitError("");
-
-      const commentObj: CommentsModelRoute = {
+      const commentOBJ: CommentsModelRoute = {
         UserId: userId,
         RouteId: id,
-        CommentText: commentText.trim(),
+        CommentText: commentText,
         IsDeleted: false,
+      
       };
+      console.log(commentOBJ);
 
-      const response = await AddCommentRoute(commentObj);
+      const response = await AddCommentRoute(commentOBJ);
 
       if (response) {
-        // Clear input after successful submission
         setCommentText("");
-
-        // Add the new comment to the local state for immediate feedback
-        // In a real app, you'd want to get the actual comment ID from the response
-        const newComment = {
-          id: Date.now(), // Temporary ID
-          userId: userId,
-          routeId: id,
-          commentText: commentText.trim(),
-          createdAt: new Date().toISOString(),
-          user: {
-            id: userId,
-            userName: creator.userName, // Assuming the current user is the creator
-            profilePicture: creator.profilePicture,
-          },
-        };
-
-        setLocalComments((prev) => [...prev, newComment]);
-      } else {
-        setSubmitError("Failed to add comment. Please try again.");
+        getComments();
+        scrollToBottom();
       }
     } catch (error) {
       console.error("Error adding comment:", error);
-      setSubmitError("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
-  }, [commentText, userId, id, creator.userName, creator.profilePicture]);
+  }, [userId, id, commentText, scrollToBottom]);
 
-  // Handle modal toggle with focus management
   const toggleModal = useCallback((state: boolean) => {
     setIsModalOpen(state);
     if (!state) {
       setIsCommentsOpen(false);
       setIsImageOpen(false);
     }
-    // Prevent body scroll when modal is open
+
     document.body.style.overflow = state ? "hidden" : "";
   }, []);
 
-  // Close on escape key
   useEffect(() => {
     const handleEscKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -203,76 +231,95 @@ const UserRoutesCard = ({
     };
   }, [isModalOpen, isImageOpen, toggleModal]);
 
-  // Card preview (collapsed state)
   if (!isModalOpen) {
     return (
       <article className="w-full h-full shadow-md rounded-lg border border-blue-500 flex flex-col overflow-hidden transition-all hover:shadow-lg bg-gray-900">
         {/* Map Section */}
-        <header className="h-3/5 w-full relative">
+        <header className="h-50 w-full relative">
           <MapsUserCards
             StartingPointcoordinates={startingPoint}
-            zoom={10}
+            zoom={9}
             trailCoordinates={trailCoordinates}
           />
         </header>
 
         {/* User info */}
         <section className="p-3 flex items-center gap-3">
-          <Avatar className="h-10 w-10 rounded-full overflow-hidden">
+          <Avatar className="h-5 w-5 rounded-full overflow-hidden">
             <AvatarImage
-              src={creator.profilePicture}
-              alt={`${creator.userName}'s profile`}
+              src={
+                profilePicture
+                  ? profilePicture
+                  : "/assets/images/defaultPicture.png"
+              }
+              alt={`${creatorName}'s profile`}
               className="object-cover w-full h-full"
             />
             <AvatarFallback className="bg-blue-700 text-white flex items-center justify-center">
-              {creator.userName?.charAt(0)?.toUpperCase() || "U"}
+              {creatorName?.charAt(0)?.toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
-          <p className="text-white text-sm font-medium">{creator.userName}</p>
+          <p className="text-white text-sm font-medium">{creatorName}</p>
         </section>
 
         {/* Route Info */}
         <main className="px-3 py-2 flex justify-between items-center text-white">
           <section className="flex gap-4">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleLike();
-              }}
-              className="flex items-center gap-1 hover:opacity-80 transition-opacity"
-              aria-label={isLiked ? "Unlike route" : "Like route"}
-            >
-              <Image
-                src={
-                  isLiked
-                    ? "/assets/images/thumbs-up-blue.png"
-                    : "/assets/images/card/thumbs-up.png"
-                }
-                width={16}
-                height={16}
-                alt="Like"
-                className="w-4 h-4"
-              />
-              <span className="text-xs">{likes?.length || 0}</span>
-            </button>
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  isLiked ? HandleRemoveRouteLike() : handleLike();
+                }}
+                className="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer"
+                aria-label={isLiked ? "Unlike route" : "Like route"}
+              >
+                <Heart
+                  className={`transition-colors ${
+                    isLiked ? "text-blue-600" : "text-white"
+                  }`}
+                />
+                <span className="text-xs">{likedCount}</span>
+              </button>
 
+              {showTooltip && (
+                <div className="absolute bottom-full mb-3 left-40 lg:left-20 transform -translate-x-1/2 z-50 animate-fade-in">
+                  <div className="relative bg-gray-900 border-1 border-white text-white text-xs px-3 py-2 rounded-md shadow-lg min-w-[300px] text-center">
+                    Please{" "}
+                    <span
+                      onClick={() => {
+                        push("/pages/Login/loginPage");
+                      }}
+                      className="underline text-blue-200 cursor-pointer"
+                    >
+                      log in
+                    </span>{" "}
+                    or{" "}
+                    <span
+                      onClick={() => {
+                        push("/pages/Login/loginPage");
+                      }}
+                      className="underline text-blue-200 cursor-pointer"
+                    >
+                      sign up
+                    </span>{" "}
+                    to like a route
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 rotate-45 bg-gray-900"></div>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-1">
-              <Image
-                src="/assets/images/card/coment.png"
-                width={16}
-                height={16}
-                alt="Comments"
-                className="w-4 h-4"
-              />
-              <span className="text-xs">{comments?.length || 0}</span>
+              <MessageSquareMore className="text-white" />
+              <span>{commentCount}</span>
             </div>
           </section>
 
           <h3
             className="font-medium text-center truncate max-w-[40%]"
-            title={routeName}
+            title={title}
           >
-            {routeName}
+            {title}
           </h3>
 
           <time
@@ -310,7 +357,7 @@ const UserRoutesCard = ({
         <header className="flex items-center p-3 border-b border-gray-800">
           <BackButtonComponent onClick={() => toggleModal(false)} />
           <h2 className="ml-4 text-white font-bold text-lg truncate">
-            {routeName}
+            {title}
           </h2>
         </header>
 
@@ -326,14 +373,14 @@ const UserRoutesCard = ({
                 setIsModalOpen(true);
               }}
             >
-              <Image
+              {/* <Image
                 src={imageUrl || "/assets/images/card/motorbike.png"}
                 alt="Route preview"
                 fill
                 className="object-cover transition-transform hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 50vw"
                 onClick={(e) => e.stopPropagation()}
-              />
+              /> */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             </div>
 
@@ -342,17 +389,17 @@ const UserRoutesCard = ({
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8 rounded-full overflow-hidden">
                   <AvatarImage
-                    src={creator.profilePicture}
-                    alt={creator.userName}
+                    src={profilePicture ? profilePicture : ""}
+                    alt={creatorName}
                     className="object-cover"
                   />
                   <AvatarFallback className="bg-blue-700 text-white flex items-center justify-center">
-                    {creator.userName?.charAt(0)?.toUpperCase() || "U"}
+                    {creatorName?.charAt(0)?.toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="text-white text-sm font-medium">
-                    {creator.userName}
+                    {creatorName}
                   </p>
                   <time
                     className="text-xs text-gray-400"
@@ -363,24 +410,50 @@ const UserRoutesCard = ({
                 </div>
               </div>
 
-              <button
-                onClick={handleLike}
-                className="flex items-center gap-1 text-sm text-white"
-                aria-label={isLiked ? "Unlike route" : "Like route"}
-              >
-                <Image
-                  src={
-                    isLiked
-                      ? "/assets/images/thumbs-up-blue.png"
-                      : "/assets/images/card/thumbs-up.png"
-                  }
-                  width={18}
-                  height={18}
-                  alt="Like"
-                  className="w-5 h-5"
-                />
-                <span>{likes?.length || 0}</span>
-              </button>
+              <div className="relative">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    isLiked ? HandleRemoveRouteLike() : handleLike();
+                  }}
+                  className="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer"
+                  aria-label={isLiked ? "Unlike route" : "Like route"}
+                >
+                  <Heart
+                    className={`transition-colors ${
+                      isLiked ? "text-blue-600" : "text-white"
+                    }`}
+                  />
+                  <span className="text-xs text-white">{likedCount}</span>
+                </button>
+
+                {showTooltip && (
+                  <div className="absolute bottom-full mb-3   lg:left-1 transform -translate-x-65 lg:-translate-x-1/2 z-50 animate-fade-in">
+                    <div className="relative bg-gray-900 border-1 border-white text-white text-xs px-3 py-2 rounded-md shadow-lg min-w-[300px] text-center">
+                      Please{" "}
+                      <span
+                        onClick={() => {
+                          push("/pages/Login/loginPage");
+                        }}
+                        className="underline text-blue-200 cursor-pointer"
+                      >
+                        log in
+                      </span>{" "}
+                      or{" "}
+                      <span
+                        onClick={() => {
+                          push("/pages/Login/loginPage");
+                        }}
+                        className="underline text-blue-200 cursor-pointer"
+                      >
+                        sign up
+                      </span>{" "}
+                      to like a route
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 rotate-45 bg-gray-900"></div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Route Description */}
@@ -415,7 +488,7 @@ const UserRoutesCard = ({
                     : "text-gray-400 hover:text-white"
                 }`}
               >
-                Comments ({comments?.length || 0})
+                {/* Comments ({comments?.length || 0}) */}
               </button>
             </div>
 
@@ -432,10 +505,12 @@ const UserRoutesCard = ({
 
             {/* Comments Section */}
             <div
-              className={`flex-1 flex flex-col ${!isCommentsOpen ? "hidden md:flex" : ""}`}
+              className={`flex-1 flex flex-col ${
+                !isCommentsOpen ? "hidden md:flex" : ""
+              }`}
             >
               {/* Comments List - Fixed for better scrollability */}
-              <div className="flex-1 overflow-y-auto px-4 py-2 max-h-[300px]">
+              <div className="flex-1 overflow-y-auto px-4 py-2 max-h-[350px] custom-scrollbar">
                 <div className="flex-1 overflow-y-auto px-4 py-2">
                   {localComments && localComments.length > 0 ? (
                     <div className="space-y-4">
@@ -443,26 +518,25 @@ const UserRoutesCard = ({
                         <div key={index} className="flex gap-3 animate-fadeIn">
                           <Avatar className="h-8 w-8 flex-shrink-0 rounded-full overflow-hidden">
                             <AvatarImage
-                              src={comment.user.profilePicture}
-                              alt={comment.user.userName}
+                              src={comment.profilePictureUrl}
+                              alt={comment.username}
                               className="object-cover"
                             />
                             <AvatarFallback className="bg-blue-700 text-white flex items-center justify-center">
-                              {comment.user.userName
-                                ?.charAt(0)
-                                ?.toUpperCase() || "U"}
+                              {comment.username?.charAt(0)?.toUpperCase() ||
+                                "U"}
                             </AvatarFallback>
                           </Avatar>
 
                           <div className="flex-1 max-w-full">
                             <div className="flex items-center gap-2 flex-wrap">
                               <p className="text-white text-xs font-medium">
-                                {comment.user.userName}
+                                {comment.username}
                               </p>
                               <time className="text-xs text-gray-400">
-                                {comment.createdAt
+                                {comment.dateCreated
                                   ? new Date(
-                                      comment.createdAt
+                                      comment.dateCreated
                                     ).toLocaleDateString("en-CA")
                                   : "Unknown Date"}
                               </time>
@@ -486,17 +560,18 @@ const UserRoutesCard = ({
               </div>
 
               {/* Comment Input */}
-              <div className="p-3 border-t border-gray-800 bg-gray-900">
+              <div className="p-3 border-t border-gray-800 bg-gray-900 relative">
                 <div className="flex items-center gap-2">
                   <Avatar className="h-8 w-8 flex-shrink-0 rounded-full overflow-hidden hidden sm:block">
                     <AvatarImage
-                      src={creator.profilePicture}
+                      src={
+                        profilePictures
+                          ? profilePictures
+                          : "/assets/images/defaultPicture.png"
+                      }
                       alt="Your avatar"
                       className="object-cover"
                     />
-                    <AvatarFallback className="bg-blue-700 text-white flex items-center justify-center">
-                      {creator.userName?.charAt(0)?.toUpperCase() || "U"}
-                    </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 relative">
@@ -537,10 +612,31 @@ const UserRoutesCard = ({
                     </button>
                   </div>
                 </div>
-                {submitError && (
-                  <p className="text-red-500 text-xs mt-1 text-center">
-                    {submitError}
-                  </p>
+                {showCToolTip && (
+                  <div className="absolute bottom-full mb-3 left-75 lg:left-40 transform -translate-x-65 lg:-translate-x-1/2 z-50 animate-fade-in">
+                    <div className="relative bg-gray-900 border-1 border-white text-white text-xs px-3 py-2 rounded-md shadow-lg min-w-[300px] text-center">
+                      Please{" "}
+                      <span
+                        onClick={() => {
+                          push("/pages/Login/loginPage");
+                        }}
+                        className="underline text-blue-200 cursor-pointer"
+                      >
+                        log in
+                      </span>{" "}
+                      or{" "}
+                      <span
+                        onClick={() => {
+                          push("/pages/Login/loginPage");
+                        }}
+                        className="underline text-blue-200 cursor-pointer"
+                      >
+                        sign up
+                      </span>{" "}
+                      to Comment
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 rotate-45 bg-gray-900"></div>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
@@ -589,13 +685,13 @@ const UserRoutesCard = ({
             className="w-full h-full flex items-center justify-center p-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
+            {/* <Image
               src={imageUrl || "/assets/images/card/motorbike.png"}
               alt="Route image full view"
               width={1200}
               height={800}
               className="max-w-full max-h-full object-contain"
-            />
+            /> */}
           </div>
         </div>
       )}

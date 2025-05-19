@@ -1,135 +1,277 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronRight, ChevronLeft} from "lucide-react";
 
 import UserCards from "@/components/ui/UserCards";
-import { IUserCardType, Likes, VideoGet } from "@/components/utils/Interface";
-
-import { getGalleryPosts,  GetVideo } from "@/components/utils/DataServices";
-
-
-
-
-import VideoComponet from "@/components/VideoComponet";
+import UserRoutesCard from "@/components/ui/UserRoutesCard";
+import VideoComponent from "@/components/VideoComponet";
 import VideoModal from "@/components/VideoModal";
+
+import {
+  getGalleryPosts,
+  GetRoute,
+  GetVideo,
+} from "@/components/utils/DataServices";
+
+import {
+  GetRoutes,
+  IUserCardType,
+  
+  VideoGet,
+} from "@/components/utils/Interface";
+
+import { GetLocalStorageId } from "@/components/utils/helperFunctions";
+
+const SectionTitle = ({title}:{title:string}) => (
+  <div className="w-full flex items-center justify-between px-4 md:px-8 py-6">
+    <h2 className="text-2xl md:text-3xl text-white font-bold">{title}</h2>
+    <motion.button 
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="text-gray-400 hover:text-white flex items-center gap-1 text-sm md:text-base"
+    >
+      View all <ChevronRight size={16} />
+    </motion.button>
+  </div>
+);
+
+const ScrollableSection = ({
+  children,
+  title,
+}: {
+  children: React.ReactNode;
+  title: string;
+}) => {
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  
+   const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = direction === 'left' ? -400 : 400;
+      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+
+  return (
+    <section className="w-full px-2 py-4">
+      <SectionTitle title={title}/>
+      
+      <div className="relative group">
+        <motion.button 
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 rounded-full p-2 z-10 text-white opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => scroll('left')}
+        >
+          <ChevronLeft size={24} />
+        </motion.button>
+        
+        <div 
+          ref={scrollRef}
+          className="w-full flex flex-row gap-4 overflow-x-auto scrollbar-hide snap-x scroll-px-4 pb-6 px-2"
+        >
+          {children}
+        </div>
+        
+        <motion.button 
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 rounded-full p-2 z-10 text-white opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => scroll('right')}
+        >
+          <ChevronRight size={24} />
+        </motion.button>
+      </div>
+    </section>
+  );
+};
 
 const Page = () => {
   const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
   const [userVideoData, setUserVideoData] = useState<VideoGet[]>([]);
+  const [routes, setRoutes] = useState<GetRoutes[]>([]);
+  const [userId, setUserId] = useState(0);
   const [likesCount, setLikesCount] = useState<number>();
-  const [isImagePosted, setIsImagePosted] = useState<boolean>(false);
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [isImagePosted, setIsImagePosted] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<string>();
   const [videoId, setVideoId] = useState<number>();
-  const [videoLikes, setVideoLikes] = useState<Likes[]>([]);
+  const [videoLikes, setVideoLikes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-   
-    const fetchPosts = async () => {
-      const res = await getGalleryPosts();
-      const data = await res;
-      const sorted = data.sort(
-        (a: IUserCardType, b: IUserCardType) =>
-          new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
-      );
-      const latestThree = sorted.slice(0, 3);
-      setUserCardsDataArr(latestThree);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const getProfile = GetLocalStorageId();
+        if (getProfile) setUserId(getProfile);
+
+        // Fetch routes
+        const routesRes = await GetRoute(userId);
+        const sortedRoutes = routesRes.sort(
+          (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        );
+        setRoutes(sortedRoutes);
+
+        // Fetch gallery posts
+        const galleryRes = await getGalleryPosts();
+        const sortedGallery = galleryRes.sort(
+          (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        );
+        const latestPosts = sortedGallery.slice(0, 6);
+        setUserCardsDataArr(latestPosts);
+
+        // Fetch videos
+        const videoRes = await GetVideo();
+        const sortedVideos = videoRes.sort(
+          (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
+        );
+        const latestVideos = sortedVideos.slice(0, 6);
+        setUserVideoData(latestVideos);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    const fetchVideos = async () => {
-      const res = await GetVideo();
-      const data = await res;
-      const sorted = data.sort(
-        (a: IUserCardType, b: IUserCardType) =>
-          new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
-      );
-      const latestThree = sorted.slice(0, 3);
-      setUserVideoData(latestThree);
-    };
-    fetchVideos();
-    fetchPosts();
-   
-  }, []);
+
+    fetchData();
+  }, [userId]);
+
   useEffect(() => {
     if (isImagePosted) {
-      const fetchPosts = async () => {
-        const res = await getGalleryPosts();
-        const data = await res;
-        console.log("Refetched Images:", data);
-        setUserCardsDataArr(data);
+      const refetchData = async () => {
+        try {
+          const galleryRes = await getGalleryPosts();
+          setUserCardsDataArr(galleryRes);
+
+          const videoRes = await GetVideo();
+          setUserVideoData(videoRes);
+        } catch (error) {
+          console.error("Error refetching data:", error);
+        } finally {
+          setIsImagePosted(false);
+        }
       };
-      const fetchVideos = async () => {
-        const res = await GetVideo();
-        const data = await res;
-        console.log("Refetched Video:", data);
-        setUserVideoData(data);
-      };
-      fetchVideos();
-      fetchPosts();
-      setIsImagePosted(false);
+
+      refetchData();
     }
   }, [isImagePosted]);
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col bg-black">
-    <header className="h-[500px] w-full">
-    <video
-      className="w-full h-full object-cover"
-      autoPlay
-      loop
-      playsInline
-      muted
-    >
-      <source src="/assets/video/LetsRideVidRevOne.mp4" type="video/mp4" />
-    </video>
-  </header>
+    <div className="min-h-screen w-full flex flex-col bg-zinc-900">
+      {/* Hero Section */}
+      <section className="relative w-full h-[40vh] md:h-[60vh] lg:h-[80vh] overflow-hidden">
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          loop
+          playsInline
+          muted
+        >
+          <source
+            src="/assets/video/lets_ride_Final_Video.mp4"
+            type="video/mp4"
+          />
+        </video>
+        
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent" />
+        
+        <div className="absolute bottom-8 left-0 w-full px-4 md:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="max-w-3xl"
+          >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2">
+              Lets <span className="text-blue-600">Ride</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-200 max-w-lg">
+              Share your rides, discover new routes, and connect with fellow riders
+            </p>
+            
+          </motion.div>
+        </div>
+      </section>
 
-  <section className="w-full flex justify-center items-center py-4">
-    <h1 className="text-[30px] text-white pl-5">Recent</h1>
-  </section>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+        </div>
+      ) : (
+        <main className="w-full flex flex-col">
+          {/* Routes Section */}
+          {routes.length > 0 && (
+            <ScrollableSection title="Recent Routes">
+              {routes.map((route, index) => (
+                <motion.div 
+                  key={index}
+                  className="min-w-[280px] w-[85vw] sm:w-[350px] md:w-[300px] lg:w-[350px] flex-shrink-0 snap-start"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index, duration: 0.3 }}
+                >
+                  <UserRoutesCard {...route} />
+                </motion.div>
+              ))}
+            </ScrollableSection>
+          )}
 
-  <main className="w-full flex flex-col">
-    <section className="w-full min-h-[350px]">
-      <div className="w-full flex flex-row justify-center  gap-4 overflow-x-auto pl-3 pr-3">
-        {userCardsDataArr.map((card, index) => (
-          <div className="w-[350px] flex-shrink-0" key={index}>
-            <UserCards {...card} />
-          </div>
-        ))}
-      </div>
-    </section>
+          {/* Gallery Section */}
+          {userCardsDataArr.length > 0 && (
+            <ScrollableSection title="Recent Photos">
+              {userCardsDataArr.map((card, index) => (
+                <motion.div 
+                  key={index}
+                  className="min-w-[280px] w-[85vw] sm:w-[350px] md:w-[300px] lg:w-[350px] flex-shrink-0 snap-start"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index, duration: 0.3 }}
+                >
+                  <UserCards {...card} />
+                </motion.div>
+              ))}
+            </ScrollableSection>
+          )}
 
-    <section className="w-full py-4 flex justify-center">
-      <h1 className="text-[30px] text-white pl-5">Videos</h1>
-    </section>
+          {/* Videos Section */}
+          {userVideoData.length > 0 && (
+            <ScrollableSection title="Featured Videos">
+              {userVideoData.map((video, index) => (
+                <motion.div 
+                  key={index}
+                  className="min-w-[280px] w-[85vw] sm:w-[350px] md:w-[300px] lg:w-[350px] flex-shrink-0 snap-start"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index, duration: 0.3 }}
+                  onClick={() => {
+                    setSelectedVideo(video.videoUrl);
+                    setVideoId(video.id);
+                    setLikesCount(video.likes.length);
+                    
+                  }}
+                >
+                  <VideoComponent {...video} />
+                </motion.div>
+              ))}
+            </ScrollableSection>
+          )}
+        </main>
+      )}
 
-    <section className="w-full min-h-[450px]">
-      <div className="w-full flex flex-row justify-center gap-5 overflow-x-auto">
-        {userVideoData.map((videos, index) => (
-          <div className="w-[50%] lg:w-[20%]  flex-shrink-0 pb-5" key={index}>
-            <VideoComponet
-              {...videos}
-              onClick={() => {
-                setSelectedVideo(videos.videoUrl);
-                setVideoId(videos.id);
-                setLikesCount(videos.likes.length);
-                setVideoLikes(videos.likes);
-              }}
-            />
-          </div>
-        ))}
-      </div>
-    </section>
-  </main>
-
-  {selectedVideo && (
-    <VideoModal
-      videoUrl={selectedVideo}
-      videoId={videoId ?? 0}
-      videoLikes={likesCount ?? 0}
-      videoLikeArr={videoLikes}
-      onClose={() => setSelectedVideo(null)}
-    />
-  )}
-</div>
-
+      {/* Video Modal */}
+      {selectedVideo && (
+        <VideoModal
+          videoUrl={selectedVideo}
+          videoId={videoId ?? 0}
+          videoLikes={likesCount ?? 0}
+          videoLikeArr={videoLikes}
+          onClose={() => setSelectedVideo('')}
+        />
+      )}
+    </div>
   );
 };
 

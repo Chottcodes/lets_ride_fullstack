@@ -1,4 +1,4 @@
-import { AddGalleryPost, CommentsModelGallery, CommentsModelRoute, InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo } from "./Interface"
+import { AddGalleryPost, CommentsModelGallery,  InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo } from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -101,12 +101,25 @@ export const PostRoute = async (route:RoutePostTypes ) => {
     const data = await res.json();
     return data;
 }
-export const GetRoute = async () => {
-    const res = await fetch(url + `RideTables/GetRoutes`)
+export const GetRoute = async (userId: number) => {
+  try {
+    const res = await fetch(url + `RideTables/GetRoutes/${userId}`);
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error(`Failed to fetch routes (status: ${res.status}):`, errorText);
+      return [];
+    }
+
     const data = await res.json();
-    console.log(data)
+    console.log("Fetched routes:", data);
     return data;
-}
+  } catch (err) {
+    console.error("Network or fetch error in GetRoute:", err);
+    return [];
+  }
+};
+
 export const GetProfileById = async (id:number) => {
     const res = await fetch(url + `RideTables/GetProfile/${id}`)
     const data = await res.json();
@@ -227,21 +240,33 @@ export const AddVideoLike = async (Likes:LikesVideoModel) => {
         return data;
     }
     
-export const AddCommentRoute=async (comment:CommentsModelRoute) => {
-    const res = await fetch(url + "RideTables/AddComment",{
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },body: JSON.stringify(comment)
+export const AddCommentRoute = async (comment: LikesRoutesModel) => {
+  try {
+    const response = await fetch(url + "RideTables/AddComment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(comment),
     });
-    if(!res.ok)
-        {
-            console.log("Error");
-            return null;
-        }
-        const data = await res.json();
-        return data;
-}
+
+    // Response returned but not OK (like 400 or 500)
+    if (!response.ok) {
+      const errorText = await response.text(); // Read the error body
+      console.error(`Server responded with status ${response.status}:`, errorText);
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    // Catch network errors, CORS issues, etc.
+    console.error("Fetch failed:", error);
+    throw new Error(`Fetch failed: ${(error as Error).message}`);
+  }
+};
+
+
+
 export const AddCommentVideo=async (comment: CommentsModelVideo) => {
     const res = await fetch(url + "RideTables/AddComment",{
         method: "POST",
@@ -317,6 +342,35 @@ export const GetVideo=async()=>{
         }
         const data = await res.json();
         return data;
+}
+export const RemoveRouteLike=async(userId:number,postId:number)=>
+{
+
+    const res = await fetch(url + `RideTables/RemoveRouteLike/${userId}/${postId}`,{
+        method:"DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+     if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+    return data
+}
+
+export const GetRouteComment = async(routeId:number)=>
+{
+    const res = await fetch(url + `RideTables/GetRouteComments/${routeId}`)
+     if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+        return data
 }
 
 
