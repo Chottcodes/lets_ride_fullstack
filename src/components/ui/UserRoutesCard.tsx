@@ -27,7 +27,6 @@ import { useProfilePicture } from "@/hooks/useProfilePicture";
 import { useRouter } from "next/navigation";
 import { Heart, MessageSquareMore } from "lucide-react";
 
-
 const UserRoutesCard = ({
   id,
   title,
@@ -185,7 +184,6 @@ const UserRoutesCard = ({
         RouteId: id,
         CommentText: commentText,
         IsDeleted: false,
-      
       };
       console.log(commentOBJ);
 
@@ -269,7 +267,11 @@ const UserRoutesCard = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  isLiked ? HandleRemoveRouteLike() : handleLike();
+                  if (isLiked) {
+                    HandleRemoveRouteLike();
+                  } else {
+                    handleLike();
+                  }
                 }}
                 className="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer"
                 aria-label={isLiked ? "Unlike route" : "Like route"}
@@ -414,7 +416,11 @@ const UserRoutesCard = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    isLiked ? HandleRemoveRouteLike() : handleLike();
+                    if (isLiked) {
+                      HandleRemoveRouteLike();
+                    } else {
+                      handleLike();
+                    }
                   }}
                   className="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer"
                   aria-label={isLiked ? "Unlike route" : "Like route"}
