@@ -1,5 +1,6 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import {
@@ -12,6 +13,7 @@ import {
   AddCommentGallery,
   AddGalleryLike,
   GetGalleryComments,
+  RemoveGalleryLike,
 } from "../utils/DataServices";
 
 const UserCardsPost = (props: IUserCardType) => {
@@ -24,6 +26,8 @@ const UserCardsPost = (props: IUserCardType) => {
   const [userComment, setUsercomment] = useState<string>("");
   const [userId, setUserId] = useState<number>();
   const [comments, setComments] = useState<GalleryComments[]>([]);
+  const [likeCount, setLikeCount] = useState<number>(props.likeCount || 0);
+
 
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -63,15 +67,6 @@ const UserCardsPost = (props: IUserCardType) => {
     GetPost();
   }, [isCommentPosted]);
 
-  useEffect(() => {
-    if (
-      userId !== undefined &&
-      props.likes?.some((like) => like.userId === userId)
-    ) {
-      setIsliked(true);
-    }
-  }, [userId, props.likes]);
-
   const LikeGalleryPost = async (GalleryId: number) => {
     if (userId === null) {
       console.error("UserId is null. Cannot add like.");
@@ -87,13 +82,21 @@ const UserCardsPost = (props: IUserCardType) => {
       if (response) {
         console.log("Like added successfully");
         setIsliked(true);
+         setLikeCount((prev) => prev + 1);
       } else {
         console.error("Error adding like");
       }
     }
-
-   
   };
+  const UnlikeGalleryPost = async (GalleryId: number) => {
+  if (!userId) return;
+  const success = await RemoveGalleryLike(userId, GalleryId);
+  if (success) {
+    setIsliked(false);
+    setLikeCount((prev) => Math.max(0, prev - 1)); 
+  }
+};
+
   return (
     <>
       <main className="w-full max-w-[1570px] h-full overflow-hidden shadow-md rounded-md border-2 border-blue-500 pb-5">
@@ -114,14 +117,14 @@ const UserCardsPost = (props: IUserCardType) => {
           <div className="h-full w-[50%] pl-2  text-white flex justify-start items-center">
             <Avatar>
               <AvatarImage
-                src={props.creator.profilePicture}
+                src={props.profilePicture}
                 className="object-contain w-[20px] h-[20px] rounded-full"
               />
             </Avatar>
-            <p>{`@${props.creator.userName}`}</p>
+            <p>{`@${props.creatorName}`}</p>
           </div>
           <div className="w-[50%] h-full  flex justify-start items-center">
-            <h1 className="text-white text-[16px]">{props.title}</h1>
+            <h1 className="text-white text-[16px]">{props.caption}</h1>
           </div>
         </section>
 
@@ -130,31 +133,28 @@ const UserCardsPost = (props: IUserCardType) => {
           <div className="flex justify-center items-center space-x-4 ">
             <div className="flex justify-center items-center gap-2">
               {/* If liked */}
-              {isLiked ? (
-                <button className={"flex items-center space-x-2 text-white"}>
-                  <Image
-                    src="/assets/images/thumbs-up-blue.png"
-                    width={1000}
-                    height={1000}
-                    alt="Like"
-                    className="w-6 h-6 text-black cursor-pointer"
-                  />
-                  <p className="text-[18px]">{props.likes?.length}</p>
-                </button>
-              ) : (
-                // Default like
-                <button className={"flex items-center space-x-2 text-white"}>
-                  <Image
-                    onClick={() => LikeGalleryPost(props.id)}
-                    src="/assets/images/card/thumbs-up.png"
-                    width={1000}
-                    height={1000}
-                    alt="Like"
-                    className="w-6 h-6 text-black cursor-pointer"
-                  />
-                  <p className="text-[18px]">{props.likes?.length}</p>
-                </button>
-              )}
+
+             <button
+                      className={"flex items-center space-x-2 text-white"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isLiked || props.isLikedByCurrentUser) {
+                            UnlikeGalleryPost(props.id);
+                          }
+                         else {
+                          LikeGalleryPost(props.id);
+                        }
+                      }}
+                    >
+                      <Heart
+                        className={`${
+                          isLiked || props.isLikedByCurrentUser
+                            ? "text-blue-700"
+                            : "text-white"
+                        } cursor-pointer`}
+                      />
+                      <p className="text-[18px]">{likeCount}</p>
+                    </button>
             </div>
             <button
               onClick={() => setIsModel(true)}
@@ -167,9 +167,7 @@ const UserCardsPost = (props: IUserCardType) => {
                 alt="comments"
                 className="object-contain w-[20px] h-[20px]"
               />
-              <span className="text-lg">
-                {props.comments == null ? 0 : props.comments.length}
-              </span>
+              <span className="text-lg">{props.commentCount}</span>
             </button>
           </div>
 
@@ -219,18 +217,18 @@ const UserCardsPost = (props: IUserCardType) => {
                 <div className="w-full h-[10%] flex text-white relative">
                   <button className="w-[35%] lg:w-[20%] flex justify-start items-center  overflow-hidden cursor-pointer ">
                     <Image
-                      src={props.creator.profilePicture}
+                      src={props.profilePicture}
                       className="object-contain w-[25px] h-[25px] rounded-full"
                       alt={""}
                       height={100}
                       width={100}
                     />
 
-                    <p>{`${props.creator.userName}`}</p>
+                    <p>{`${props.creatorName}`}</p>
                   </button>
 
                   <div className="w-full h-full flex items-center justify-center absolute">
-                    {props.title}
+                    {props.caption}
                   </div>
                 </div>
 
@@ -287,7 +285,7 @@ const UserCardsPost = (props: IUserCardType) => {
                         <div className="w-full h-[50%] flex items-center ">
                           <div className="h-[25px] w-[25px] lg:h-[55px] lg:w-[55px] rounded-full ">
                             <Image
-                              src={props.creator.profilePicture}
+                              src={props.profilePicture}
                               className="object-contain w-full h-full rounded-full"
                               alt={"Profile picture"}
                               height={200}
@@ -317,42 +315,34 @@ const UserCardsPost = (props: IUserCardType) => {
                       </section>
                     </div>
                   ) : (
-                    <p className="indent-8 text-lg">{props.description}</p>
+                    <p className="indent-8 text-lg">{props.caption}</p>
                   )}
                 </div>
 
                 {/* Likes & Comments */}
                 <div className="w-full border-t">
                   <div className="flex items-center gap-5">
-                    {isLiked ? (
-                      <button
-                        className={"flex items-center space-x-2 text-white"}
-                      >
-                        <Image
-                          src="/assets/images/thumbs-up-blue.png"
-                          width={1000}
-                          height={1000}
-                          alt="Like"
-                          className="w-6 h-6 text-black cursor-pointer"
-                        />
-                        <p className="text-[18px]">{props.likes?.length}</p>
-                      </button>
-                    ) : (
-                      <button
-                        className={"flex items-center space-x-2 text-white"}
-                      >
-                        <Image
-                          src="/assets/images/card/thumbs-up.png"
-                          onClick={() => LikeGalleryPost(props.id)}
-                          width={1000}
-                          height={1000}
-                          alt="Like"
-                          className="w-6 h-6 text-black cursor-pointer"
-                        />
-                        <p className="text-[18px]">{props.likes?.length}</p>
-                      </button>
-                    )}
-
+                    <button
+                      className={"flex items-center space-x-2 text-white"}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isLiked || props.isLikedByCurrentUser) {
+                            UnlikeGalleryPost(props.id);
+                          }
+                         else {
+                          LikeGalleryPost(props.id);
+                        }
+                      }}
+                    >
+                      <Heart
+                        className={`${
+                          isLiked || props.isLikedByCurrentUser
+                            ? "text-blue-700"
+                            : "text-white"
+                        } cursor-pointer`}
+                      />
+                      <p className="text-[18px]">{likeCount}</p>
+                    </button>
                     <button className="w-[90%] flex items-center space-x-2 text-white">
                       <Image
                         onClick={() => setIsCommentsOpen(!isCommentsOpen)}
@@ -364,7 +354,7 @@ const UserCardsPost = (props: IUserCardType) => {
                       />
                       <div className="w-[15%] text-lg flex gap-2">
                         <p>Comments</p>
-                        {props.comments == null ? 0 : props.comments.length}
+                        {props.commentCount}
                       </div>
                     </button>
                   </div>

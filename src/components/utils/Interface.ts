@@ -8,18 +8,15 @@ export interface IUserCreate
 }
 export interface IUserCardType {
     id: number;
-    creatorId: number;
-    creator: {
-    profilePicture: string;
-    userName: string;
-    };
+   
     imageUrl: string;
-    title: string;
-    description: string;
+   caption: string;
+   creatorName: string;
+   profilePicture: string;
     dateCreated: string;
-    isDeleted: boolean;
-    likes: LikeModel[];
-    comments: CommentModel[];
+   likeCount:number
+    commentCount:number
+    isLikedByCurrentUser:boolean
   }
   export interface LikeModel {
     userId: number;
@@ -216,13 +213,14 @@ export interface Coordinates {
       }
       export interface VideoGet{
         id:number
-        creator:UserProfile;
         videoUrl:string;
         title:string;
-        isDeleted:boolean;
-        createdAt:string
-        likes:Likes[];
-        comments:comments[]
+        creatorName:string;
+        profilePicture:string;
+        dateCreated:string
+        likeCount:number;
+        commentCount:number;
+        isLikedByCurrentUser:boolean
       }
    export interface Coordinate {
   latitude: number;

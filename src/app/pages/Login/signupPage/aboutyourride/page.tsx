@@ -29,7 +29,7 @@ const AboutYourRidePage = () => {
     console.log('Frequency',ridingFrequency)
   }, [beginner,preferences,ridingFrequency]);
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center">
+    <div className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-800 to-black">
       <nav className="w-full  lg:h-[10%] flex flex-col items-center justify-center lg:gap-5 lg:mt-0">
         <h1 className="text-4xl text-white">
           Tell Us About <span className="text-[#506FFD]">Your Ride</span>

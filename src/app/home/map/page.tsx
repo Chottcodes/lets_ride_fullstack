@@ -50,7 +50,7 @@ const MapPage = () => {
     if (activeTab === "community" || window.innerWidth >= 1024) {
       setIsLoading(true);
       try {
-        const res = await GetRoute(userId);
+        const res = await GetRoute(userId,1,4);
         setAllRoutes(res);
       } catch (error) {
         console.error("Error fetching routes:", error);

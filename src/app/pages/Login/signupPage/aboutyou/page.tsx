@@ -140,7 +140,7 @@ useEffect(() => {
 }, [userId]);
 
   return (
-    <div className="text-white h-screen flex flex-col justify-center items-center">
+    <div className="text-white h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-800 to-black">
       <header className="w-full h-[10%] flex flex-col items-center justify-center gap-5 lg:gap-7 lg:mt-0">
         <h1 className="text-4xl">
           Tell Us About <span className="text-[#506FFD]">Yourself</span>

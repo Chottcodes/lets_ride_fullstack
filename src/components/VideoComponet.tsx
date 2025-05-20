@@ -20,8 +20,8 @@ const VideoComponet = (props: VideoGet & { onClick?: () => void }) => {
       </div>
       <div className="h-[10%] w-full flex justify-between items-center relative">
         <div className="pl-2 w-[30%] flex justify-start items-center text-white">
-        <Image src={props.creator.profilePicture} width={1000} height={1000} className="w-[20px] h-[20px] rounded-full " alt={"Profile picture"}/>
-        <p className="text-[15px]">{props.creator.userName}</p>
+        <Image src={props.profilePicture} width={1000} height={1000} className="w-[20px] h-[20px] rounded-full " alt={"Profile picture"}/>
+        <p className="text-[15px]">{props.creatorName}</p>
         </div>
         <div className="w-full h-full text-white flex justify-center items-center absolute">
           <p>{props.title}</p>

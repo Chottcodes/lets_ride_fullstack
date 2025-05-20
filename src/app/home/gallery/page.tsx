@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 import UserCards from "@/components/ui/UserCards";
 import { IUserCardType, Likes, VideoGet } from "@/components/utils/Interface";
-import { getGalleryPosts, GetVideo } from "@/components/utils/DataServices";
+import { GetGalleryPosts, GetVideo } from "@/components/utils/DataServices";
 import VideoComponet from "@/components/VideoComponet";
 import VideoModal from "@/components/VideoModal";
 
@@ -15,9 +15,11 @@ import VideoModal from "@/components/VideoModal";
 
 import { ChevronRight } from "lucide-react";
 import OpenPostModal from "@/components/inputs/cardTestInput";
+import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 
 const Page = () => {
   const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
+  const [ userId, setUserId] = useState<number>(0);
   const [userVideoData, setUserVideoData] = useState<VideoGet[]>([]);
   const [likesCount, setLikesCount] = useState<number>();
   const [isImagePosted, setIsImagePosted] = useState<boolean>(false);
@@ -31,13 +33,15 @@ const Page = () => {
 
   // Fetch data on initial load
   useEffect(() => {
+    const getId = GetLocalStorageId();
+    if(getId) setUserId(getId);
     const fetchPosts = async () => {
-      const res = await getGalleryPosts();
+      const res = await GetGalleryPosts(userId,1,100);
       setUserCardsDataArr(res || []);
     };
     
     const fetchVideos = async () => {
-      const res = await GetVideo();
+      const res = await GetVideo(userId,1,100);
       setUserVideoData(res || []);
     };
    
@@ -49,12 +53,12 @@ const Page = () => {
   useEffect(() => {
     if (isImagePosted) {
       const fetchPosts = async () => {
-        const res = await getGalleryPosts();
+        const res = await GetGalleryPosts(userId,1,100);
         setUserCardsDataArr(res || []);
       };
       
       const fetchVideos = async () => {
-        const res = await GetVideo();
+        const res = await GetVideo(userId,1,100);
         setUserVideoData(res || []);
       };
       
@@ -170,12 +174,12 @@ const Page = () => {
                   key={index}
                   variants={variants}
                   className="h-full aspect-video bg-zinc-800 rounded-lg overflow-hidden"
-                  onClick={() => {
-                    setSelectedVideo(video.videoUrl);
-                    setVideoId(video.id);
-                    setLikesCount(video.likes.length);
-                    setVideoLikes(video.likes);
-                  }}
+                  // onClick={() => {
+                  //   setSelectedVideo(video.videoUrl);
+                  //   setVideoId(video.id);
+                  //   setLikesCount(video.likes.length);
+                  //   setVideoLikes(video.likes);
+                  // }}
                 >
                   <VideoComponet {...video} />
                 </motion.div>

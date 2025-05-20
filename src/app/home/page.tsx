@@ -8,9 +8,10 @@ import UserCards from "@/components/ui/UserCards";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import VideoComponent from "@/components/VideoComponet";
 import VideoModal from "@/components/VideoModal";
+import { useRouter } from "next/navigation";
 
 import {
-  getGalleryPosts,
+  GetGalleryPosts,
   GetRoute,
   GetVideo,
 } from "@/components/utils/DataServices";
@@ -18,13 +19,12 @@ import {
 import {
   GetRoutes,
   IUserCardType,
-  
   VideoGet,
 } from "@/components/utils/Interface";
 
 import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 
-const SectionTitle = ({title}:{title:string}) => (
+const SectionTitle = ({title}:{title:React.ReactNode}) => (
   <div className="w-full flex items-center justify-between px-4 md:px-8 py-6">
     <h2 className="text-2xl md:text-3xl text-white font-bold">{title}</h2>
    
@@ -36,7 +36,7 @@ const ScrollableSection = ({
   title,
 }: {
   children: React.ReactNode;
-  title: string;
+  title: React.ReactNode;
 }) => {
   const scrollRef = React.useRef<HTMLDivElement>(null);
   
@@ -93,23 +93,25 @@ const Page = () => {
   const [videoId, setVideoId] = useState<number>();
   const [videoLikes, setVideoLikes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const getProfile = GetLocalStorageId();
-        if (getProfile) setUserId(getProfile);
+        const getId = GetLocalStorageId();
+        if (getId) setUserId(getId);
 
         // Fetch routes
-        const routesRes = await GetRoute(userId);
+        const routesRes = await GetRoute(userId,1,4);
         const sortedRoutes = routesRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );
         setRoutes(sortedRoutes);
 
         // Fetch gallery posts
-        const galleryRes = await getGalleryPosts();
+        const galleryRes = await GetGalleryPosts(userId,1,3);
+       
         const sortedGallery = galleryRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );
@@ -117,12 +119,12 @@ const Page = () => {
         setUserCardsDataArr(latestPosts);
 
         // Fetch videos
-        const videoRes = await GetVideo();
+        const videoRes = await GetVideo(userId,1,3);
         const sortedVideos = videoRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );
-        const latestVideos = sortedVideos.slice(0, 6);
-        setUserVideoData(latestVideos);
+     
+        setUserVideoData(sortedVideos);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -132,15 +134,15 @@ const Page = () => {
 
     fetchData();
   }, [userId]);
-
+  
   useEffect(() => {
     if (isImagePosted) {
       const refetchData = async () => {
         try {
-          const galleryRes = await getGalleryPosts();
+          const galleryRes = await GetGalleryPosts(userId,1,3);
           setUserCardsDataArr(galleryRes);
 
-          const videoRes = await GetVideo();
+          const videoRes = await GetVideo(userId,1,3);
           setUserVideoData(videoRes);
         } catch (error) {
           console.error("Error refetching data:", error);
@@ -198,7 +200,15 @@ const Page = () => {
         <main className="w-full flex flex-col pb-[80px] lg:pb-0" >
           {/* Routes Section */}
           {routes.length > 0 && (
-            <ScrollableSection title="Recent Routes">
+            <ScrollableSection title={  <>
+      Recent{' '}
+      <span
+        onClick={() => router.push('/home/map')}
+        className="text-blue-600 cursor-pointer"
+      >
+        Routes
+      </span>
+    </>}>
               {routes.map((route, index) => (
                 <motion.div 
                   key={index}
@@ -215,7 +225,15 @@ const Page = () => {
 
           {/* Gallery Section */}
           {userCardsDataArr.length > 0 && (
-            <ScrollableSection title="Recent Photos">
+            <ScrollableSection title={  <>
+      Recent{' '}
+      <span
+        onClick={() => router.push('/home/gallery')}
+        className="text-blue-600 cursor-pointer"
+      >
+        Photos
+      </span>
+    </>}>
               {userCardsDataArr.map((card, index) => (
                 <motion.div 
                   key={index}
@@ -231,7 +249,7 @@ const Page = () => {
           )}
 
           {/* Videos Section */}
-          {userVideoData.length > 0 && (
+          {Array.isArray(userVideoData) && userVideoData.length > 0 && (
             <ScrollableSection title="Featured Videos">
               {userVideoData.map((video, index) => (
                 <motion.div 
@@ -240,12 +258,12 @@ const Page = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * index, duration: 0.3 }}
-                  onClick={() => {
-                    setSelectedVideo(video.videoUrl);
-                    setVideoId(video.id);
-                    setLikesCount(video.likes.length);
+                  // onClick={() => {
+                  //   setSelectedVideo(video.videoUrl);
+                  //   setVideoId(video.id);
+                  //   setLikesCount(video.likes.length);
                     
-                  }}
+                  // }}
                 >
                   <VideoComponent {...video} />
                 </motion.div>

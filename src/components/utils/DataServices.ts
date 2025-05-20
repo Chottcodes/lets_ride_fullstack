@@ -101,10 +101,16 @@ export const PostRoute = async (route:RoutePostTypes ) => {
     const data = await res.json();
     return data;
 }
-export const GetRoute = async (userId: number) => {
+export const GetRoute = async (userId: number, page: number, pageSize: number) => {
   try {
-    const res = await fetch(url + `RideTables/GetRoutes/${userId}`);
-    
+    const queryParams = new URLSearchParams({
+      userId: userId.toString(),
+      page: page.toString(),
+      pageSize: pageSize.toString(),
+    });
+
+    const res = await fetch(`${url}RideTables/GetRoutes?${queryParams}`);
+
     if (!res.ok) {
       const errorText = await res.text();
       console.error(`Failed to fetch routes (status: ${res.status}):`, errorText);
@@ -112,13 +118,14 @@ export const GetRoute = async (userId: number) => {
     }
 
     const data = await res.json();
-    console.log("Fetched routes:", data);
+    
     return data;
   } catch (err) {
     console.error("Network or fetch error in GetRoute:", err);
     return [];
   }
 };
+
 
 export const GetProfileById = async (id:number) => {
     const res = await fetch(url + `RideTables/GetProfile/${id}`)
@@ -127,22 +134,39 @@ export const GetProfileById = async (id:number) => {
 }
 
 // ------------------- Gallery Page ---------------------------------
-export const getGalleryPosts = async () => {
-    try {
-      const res = await fetch(url + "RideTables/GetGallery");
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error("Fetch failed:", res.status, errText);
-        return null;
-      }
-  
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      console.error("Network error:", err);
+export const GetGalleryPosts = async (userId: number, page:number, pageSize:number ) => {
+  try {
+    const res = await fetch(
+      `${url}/RideTables/GetGallery/${userId}?page=${page}&pageSize=${pageSize}`
+    );
+
+    if (!res.ok) {
+      console.error("Error fetching gallery posts");
       return null;
     }
-  };
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Network error in GetGalleryPosts:", err);
+    return null;
+  }
+};
+export const RemoveGalleryLike=async(userId:number,postId:number)=>{
+    const res = await fetch(url + `RideTables/RemoveGalleryLike/${userId}/${postId}`,{
+        method:"DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+     if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+    return data
+}
 
  export const addGalleryPost = async (galleryPost: AddGalleryPost) =>
  {
@@ -333,16 +357,25 @@ export const AddVideo=async(input:AddVideoTypes)=>{
         const data = await res.json();
         return data;
 }
-export const GetVideo=async()=>{
-    const res = await fetch(url + `RideTables/GetVideos`)
-    if(!res.ok)
-        {
-            console.log("Error");
-            return null;
-        }
-        const data = await res.json();
-        return data;
-}
+export const GetVideo = async (userId: number, page:number, pageSize:number) => {
+  try {
+    const res = await fetch(
+      `${url}/RideTables/GetVideos/${userId}?page=${page}&pageSize=${pageSize}`
+    );
+
+    if (!res.ok) {
+      console.log("Error fetching videos");
+      return null;
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Network error in GetVideo:", err);
+    return null;
+  }
+};
+
 export const RemoveRouteLike=async(userId:number,postId:number)=>
 {
 
