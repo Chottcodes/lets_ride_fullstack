@@ -70,37 +70,39 @@ const MobileNavBar = () => {
     }
   }, [pathname]);
   return (
-    <nav className="w-[80%] h-[10%] lg:hidden flex justify-between items-center">
-      <button onClick={handleHomeButton}>
-        <Home className={`${isHomeOn ? "text-blue-700" : "text-white"} `} />
-      </button>
-      <button onClick={handleLocationButton}>
-        <MapPin
-          className={`${isLocationOn ? "text-blue-700" : "text-white"}`}
-        />
-      </button>
-      <button onClick={handleGalleryButton}>
-        <GalleryIcon
-          className={`${isGalleryOn ? "text-blue-700" : "text-white"}`}
-        />
-      </button>
-      <button
-        onClick={handleProfileButton}
-        className={`${
-          isProfileOn ? "border-2 border-blue-700" : "border-none"
-        } rounded-full overflow-hidden`}
-      >
-        <Image
-          className="h-[30px] w-[30px]"
-          src={
-            profilePicture ? profilePicture : "/assets/images/defaultPicture.png"
-          }
-          width={30}
-          height={30}
-          alt="Profile Icon"
-        />
-      </button>
-    </nav>
+   <nav
+  className="fixed bottom-0 left-0 right-0 w-full lg:hidden flex justify-between items-center px-6 bg-black z-50"
+  style={{
+    paddingBottom: "env(safe-area-inset-bottom)",
+    paddingTop: "12px",
+    height: "calc(60px + env(safe-area-inset-bottom))",
+  }}
+>
+  <button onClick={handleHomeButton}>
+    <Home className={`${isHomeOn ? "text-blue-700" : "text-white"}`} />
+  </button>
+  <button onClick={handleLocationButton}>
+    <MapPin className={`${isLocationOn ? "text-blue-700" : "text-white"}`} />
+  </button>
+  <button onClick={handleGalleryButton}>
+    <GalleryIcon className={`${isGalleryOn ? "text-blue-700" : "text-white"}`} />
+  </button>
+  <button
+    onClick={handleProfileButton}
+    className={`${
+      isProfileOn ? "border-2 border-blue-700" : "border-none"
+    } rounded-full overflow-hidden`}
+  >
+    <Image
+      className="h-[30px] w-[30px]"
+      src={profilePicture ?? "/assets/images/defaultPicture.png"}
+      width={30}
+      height={30}
+      alt="Profile Icon"
+    />
+  </button>
+</nav>
+
   );
 };
 

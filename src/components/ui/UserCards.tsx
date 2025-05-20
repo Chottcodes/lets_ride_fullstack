@@ -47,6 +47,7 @@ const UserCardsPost = (props: IUserCardType) => {
         setUsercomment("");
         const updatedComments = await GetGalleryComments(GalleryId);
         setComments(updatedComments);
+        console.log(comments);
       }
     }
   };
@@ -251,7 +252,7 @@ const UserCardsPost = (props: IUserCardType) => {
                             <Avatar className="w-[30px] h-[30px] rounded-full overflow-hidden">
                               <AvatarImage
                                 src={
-                                  comment.user.profilePicture ||
+                                  comment.profilePictureUrl ||
                                   "/assets/images/default-avatar.png"
                                 }
                                 alt="Profile Picture"
@@ -264,12 +265,12 @@ const UserCardsPost = (props: IUserCardType) => {
                             <div className="flex flex-col text-white w-full">
                               <div className="flex justify-between items-center w-full">
                                 <p className="text-sm font-semibold text-white">
-                                  @{comment.user.userName || "Unknown User"}
+                                  @{comment.username || "Unknown User"}
                                 </p>
                                 <p className="text-xs text-gray-400">
-                                  {comment.createdAt
+                                  {comment.dateCreated
                                     ? new Date(
-                                        comment.createdAt
+                                        comment.dateCreated
                                       ).toLocaleDateString("en-CA")
                                     : "Unknown Date"}
                                 </p>

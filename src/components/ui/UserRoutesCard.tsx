@@ -375,14 +375,7 @@ const UserRoutesCard = ({
                 setIsModalOpen(true);
               }}
             >
-              {/* <Image
-                src={imageUrl || "/assets/images/card/motorbike.png"}
-                alt="Route preview"
-                fill
-                className="object-cover transition-transform hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                onClick={(e) => e.stopPropagation()}
-              /> */}
+              
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             </div>
 
@@ -494,7 +487,7 @@ const UserRoutesCard = ({
                     : "text-gray-400 hover:text-white"
                 }`}
               >
-                {/* Comments ({comments?.length || 0}) */}
+                Comments {commentCount}
               </button>
             </div>
 
@@ -576,7 +569,7 @@ const UserRoutesCard = ({
                           : "/assets/images/defaultPicture.png"
                       }
                       alt="Your avatar"
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </Avatar>
 

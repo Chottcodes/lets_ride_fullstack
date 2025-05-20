@@ -27,13 +27,7 @@ import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 const SectionTitle = ({title}:{title:string}) => (
   <div className="w-full flex items-center justify-between px-4 md:px-8 py-6">
     <h2 className="text-2xl md:text-3xl text-white font-bold">{title}</h2>
-    <motion.button 
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="text-gray-400 hover:text-white flex items-center gap-1 text-sm md:text-base"
-    >
-      View all <ChevronRight size={16} />
-    </motion.button>
+   
   </div>
 );
 
@@ -201,7 +195,7 @@ const Page = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
         </div>
       ) : (
-        <main className="w-full flex flex-col">
+        <main className="w-full flex flex-col pb-[80px] lg:pb-0" >
           {/* Routes Section */}
           {routes.length > 0 && (
             <ScrollableSection title="Recent Routes">

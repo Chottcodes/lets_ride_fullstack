@@ -46,7 +46,6 @@ const MapPage = () => {
 
   useEffect(() => {
   const fetchRoutes = async () => {
-    if (!userId) return; 
 
     if (activeTab === "community" || window.innerWidth >= 1024) {
       setIsLoading(true);
@@ -67,11 +66,11 @@ const MapPage = () => {
   const publicRoutes = allRoutes.filter((route) => route.isPrivate === false);
 
   return (
-    <div className="flex flex-col h-[100dvh] w-full overflow-hidden bg-gray-50">
+    <div className="flex flex-col h-full w-full overflow-hidden bg-gray-50 pb-[80px] lg:pb-0">
       {/* Header with Navigation Tabs */}
-      <header className="bg-gray-800 shadow-md w-full py-4 px-4">
+      <header className="bg-gray-700 shadow-md w-full py-4 px-4">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-blue-700">Route Explorer</h1>
+          <h1 className="text-xl font-bold text-white">Route Explorer</h1>
           
           <div className="flex gap-4">
             <button

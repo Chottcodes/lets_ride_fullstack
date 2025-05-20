@@ -204,11 +204,9 @@ export interface Coordinates {
       }
      export interface GalleryComments{
         commentText?: string;
-        createdAt?: string;
-        user: {
-          userName: string;
-          profilePicture: string;
-        };
+        dateCreated?: string;
+        profilePictureUrl?: string;
+        username:string;
       }
       export interface AddVideoTypes{
         CreatorId:number;
