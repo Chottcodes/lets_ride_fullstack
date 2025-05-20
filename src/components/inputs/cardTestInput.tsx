@@ -6,6 +6,7 @@ import { storage } from "@/lib/firebase";
 import { AddGalleryPost, AddVideoTypes } from "../utils/Interface";
 import { addGalleryPost, AddVideo } from "../utils/DataServices";
 import { Switch } from "../ui/switch";
+import LoginWarning from "../ui/LoginWarning";
 interface OpenPostModalProps {
   isPosted: (value: boolean) => void;
 }
@@ -56,6 +57,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
 
   //   return;
   // }
+
   const handleSubmit = async () => {
     if (file && userId !== null) {
       try {
@@ -65,7 +67,6 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
         await uploadBytes(uploadRef, file);
         const downloadURL = await getDownloadURL(uploadRef);
         if (isVideo) {
-          
           const inputFieldObj: AddVideoTypes = {
             VideoUrl: downloadURL,
             CreatorId: userId,
@@ -91,7 +92,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
             isPosted(true);
           }
         }
-  
+
         resetModal();
       } catch (error) {
         console.error("Error uploading file or posting:", error);
@@ -103,7 +104,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
 
   const resetModal = () => {
     setIsOpen(false);
-    
+
     setPreview(null);
     setTitleInput("");
     setDescriptionInput("");
@@ -131,68 +132,77 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
             className="bg-white text-black p-6 rounded-xl w-full max-w-lg shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-xl font-bold mb-4">Upload Image or Route</h2>
+            {userId === null ? (
+              <LoginWarning />
+            ) : (
+              <>
+                <h2 className="text-xl font-bold mb-4">
+                  Upload Image or Route
+                </h2>
 
-            {preview && (
-              <div className="mb-4">
-                {isVideo ? (
-                  <video
-                    controls
-                    src={preview}
-                    className="w-full h-[250px] object-contain rounded border"
-                  />
-                ) : (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-full h-[250px] object-contain rounded border"
-                  />
+                {preview && (
+                  <div className="mb-4">
+                    {isVideo ? (
+                      <video
+                        controls
+                        src={preview}
+                        className="w-full h-[250px] object-contain rounded border"
+                      />
+                    ) : (
+                      <img
+                        src={preview}
+                        alt="Preview"
+                        className="w-full h-[250px] object-contain rounded border"
+                      />
+                    )}
+                  </div>
                 )}
-              </div>
+
+                <input
+                  type="file"
+                  onChange={handleImagePost}
+                  className="mb-2 w-full cursor-pointer file:cursor-pointer file:rounded file:border file:border-gray-300 file:px-4 file:py-2 file:bg-white file:hover:bg-blue-50 file:text-sm file:text-gray-700 transition"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Title"
+                  className="w-full mb-2 p-2 rounded border"
+                  value={titleInput}
+                  onChange={(e) => setTitleInput(e.target.value)}
+                />
+
+                <textarea
+                  placeholder="Description"
+                  className="w-full mb-2 p-2 rounded border"
+                  value={descriptionInput}
+                  onChange={(e) => setDescriptionInput(e.target.value)}
+                />
+
+                <div className="w-full h-[20%] flex items-center gap-2 ">
+                  <Switch
+                    checked={isVideo}
+                    onCheckedChange={(checked: boolean) => setIsVideo(checked)}
+                  />
+                  {isVideo ? "Video" : "Image"}
+                </div>
+
+                <div className="flex justify-end gap-4 mt-4">
+                  <button
+                    className="bg-gray-300 text-black px-4 py-2 rounded"
+                    onClick={resetModal}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="bg-blue-600 text-white px-4 py-2 rounded"
+                    onClick={handleSubmit}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </>
             )}
-
-            <input
-              type="file"
-              onChange={handleImagePost}
-              className="mb-2 w-full cursor-pointer file:cursor-pointer file:rounded file:border file:border-gray-300 file:px-4 file:py-2 file:bg-white file:hover:bg-blue-50 file:text-sm file:text-gray-700 transition"
-            />
-
-            <input
-              type="text"
-              placeholder="Title"
-              className="w-full mb-2 p-2 rounded border"
-              value={titleInput}
-              onChange={(e) => setTitleInput(e.target.value)}
-            />
-
-            <textarea
-              placeholder="Description"
-              className="w-full mb-2 p-2 rounded border"
-              value={descriptionInput}
-              onChange={(e) => setDescriptionInput(e.target.value)}
-            />
-            <div className="w-full h-[20%] flex items-center gap-2 ">
-              <Switch
-                checked={isVideo}
-                onCheckedChange={(checked: boolean) => setIsVideo(checked)}
-              />
-              {isVideo ? "Video" : "Image"}
-            </div>
-
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                className="bg-gray-300 text-black px-4 py-2 rounded"
-                onClick={resetModal}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-blue-600 text-white px-4 py-2 rounded"
-                onClick={handleSubmit}
-              >
-                Submit
-              </button>
-            </div>
           </div>
         </div>
       )}
