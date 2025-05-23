@@ -1,8 +1,7 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { Heart } from "lucide-react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { Heart, MessageCircle, X, ZoomIn, ZoomOut, Info } from "lucide-react";
 import {
   CommentsModelGallery,
   GalleryComments,
@@ -16,349 +15,360 @@ import {
   RemoveGalleryLike,
 } from "../utils/DataServices";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 const UserCardsPost = (props: IUserCardType) => {
-  // Model Card
-  const [isModel, setIsModel] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isFullImage, setIsFullImage] = useState<boolean>(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
-  const [isLiked, setIsliked] = useState<boolean>(false);
-  const [isCommentPosted, setIsCommentPosted] = useState<boolean>(false);
-  const [userComment, setUsercomment] = useState<string>("");
-  const [userId, setUserId] = useState<number>();
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [userComment, setUserComment] = useState<string>("");
+  const [userId, setUserId] = useState<number>(0);
   const [comments, setComments] = useState<GalleryComments[]>([]);
   const [likeCount, setLikeCount] = useState<number>(props.likeCount || 0);
+  const [showLoginTooltip, setShowLoginTooltip] = useState<boolean>(false);
 
-
+  // Initialize user data
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));
   }, []);
 
-  const handleCommentSubmit = async (
-    commentText: string,
-    GalleryId: number
-  ) => {
-    if (commentText && userId) {
-      const CommentsOBj: CommentsModelGallery = {
-        UserId: userId,
-        GalleryPostId: GalleryId,
-        CommentText: commentText,
-        IsDeleted: false,
-      };
-      const response = await AddCommentGallery(CommentsOBj);
-      if (response) {
-        setIsCommentPosted(true);
-        setUsercomment("");
-        const updatedComments = await GetGalleryComments(GalleryId);
-        setComments(updatedComments);
-        console.log(comments);
-      }
-    }
-  };
-
+  // Set initial like state
   useEffect(() => {
-    const GetPost = async () => {
-      const getGalleryPosts = await GetGalleryComments(props.id);
-      if (getGalleryPosts) {
-        setComments(getGalleryPosts);
-        setUsercomment("");
+    if (props.isLikedByCurrentUser) {
+      setIsLiked(true);
+    }
+  }, [props.isLikedByCurrentUser]);
+
+  // Fetch comments
+  useEffect(() => {
+    const fetchComments = async () => {
+      const galleryComments = await GetGalleryComments(props.id);
+      if (galleryComments) {
+        setComments(galleryComments);
       }
     };
-    GetPost();
-  }, [isCommentPosted]);
+    
+    // Fetch comments when modal is opened or comment is posted
+    if (isModalOpen || isCommentsOpen) {
+      fetchComments();
+    }
+  }, [isModalOpen, isCommentsOpen, props.id]);
 
-  const LikeGalleryPost = async (GalleryId: number) => {
-    if (userId === null) {
-      console.error("UserId is null. Cannot add like.");
+  const handleCommentSubmit = async () => {
+    if (!userId) {
+      setShowLoginTooltip(true);
+      setTimeout(() => setShowLoginTooltip(false), 3000);
       return;
     }
-    if (userId) {
-      const likeObj: LikesGalleryModel = {
+
+    if (userComment.trim()) {
+      const commentObj: CommentsModelGallery = {
         UserId: userId,
-        GalleryPostId: GalleryId,
+        GalleryPostId: props.id,
+        CommentText: userComment,
         IsDeleted: false,
       };
-      const response = await AddGalleryLike(likeObj);
+      
+      const response = await AddCommentGallery(commentObj);
       if (response) {
-        console.log("Like added successfully");
-        setIsliked(true);
-         setLikeCount((prev) => prev + 1);
-      } else {
-        console.error("Error adding like");
+        setUserComment("");
+        const updatedComments = await GetGalleryComments(props.id);
+        setComments(updatedComments);
       }
     }
   };
-  const UnlikeGalleryPost = async (GalleryId: number) => {
-  if (!userId) return;
-  const success = await RemoveGalleryLike(userId, GalleryId);
-  if (success) {
-    setIsliked(false);
-    setLikeCount((prev) => Math.max(0, prev - 1)); 
-  }
-};
+
+  const handleLikeToggle = async () => {
+    if (!userId) {
+      setShowLoginTooltip(true);
+      setTimeout(() => setShowLoginTooltip(false), 3000);
+      return;
+    }
+
+    if (isLiked) {
+      const success = await RemoveGalleryLike(userId, props.id);
+      if (success) {
+        setIsLiked(false);
+        setLikeCount((prev) => Math.max(0, prev - 1));
+      }
+    } else {
+      const likeObj: LikesGalleryModel = {
+        UserId: userId,
+        GalleryPostId: props.id,
+        IsDeleted: false,
+      };
+      
+      const response = await AddGalleryLike(likeObj);
+      if (response) {
+        setIsLiked(true);
+        setLikeCount((prev) => prev + 1);
+      }
+    }
+  };
+
+  const formatDate = (dateString:string) => {
+    return new Date(dateString).toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   return (
     <>
-      <main className="w-full max-w-[1570px] h-full overflow-hidden shadow-md rounded-md border-2 border-blue-500 pb-5">
-        {/* Card image section */}
-        <section className="transition-transform duration-300 hover:scale-102 w-full">
-          <button onClick={() => setIsModel(true)} className="w-full">
-            <div className="w-full h-auto aspect-[3/2] relative">
-              <Image
-                src={props.imageUrl}
-                alt="User Image"
-                fill
-                className="object-contain w-full h-full rounded-t-md cursor-pointer"
-              />
-            </div>
-          </button>
-        </section>
-        <section className="w-full h-[10%] flex items-center justify-evenly">
-          <div className="h-full w-[50%] pl-2  text-white flex justify-start items-center">
-            <Avatar>
-              <AvatarImage
-                src={props.profilePicture}
-                className="object-contain w-[20px] h-[20px] rounded-full"
-              />
-            </Avatar>
-            <p>{`@${props.creatorName}`}</p>
+      {/* Main Card */}
+      <div className="w-full bg-gray-900 rounded-lg overflow-hidden shadow-lg transition-all duration-300 hover:shadow-blue-500/30 border border-gray-800 hover:border-blue-500/50">
+        {/* Image Container */}
+        <div 
+          className="relative aspect-[3/2] overflow-hidden cursor-pointer group"
+          onClick={() => setIsModalOpen(true)}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3">
+            <ZoomIn className="text-white/80 w-6 h-6" />
           </div>
-          <div className="w-[50%] h-full  flex justify-start items-center">
-            <h1 className="text-white text-[16px]">{props.caption}</h1>
-          </div>
-        </section>
-
-        {/* Info Container */}
-        <div className="w-full h-[20%] flex justify-between items-center px-4 py-2 text-white text-sm ">
-          <div className="flex justify-center items-center space-x-4 ">
-            <div className="flex justify-center items-center gap-2">
-              {/* If liked */}
-
-             <button
-                      className={"flex items-center space-x-2 text-white"}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isLiked || props.isLikedByCurrentUser) {
-                            UnlikeGalleryPost(props.id);
-                          }
-                         else {
-                          LikeGalleryPost(props.id);
-                        }
-                      }}
-                    >
-                      <Heart
-                        className={`${
-                          isLiked || props.isLikedByCurrentUser
-                            ? "text-blue-700"
-                            : "text-white"
-                        } cursor-pointer`}
-                      />
-                      <p className="text-[18px]">{likeCount}</p>
-                    </button>
+          
+          <Image
+            src={props.imageUrl}
+            alt={props.caption || "Gallery image"}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
+        
+        {/* User Info & Caption */}
+        <div className="px-4 pt-3 pb-1">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Avatar className="h-7 w-7">
+                <AvatarImage src={props.profilePicture} alt={props.creatorName} />
+                <AvatarFallback>{props.creatorName?.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium text-gray-200">@{props.creatorName}</span>
             </div>
+            <span className="text-xs text-gray-400">{formatDate(props.dateCreated)}</span>
+          </div>
+          
+          <p className="text-gray-300 mt-2 line-clamp-2 text-sm">{props.caption}</p>
+        </div>
+        
+        {/* Interaction Bar */}
+        <div className="px-4 py-3 flex items-center justify-between border-t border-gray-800 mt-2">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <button
+                className="flex items-center space-x-1 group"
+                onClick={handleLikeToggle}
+                aria-label={isLiked ? "Unlike" : "Like"}
+              >
+                <Heart
+                  className={`h-5 w-5 ${
+                    isLiked 
+                      ? "text-blue-500 fill-blue-500" 
+                      : "text-gray-400 group-hover:text-gray-200"
+                  } transition-colors duration-200`}
+                />
+                <span className="text-sm text-gray-300">{likeCount}</span>
+              </button>
+              
+              {showLoginTooltip && userId === 0 && (
+                <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded shadow-lg z-50">
+                  Please login or signup to like this post
+                </div>
+              )}
+            </div>
+            
             <button
-              onClick={() => setIsModel(true)}
-              className="w-[50%] h-[35%] flex items-center justify-center cursor-pointer gap-1"
+              className="flex items-center space-x-1 group"
+              onClick={() => setIsModalOpen(true)}
+              aria-label="View comments"
             >
-              <Image
-                src="/assets/images/card/coment.png"
-                width={1000}
-                height={1000}
-                alt="comments"
-                className="object-contain w-[20px] h-[20px]"
-              />
-              <span className="text-lg">{props.commentCount}</span>
+              <MessageCircle className="h-5 w-5 text-gray-400 group-hover:text-gray-200" />
+              <span className="text-sm text-gray-300">{props.commentCount}</span>
             </button>
           </div>
-
-          <p className="text-sm">
-            {new Date(props.dateCreated).toLocaleDateString("en-CA")}
-          </p>
         </div>
-      </main>
+      </div>
 
-      {/* Expanded View / Modal */}
-      {isModel && (
-        <div
-          className="w-full h-[80%] lg:h-[90%] m-auto fixed inset-0 z-50 flex justify-center items-center bg-black border-2 "
-          onClick={() => {
-            setIsModel(false);
-            setIsFullImage(false);
-          }}
-        >
-          <div
-            className="h-full bg-black rounded-xl shadow-xl max-w-4xl w-full p-6 relative overflow-y-auto custom-scrollbar"
+      {/* Modal View */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div 
+            className={`bg-gray-900 rounded-lg overflow-hidden shadow-xl max-w-4xl w-full max-h-[90vh] ${
+              isFullImage ? 'p-0' : 'p-4'
+            } relative flex flex-col`}
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setIsModel(false)}
-              className="absolute top-4 right-4 text-white text-3xl font-bold z-50 hover:text-red-500 transition"
+              onClick={() => setIsModalOpen(false)}
+              className="absolute right-4 top-4 z-50 bg-gray-800/70 rounded-full p-1 text-gray-200 hover:text-white hover:bg-gray-700/80 transition-colors"
               aria-label="Close modal"
             >
-              &times;
+              <X className="h-5 w-5" />
             </button>
-            {/* Zoomable Image */}
-            <Image
-              src={props.imageUrl}
-              width={1000}
-              height={1000}
-              alt="Motorbike POV"
-              onClick={() => setIsFullImage(!isFullImage)}
-              className={`transition-all duration-300 cursor-pointer object-contain ${
-                isFullImage
-                  ? "fixed top-0 left-0 w-full h-full object-contain z-50 bg-black"
-                  : "w-full h-[400px] object-contain"
-              }`}
-            />
+
+            {/* Image Section */}
+            <div className={`relative ${isFullImage ? 'w-full h-screen' : 'max-h-[60vh]'} overflow-hidden`}>
+              <button
+                onClick={() => setIsFullImage(!isFullImage)}
+                className="absolute right-12 top-4 z-50 bg-gray-800/70 rounded-full p-1 text-gray-200 hover:text-white hover:bg-gray-700/80 transition-colors"
+                aria-label={isFullImage ? "Zoom out" : "Zoom in"}
+              >
+                {isFullImage ? <ZoomOut className="h-5 w-5" /> : <ZoomIn className="h-5 w-5" />}
+              </button>
+              
+              <div className={`relative ${isFullImage ? 'w-full h-screen' : 'w-full h-[60vh]'}`}>
+                <Image
+                  src={props.imageUrl}
+                  alt={props.caption || "Gallery image"}
+                  fill
+                  className={`object-contain ${isFullImage ? 'object-contain cursor-zoom-out' : 'cursor-zoom-in'}`}
+                  sizes="100vw"
+                  priority
+                />
+              </div>
+            </div>
 
             {!isFullImage && (
               <>
-                {/* User Name Account */}
-                <div className="w-full h-[10%] flex text-white relative">
-                  <button className="w-[35%] lg:w-[20%] flex justify-start items-center  overflow-hidden cursor-pointer ">
-                    <Image
-                      src={props.profilePicture}
-                      className="object-contain w-[25px] h-[25px] rounded-full"
-                      alt={""}
-                      height={100}
-                      width={100}
-                    />
-
-                    <p>{`${props.creatorName}`}</p>
-                  </button>
-
-                  <div className="w-full h-full flex items-center justify-center absolute">
-                    {props.caption}
+                {/* User Info & Caption */}
+                <div className="py-4 border-b border-gray-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={props.profilePicture} alt={props.creatorName} />
+                        <AvatarFallback>{props.creatorName?.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium text-gray-200">@{props.creatorName}</span>
+                    </div>
+                    <span className="text-sm text-gray-400">{formatDate(props.dateCreated)}</span>
                   </div>
+                  
+                  <p className="text-gray-300">{props.caption}</p>
                 </div>
 
-                {/* Description */}
-                <div
-                  className={`w-full text-white text-lg break-words whitespace-pre-wrap ${
-                    isCommentsOpen ? "h-[50%]" : "h-[15%]"
-                  } transition-all duration-300 ease-in-out`}
-                >
-                  {isCommentsOpen ? (
-                    <div className="h-full w-full text-lg text-white relative">
-                      <div className="h-[80%] w-full flex flex-col  gap-2 overflow-y-auto custom-scrollbar">
-                        {comments.map((comment, index) => (
-                          <div
-                            key={index}
-                            className="flex items-start gap-3 bg-gray-800 px-4 py-3 rounded-lg shadow-md w-[90%] lg:w-[50%] "
-                          >
-                            {/* Avatar */}
-                            <Avatar className="w-[30px] h-[30px] rounded-full overflow-hidden">
-                              <AvatarImage
-                                src={
-                                  comment.profilePictureUrl ||
-                                  "/assets/images/default-avatar.png"
-                                }
-                                alt="Profile Picture"
-                                className="object-cover w-full h-full"
-                              />
-                              <AvatarFallback>U</AvatarFallback>
-                            </Avatar>
+                {/* Interaction Bar */}
+                <div className="flex items-center space-x-6 py-3 border-b border-gray-800">
+                  <div className="relative">
+                    <button
+                      className="flex items-center space-x-2 group"
+                      onClick={handleLikeToggle}
+                      aria-label={isLiked ? "Unlike" : "Like"}
+                    >
+                      <Heart
+                        className={`h-6 w-6 ${
+                          isLiked 
+                            ? "text-blue-500 fill-blue-500" 
+                            : "text-gray-400 group-hover:text-gray-200"
+                        } transition-colors duration-200`}
+                      />
+                      <span className="text-gray-300">{likeCount}</span>
+                    </button>
+                    
+                    {showLoginTooltip && userId === 0 && (
+                      <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded shadow-lg z-50 flex items-center">
+                        <Info className="h-4 w-4 mr-1 text-blue-400" />
+                        Please login or signup to like this post
+                      </div>
+                    )}
+                  </div>
+                  
+                  <button
+                    className="flex items-center space-x-2 group"
+                    onClick={() => setIsCommentsOpen(!isCommentsOpen)}
+                    aria-label={isCommentsOpen ? "Hide comments" : "Show comments"}
+                  >
+                    <MessageCircle className={`h-6 w-6 ${
+                      isCommentsOpen ? "text-blue-500" : "text-gray-400 group-hover:text-gray-200"
+                    }`} />
+                    <span className="text-gray-300">
+                      {comments.length > 0 ? comments.length : props.commentCount} comments
+                    </span>
+                  </button>
+                </div>
 
-                            {/* Comment Content */}
-                            <div className="flex flex-col text-white w-full">
-                              <div className="flex justify-between items-center w-full">
-                                <p className="text-sm font-semibold text-white">
-                                  @{comment.username || "Unknown User"}
-                                </p>
-                                <p className="text-xs text-gray-400">
-                                  {comment.dateCreated
-                                    ? new Date(
-                                        comment.dateCreated
-                                      ).toLocaleDateString("en-CA")
-                                    : "Unknown Date"}
-                                </p>
+                {/* Comments Section */}
+                {isCommentsOpen && (
+                  <div className="flex-1 overflow-hidden flex flex-col">
+                    <div className="flex-1 overflow-y-auto py-4 space-y-4 custom-scrollbar">
+                      {comments.length > 0 ? (
+                        comments.map((comment, index) => (
+                          <div key={index} className="flex space-x-3 px-1">
+                            <Avatar className="h-8 w-8 flex-shrink-0">
+                              <AvatarImage 
+                                src={comment.profilePictureUrl || "/assets/images/default-avatar.png"} 
+                                alt={comment.username || "User"} 
+                              />
+                              <AvatarFallback>{(comment.username || "U").charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            
+                            <div className="flex-1 bg-gray-800 rounded-lg p-3">
+                              <div className="flex justify-between items-center mb-1">
+                                <span className="text-sm font-medium text-gray-200">
+                                  @{comment.username || "Unknown"}
+                                </span>
+                                <span className="text-xs text-gray-400">
+                                  {comment.dateCreated ? formatDate(comment.dateCreated) : ""}
+                                </span>
                               </div>
-                              <p className="text-sm text-gray-200 mt-1 break-words">
-                                {comment.commentText}
-                              </p>
+                              <p className="text-gray-300 text-sm break-words">{comment.commentText}</p>
                             </div>
                           </div>
-                        ))}
-                      </div>
-
-                      <section className="w-full h-[25%] flex justify-center items-center absolute bottom-0">
-                        <div className="w-full h-[50%] flex items-center ">
-                          <div className="h-[25px] w-[25px] lg:h-[55px] lg:w-[55px] rounded-full ">
-                            <Image
-                              src={props.profilePicture}
-                              className="object-contain w-full h-full rounded-full"
-                              alt={"Profile picture"}
-                              height={200}
-                              width={200}
-                            />
-                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8 text-gray-400">
+                          No comments yet. Be the first to comment!
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Comment Input */}
+                    <div className="mt-auto border-t border-gray-800 pt-3">
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-8 w-8 flex-shrink-0">
+                          <AvatarImage src={props.profilePicture} alt="Your avatar" />
+                          <AvatarFallback>U</AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="relative flex-1">
                           <input
                             type="text"
                             value={userComment}
-                            placeholder="Comment..."
-                            className="w-[85%] h-full text-sm pl-2 focus:border-none"
-                            onChange={(e) => setUsercomment(e.target.value)}
-                          />
-                          <div className="w-[10%] h-full flex justify-center items-center">
-                            <Image
-                              onClick={() =>
-                                handleCommentSubmit(userComment, props.id)
+                            onChange={(e) => setUserComment(e.target.value)}
+                            placeholder="Add a comment..."
+                            className="w-full bg-gray-800 rounded-full px-4 py-2 text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleCommentSubmit();
                               }
-                              src={"/assets/images/send.png"}
-                              width={500}
-                              height={500}
-                              alt={"send icon"}
-                              className="object-contain h-[20px] w-[20px] cursor-pointer"
-                            />
-                          </div>
+                            }}
+                          />
+                          
+                          {showLoginTooltip && userId === 0 && (
+                            <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded shadow-lg z-50 flex items-center">
+                              <Info className="h-4 w-4 mr-1 text-blue-400" />
+                              Please login or signup to comment
+                            </div>
+                          )}
                         </div>
-                      </section>
-                    </div>
-                  ) : (
-                    <p className="indent-8 text-lg">{props.caption}</p>
-                  )}
-                </div>
-
-                {/* Likes & Comments */}
-                <div className="w-full border-t">
-                  <div className="flex items-center gap-5">
-                    <button
-                      className={"flex items-center space-x-2 text-white"}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isLiked || props.isLikedByCurrentUser) {
-                            UnlikeGalleryPost(props.id);
-                          }
-                         else {
-                          LikeGalleryPost(props.id);
-                        }
-                      }}
-                    >
-                      <Heart
-                        className={`${
-                          isLiked || props.isLikedByCurrentUser
-                            ? "text-blue-700"
-                            : "text-white"
-                        } cursor-pointer`}
-                      />
-                      <p className="text-[18px]">{likeCount}</p>
-                    </button>
-                    <button className="w-[90%] flex items-center space-x-2 text-white">
-                      <Image
-                        onClick={() => setIsCommentsOpen(!isCommentsOpen)}
-                        src="/assets/images/card/coment.png"
-                        alt="Comment"
-                        className="w-6 h-6 mt-1 cursor-pointer"
-                        width={1000}
-                        height={1000}
-                      />
-                      <div className="w-[15%] text-lg flex gap-2">
-                        <p>Comments</p>
-                        {props.commentCount}
+                        
+                        <button
+                          onClick={handleCommentSubmit}
+                          disabled={!userComment.trim()}
+                          className={`px-4 py-2 rounded-full ${
+                            userComment.trim() 
+                              ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                              : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                          } transition-colors`}
+                        >
+                          Post
+                        </button>
                       </div>
-                    </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
           </div>

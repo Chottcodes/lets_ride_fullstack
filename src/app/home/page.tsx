@@ -115,8 +115,8 @@ const Page = () => {
         const sortedGallery = galleryRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );
-        const latestPosts = sortedGallery.slice(0, 6);
-        setUserCardsDataArr(latestPosts);
+        
+        setUserCardsDataArr(sortedGallery);
 
         // Fetch videos
         const videoRes = await GetVideo(userId,1,3);

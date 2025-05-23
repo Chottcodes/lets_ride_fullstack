@@ -160,6 +160,13 @@ const UserRoutesCard = ({
       }
     }
   };
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -231,7 +238,7 @@ const UserRoutesCard = ({
 
   if (!isModalOpen) {
     return (
-      <article className="w-full h-full shadow-md rounded-lg border border-blue-500 flex flex-col overflow-hidden transition-all hover:shadow-lg bg-gray-900">
+      <article className="w-full h-full shadow-md rounded-lg border shadow-lg transition-all duration-300 hover:shadow-blue-500/30 border border-gray-800 hover:border-blue-500/50  flex flex-col overflow-hidden transition-all hover:shadow-lg bg-gray-900">
         {/* Map Section */}
         <header className="h-50 w-full relative">
           <MapsUserCards
@@ -328,7 +335,7 @@ const UserRoutesCard = ({
             className="text-xs text-gray-300"
             dateTime={new Date(dateCreated).toISOString()}
           >
-            {formattedDate}
+            {formatDate(dateCreated)}
           </time>
         </main>
 
@@ -375,7 +382,6 @@ const UserRoutesCard = ({
                 setIsModalOpen(true);
               }}
             >
-              
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
             </div>
 
@@ -397,10 +403,10 @@ const UserRoutesCard = ({
                     {creatorName}
                   </p>
                   <time
-                    className="text-xs text-gray-400"
+                    className="text-xs text-gray-300"
                     dateTime={new Date(dateCreated).toISOString()}
                   >
-                    {formattedDate}
+                    {formatDate(dateCreated)}
                   </time>
                 </div>
               </div>
@@ -533,11 +539,18 @@ const UserRoutesCard = ({
                                 {comment.username}
                               </p>
                               <time className="text-xs text-gray-400">
-                                {comment.dateCreated
-                                  ? new Date(
-                                      comment.dateCreated
-                                    ).toLocaleDateString("en-CA")
-                                  : "Unknown Date"}
+                                {comment.dateCreated ? (
+                                  <time
+                                    className="text-xs text-gray-300"
+                                    dateTime={new Date(
+                                      dateCreated
+                                    ).toISOString()}
+                                  >
+                                    {formatDate(dateCreated)}
+                                  </time>
+                                ) : (
+                                  "Unknown Date"
+                                )}
                               </time>
                             </div>
                             <div className="mt-1 text-gray-300 text-sm bg-gray-800 p-2 rounded-lg inline-block max-w-full break-words">
