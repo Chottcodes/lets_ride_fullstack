@@ -1,4 +1,4 @@
-import { AddGalleryPost, CommentsModelGallery,  InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo } from "./Interface"
+import { AddGalleryPost, CommentsModelGallery,  InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo, UserProfileReturnTypes } from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -79,10 +79,40 @@ export const UserProfileSetup = async (user: UserProfileTypes) => {
         const data = await res.json();
         return data;
 }
+
+export const EditUserProfile = async(user: UserProfileTypes) => {
+    console.log("Attempting to edit profile with data:", JSON.stringify(user, null, 2));
+    try {
+        const res = await fetch(url + "RideTables/EditProfile",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            }
+        );
+        
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error(`EditUserProfile failed with status ${res.status}:`, errorText);
+            return null;
+        }
+        
+        const data = await res.json();
+        console.log("EditUserProfile success response:", data);
+        return data;
+    } catch (error) {
+        console.error("Network or fetch error in EditUserProfile:", error);
+        return null;
+    }
+}
+
 export const GetUserProfile = async(UserId:number) =>
 {
-    const res = await fetch(url + `RideTables/GetProfile/${UserId}`)
+    const res = await fetch(url + `RideTables/GetProfile/${UserId}`);
     const data = await res.json();
+    console.log("GetUserProfile response:", data);
     return data;
 }
 export const PostRoute = async (route:RoutePostTypes ) => {
@@ -102,28 +132,32 @@ export const PostRoute = async (route:RoutePostTypes ) => {
     return data;
 }
 export const GetRoute = async (userId: number, page: number, pageSize: number) => {
-  try {
-    const queryParams = new URLSearchParams({
-      userId: userId.toString(),
-      page: page.toString(),
-      pageSize: pageSize.toString(),
-    });
+    try {
+        if (!userId || page < 1 || pageSize < 1) {
+            console.error("Invalid parameters:", { userId, page, pageSize });
+            return [];
+        }
 
-    const res = await fetch(`${url}RideTables/GetRoutes?${queryParams}`);
+        const queryParams = new URLSearchParams({
+            userId: userId.toString(),
+            page: page.toString(),
+            pageSize: pageSize.toString(),
+        });
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error(`Failed to fetch routes (status: ${res.status}):`, errorText);
-      return [];
+        const res = await fetch(`${url}RideTables/GetRoutes?${queryParams}`);
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error(`GetRoute failed with status ${res.status}:`, errorText);
+            return [];
+        }
+
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.error("Network or fetch error in GetRoute:", err);
+        return [];
     }
-
-    const data = await res.json();
-    
-    return data;
-  } catch (err) {
-    console.error("Network or fetch error in GetRoute:", err);
-    return [];
-  }
 };
 
 

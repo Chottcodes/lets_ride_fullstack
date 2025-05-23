@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { GetRoute, GetUserProfile } from "@/components/utils/DataServices";
 import {
-  GetRoutes,
-  RouteGetForCardTypes,
-
-} from "@/components/utils/Interface";
+  EditUserProfile,
+  GetRoute,
+  GetUserProfile,
+} from "@/components/utils/DataServices";
+import { GetRoutes, RouteGetForCardTypes } from "@/components/utils/Interface";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 import {
@@ -18,6 +18,8 @@ import {
   LogOut,
   Pencil,
 } from "lucide-react";
+import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
+import { UserProfileTypes } from "@/components/utils/Interface";
 
 const ProfilePage = () => {
   const { push } = useRouter();
@@ -32,12 +34,17 @@ const ProfilePage = () => {
     ridePreference: "Not specified",
     experienceLevel: "Not specified",
     userId: 0,
+    profileId: 0,
+    page: 0,
+    pageSize: 0,
   });
 
   const [activeTab, setActiveTab] = useState("profile");
   const [likedRoutes, setLikedRoutes] = useState(new Set());
   const [userRoutes, setUserRoutes] = useState<GetRoutes[]>([]);
   const [userId, setUserId] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
 
@@ -46,7 +53,7 @@ const ProfilePage = () => {
     if (!id) {
       push("/pages/Login/loginPage");
       return;
-    }else{
+    } else {
       setUserId(id);
     }
 
@@ -63,6 +70,9 @@ const ProfilePage = () => {
           ridingPreference,
           userName,
           name,
+          page,
+          pageSize,
+          id: profileId,
         } = data;
 
         setUserData({
@@ -76,6 +86,9 @@ const ProfilePage = () => {
           ridePreference: ridingPreference || "Not specified",
           experienceLevel: ridingExperience || "Not specified",
           userId: id,
+          profileId: profileId,
+          page: 0,
+          pageSize: 0,
         });
       } catch (err) {
         console.error("Failed to fetch user data:", err);
@@ -91,16 +104,18 @@ const ProfilePage = () => {
     if (userData.userId) {
       const fetchRoutes = async () => {
         try {
-          const routes = await GetRoute(userId);
+          const routes = await GetRoute(userId, page, pageSize);
           setUserRoutes(routes);
 
           const liked = new Set();
-          routes.forEach((route:RouteGetForCardTypes) => {
-            route.likes?.forEach((like:{userId:number,isDeleted:boolean}) => {
-              if (like.userId === userData.userId && !like.isDeleted) {
-                liked.add(route.id);
+          routes.forEach((route: RouteGetForCardTypes) => {
+            route.likes?.forEach(
+              (like: { userId: number; isDeleted: boolean }) => {
+                if (like.userId === userData.userId && !like.isDeleted) {
+                  liked.add(route.id);
+                }
               }
-            });
+            );
           });
           setLikedRoutes(liked);
         } catch (err) {
@@ -118,12 +133,128 @@ const ProfilePage = () => {
 
   const filteredRoutes =
     activeTab === "post"
-      ? userRoutes.filter((route) => route.isPrivate === false && route.creatorName === userData.username)
+      ? userRoutes.filter(
+          (route) =>
+            route.isPrivate === false && route.creatorName === userData.username
+        )
       : activeTab === "likes"
       ? userRoutes.filter((route) => likedRoutes.has(route.id))
       : [];
 
-  // Profile data items for consistent rendering
+  // ------------------ User preferences ------------------
+  const [isEditing, setIsEditing] = useState(false);
+  const [editKey, setEditKey] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string>("");
+
+  const handleEditSubmit = async (newValue: string) => {
+    console.log("New value:", newValue);
+    if (!newValue || !editKey) return;
+
+    const fieldMappings: { [key: string]: string } = {
+      "Bike Type": "BikeType",
+      "Ride Frequency": "RideConsistency",
+      "Location": "Location",
+      "Riding Preferences": "RidingPreference",
+      "Experience Level": "RidingExperience"
+    };
+
+    const field = fieldMappings[editKey];
+    if (!field) return;
+
+    try {
+      const updatedProfile: UserProfileTypes = {
+        UserId: userData.userId,
+        UserName: userData.username,
+        Name: userData.name,
+        Location: field === "Location" ? newValue : userData.location,
+        BikeType: field === "BikeType" ? newValue : userData.bikeType,
+        RidingExperience: field === "RidingExperience" ? newValue : userData.experienceLevel,
+        RidingPreference: field === "RidingPreference" ? newValue : userData.ridePreference,
+        RideConsistency: field === "RideConsistency" ? newValue : userData.ridingFrequency,
+        ProfilePicture: userData.profilePicture
+      };
+
+      console.log("Sending updated profile:", updatedProfile);
+      const response = await EditUserProfile(updatedProfile);
+      
+      if (response) {
+        setUserData(prev => ({
+          ...prev,
+          [field === "RideConsistency" ? "ridingFrequency" : field.toLowerCase()]: newValue
+        }));
+        console.log("Profile updated successfully");
+      } else {
+        console.error("Failed to update profile - server returned null");
+      }
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+    }
+
+    setIsEditing(false);
+    setEditKey(null);
+    setEditValue("");
+  };
+
+  const getDropdownOptions = (key: string) => {
+    switch (key) {
+      case "Bike Type":
+        return {
+          titleOne: "Sport Bike",
+          optionOne: "Sport Bike",
+          titleTwo: "Cruiser",
+          optionTwo: "Cruiser",
+          titleThree: "Adventure",
+          optionThree: "Adventure",
+          titleFour: "Other",
+          optionFour: "Other"
+        };
+      case "Ride Frequency":
+        return {
+          titleOne: "A few times a year",
+          optionOne: "Rarely",
+          titleTwo: "A few times a month",
+          optionTwo: "Occasionally",
+          titleThree: "Every week",
+          optionThree: "Regularly",
+          titleFour: "Daily",
+          optionFour: "Daily"
+        };
+      case "Riding Preferences":
+        return {
+          titleOne: "Cruising",
+          optionOne: "Cruising",
+          titleTwo: "Long Distance",
+          optionTwo: "Long Distance",
+          titleThree: "Off Road",
+          optionThree: "Off Road",
+          titleFour: "Track Riding/Fast Riding",
+          optionFour: "Track Riding"
+        };
+      case "Experience Level":
+        return {
+          titleOne: "Beginner (6 months or less)",
+          optionOne: "Beginner",
+          titleTwo: "Intermediate (6 months to 2 years)",
+          optionTwo: "Intermediate",
+          titleThree: "Advanced (2 years or more)",
+          optionThree: "Advanced",
+          titleFour: null,
+          optionFour: null
+        };
+      default:
+        return {
+          titleOne: "",
+          optionOne: "",
+          titleTwo: "",
+          optionTwo: "",
+          titleThree: "",
+          optionThree: "",
+          titleFour: null,
+          optionFour: null
+        };
+    };
+  };
+
   const profileItems = [
     {
       icon: <Bike />,
@@ -252,7 +383,7 @@ const ProfilePage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+      {/* Main Content (Profile Item Cards) */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
@@ -262,9 +393,14 @@ const ProfilePage = () => {
         ) : activeTab === "profile" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {profileItems.map((item, index) => (
-              <div
+              <button
                 key={index}
-                className="bg-gray-800 rounded-xl p-5 border border-gray-700 hover:border-blue-600 transition-all duration-300 shadow-md hover:shadow-blue-900/20"
+                onClick={() => {
+                  setIsEditing(true);
+                  setEditKey(item.label);
+                  setEditValue(item.value);
+                }}
+                className="bg-gray-800 rounded-xl p-5 border border-gray-700 hover:border-blue-600 transition-all duration-300 shadow-md hover:shadow-blue-900/20 cursor-pointer"
               >
                 <div className="flex items-start gap-4">
                   <div className="bg-gray-700 p-2 rounded-lg">{item.icon}</div>
@@ -273,8 +409,50 @@ const ProfilePage = () => {
                     <p className="font-medium">{item.value}</p>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
+            {/* Open drop down here*/}
+            {isEditing && editKey && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-[90%] max-w-md">
+                  <h3 className="text-xl font-semibold mb-4">Edit {editKey}</h3>
+                  {editKey === "Location" ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="w-full bg-gray-700 text-white p-2 rounded mb-4"
+                      placeholder="Enter location"
+                    />
+                  ) : (
+                    <div className="mb-4">
+                      <DropDownInputComponent
+                        {...getDropdownOptions(editKey)}
+                        onChange={(e) => setEditValue(e.target.value)}
+                      />
+                    </div>
+                  )}
+                  <div className="flex justify-end gap-4">
+                    <button
+                      onClick={() => {
+                        setIsEditing(false);
+                        setEditKey(null);
+                        setEditValue("");
+                      }}
+                      className="px-4 py-2 text-gray-400 hover:text-white transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleEditSubmit(editValue)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : filteredRoutes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
