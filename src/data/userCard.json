@@ -1,0 +1,156 @@
+[
+    {
+      "id": 1,
+      "creatorId": 1,
+      "creator": {
+        "profilePicture": "",
+        "userName": "RiderOne"
+      },
+      "imageUrl": "",
+      "title": "Sunset Ride",
+      "description": "Caught an amazing sunset on this ride!",
+      "dateCreated": "2025-05-06T18:00:00.000Z",
+      "isDeleted": false,
+      "likes": [{ "userId": 2 }, { "userId": 3 }],
+      "comments": [
+        { "userId": 2, "text": "Looks beautiful!", "createdAt": "2025-05-06T19:00:00.000Z" },
+        { "userId": 3, "text": "I want to ride there!", "createdAt": "2025-05-06T20:00:00.000Z" }
+      ]
+    },
+    {
+      "id": 2,
+      "creatorId": 2,
+      "creator": {
+        "profilePicture": "",
+        "userName": "MotoQueen"
+      },
+      "imageUrl": "",
+      "title": "Coastal Cruise",
+      "description": "The ocean breeze was unreal.",
+      "dateCreated": "2025-05-05T16:00:00.000Z",
+      "isDeleted": false,
+      "likes": [{ "userId": 1 }],
+      "comments": [{ "userId": 1, "text": "Jealous of that view!", "createdAt": "2025-05-05T17:00:00.000Z" }]
+    },
+    {
+      "id": 3,
+      "creatorId": 3,
+      "creator": {
+        "profilePicture": "",
+        "userName": "TorqueMaster"
+      },
+      "imageUrl": "",
+      "title": "Mountain Pass",
+      "description": "Twisties for days!",
+      "dateCreated": "2025-05-04T10:00:00.000Z",
+      "isDeleted": false,
+      "likes": [],
+      "comments": []
+    },
+    {
+      "id": 4,
+      "creatorId": 4,
+      "creator": {
+        "profilePicture": "",
+        "userName": "DirtDrifter"
+      },
+      "imageUrl": "",
+      "title": "Trail Blaze",
+      "description": "Went off-road today. Mud everywhere!",
+      "dateCreated": "2025-05-03T12:30:00.000Z",
+      "isDeleted": false,
+      "likes": [{ "userId": 2 }],
+      "comments": [{ "userId": 3, "text": "That's wild!", "createdAt": "2025-05-03T13:00:00.000Z" }]
+    },
+    {
+      "id": 5,
+      "creatorId": 5,
+      "creator": {
+        "profilePicture": "",
+        "userName": "Speedster"
+      },
+      "imageUrl": "",
+      "title": "Track Day",
+      "description": "Personal best lap today!",
+      "dateCreated": "2025-05-02T14:00:00.000Z",
+      "isDeleted": false,
+      "likes": [{ "userId": 1 }, { "userId": 4 }],
+      "comments": [{ "userId": 4, "text": "Congrats!", "createdAt": "2025-05-02T15:00:00.000Z" }]
+    },
+    {
+      "id": 6,
+      "creatorId": 6,
+      "creator": {
+        "profilePicture": "",
+        "userName": "CafeRacer"
+      },
+      "imageUrl": "",
+      "title": "Urban Ride",
+      "description": "City vibes and night lights.",
+      "dateCreated": "2025-05-01T20:00:00.000Z",
+      "isDeleted": false,
+      "likes": [{ "userId": 5 }],
+      "comments": []
+    },
+    {
+      "id": 7,
+      "creatorId": 7,
+      "creator": {
+        "profilePicture": "",
+        "userName": "NomadBiker"
+      },
+      "imageUrl": "",
+      "title": "Desert Dash",
+      "description": "Heat and horsepower.",
+      "dateCreated": "2025-04-30T09:00:00.000Z",
+      "isDeleted": false,
+      "likes": [],
+      "comments": []
+    },
+    {
+      "id": 8,
+      "creatorId": 8,
+      "creator": {
+        "profilePicture": "",
+        "userName": "NightRider"
+      },
+      "imageUrl": "",
+      "title": "Midnight Cruise",
+      "description": "Peaceful night ride under the stars.",
+      "dateCreated": "2025-04-29T23:00:00.000Z",
+      "isDeleted": false,
+      "likes": [{ "userId": 6 }],
+      "comments": [{ "userId": 7, "text": "Love that vibe.", "createdAt": "2025-04-30T00:00:00.000Z" }]
+    },
+    {
+      "id": 9,
+      "creatorId": 9,
+      "creator": {
+        "profilePicture": "",
+        "userName": "HelmetHero"
+      },
+      "imageUrl": "",
+      "title": "Rain or Shine",
+      "description": "Rainy day ride, still fun!",
+      "dateCreated": "2025-04-28T11:00:00.000Z",
+      "isDeleted": false,
+      "likes": [],
+      "comments": []
+    },
+    {
+      "id": 10,
+      "creatorId": 10,
+      "creator": {
+        "profilePicture": "",
+        "userName": "ThrottleJunkie"
+      },
+      "imageUrl": "",
+      "title": "The Loop",
+      "description": "Took my favorite loop again today.",
+      "dateCreated": "2025-04-27T07:00:00.000Z",
+      "isDeleted": false,
+      "likes": [{ "userId": 1 }],
+      "comments": [{ "userId": 2, "text": "Looks fast!", "createdAt": "2025-04-27T08:00:00.000Z" }]
+    }
+  ]
+  

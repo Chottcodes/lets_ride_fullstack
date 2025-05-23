@@ -36,7 +36,7 @@ const LoginSectionPage = () => {
             localStorage.setItem("ID", id.toString());
            
           }
-          push("/home/profile");
+          push("/home");
         } else {
           setIsFieldEmpty(true);
           setEmailTitle("Invalid Email or Password");
@@ -49,7 +49,7 @@ const LoginSectionPage = () => {
     }
   };
   return (
-    <div className=" h-screen flex flex-col justify-center items-center">
+    <div className=" h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-800 to-black  ">
       <main className="w-full h-[90%] md:h-[60%]  lg:h-[80%] flex flex-col justify-center items-center text-white transform-all duration-300 ">
         <header className=" h-[20%] w-[50%] gap-2 text-3xl lg:h-[40%] lg:w-[20%]   flex flex-col justify-center items-center lg:gap-3 transform-all duration-300 ">
           <h1>

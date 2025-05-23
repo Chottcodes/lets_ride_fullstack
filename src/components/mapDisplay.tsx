@@ -86,8 +86,10 @@ const MapDisplay = () => {
                       properties: {},
                       geometry: {
                         type: "LineString",
+                        
                         coordinates: updatedPath,
                       },
+                      
                     });
                   }
 
@@ -176,6 +178,7 @@ const MapDisplay = () => {
         const response = await PostRoute(routeData);
         if (response) {
           alert("Route posted successfully!");
+          setStoppedRecording(false)
         } else {
           alert("Failed to post route.");
         }
@@ -245,7 +248,7 @@ const MapDisplay = () => {
           "line-cap": "round",
         },
         paint: {
-          "line-color": "#FFFFFF",
+         "line-color": "#FF3B30",
           "line-width": 4,
         },
       });
@@ -339,7 +342,7 @@ const MapDisplay = () => {
         <button
           className={`${
             isRecording ? "hidden" : "block"
-          } rounded-full h-15 w-15`}
+          } rounded-full h-15 w-15 lg:hidden`}
           onClick={startRecord}
         >
           <Image

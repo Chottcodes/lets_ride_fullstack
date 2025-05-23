@@ -2,6 +2,7 @@ import React from "react";
 import MobileNavBar from "@/components/navbars/MobileNavBar";
 import DesktopNavBar from "@/components/navbars/DesktopNavBar";
 
+
 export default function HomeLayout({
   children,
 }: {
@@ -9,9 +10,9 @@ export default function HomeLayout({
 }) {
   return (
     <div className="h-screen overflow-hidden">
-      <div className="flex h-full relative">
+      <div className="flex flex-col h-full relative">
         {/* Desktop Sidebar - will only show on lg screens */}
-        <div className="hidden lg:block w-[5%] h-full ">
+        <div className="w-full h-[10%] hidden lg:block">
           <DesktopNavBar />
         </div>
         
@@ -21,7 +22,7 @@ export default function HomeLayout({
         </main>
         
         {/* Mobile Navigation - will only show below lg screens */}
-        <div className="lg:hidden fixed bottom-0 left-0 w-full h-[64px] bg-black flex justify-center items-center z-50">
+        <div className="lg:hidden w-full h-[64px] bg-black flex justify-center items-center">
           <MobileNavBar />
         </div>
       </div>

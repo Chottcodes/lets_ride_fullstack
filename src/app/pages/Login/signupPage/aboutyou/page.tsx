@@ -17,8 +17,8 @@ const AboutYouPage = () => {
   const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
   const [isFirstQuestionsComplete, setIsFirstQuestionsComplete] =
     useState<boolean>(false);
-  const [userId, setUserID] = useState<number>();
-  const [userToken, setUserToken] = useState<string | null>();
+  const [userId, setUserID] = useState<number>(0);
+
   const [userName, setUserName] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [location, setLocation] = useState<string>("");
@@ -28,51 +28,64 @@ const AboutYouPage = () => {
   const [ridingFrequency, setRidingFrequency] = useState<string>("");
   const { push } = useRouter();
 
-  const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+ const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]; // Get the selected file
 
+  if (!file) return; // Check if file exists and the form is ready
+
+  console.log("File to upload:", file); // Confirm the file
+
+  try {
+    // Create a reference in Firebase Storage to upload the file
+    const imageRef = ref(storage, `profilePictures/${userId}_${file.name}`);
+    
+    // Upload the file to Firebase Storage
+    const snapshot = await uploadBytes(imageRef, file);
+    console.log("Uploaded file snapshot:", snapshot);
+
+    // Get the download URL for the uploaded file
+    const url = await getDownloadURL(snapshot.ref);
+    console.log("Uploaded profile picture URL:", url);
+
+    
+    setImage(url);
+    setIsImageFilled(true);
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
+};
+  const uploadDefaultPicture = async (id: number) => {
     try {
-      if (file) {
-        const imageRef = ref(storage, `profilePicture/${userId}_${file?.name}`);
-        await uploadBytes(imageRef, file);
-        const url = await getDownloadURL(imageRef);
-        setImage(url);
-        setIsImageFilled(true);
-        console.log("Uploaded profile picture URL:", url);
-      } else {
-        uploadDefaultPicture();
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-  const uploadDefaultPicture = async () => {
-    const defaultImagePath = "/assets/images/defaultUserPicture.png";
-    const defaultImageRef = ref(
-      storage,
-      `profilePictures/${userId}_${defaultImagePath}`
-    );
-    try {
-      const defaultImage = await fetch(defaultImagePath);
-      const blob = await defaultImage.blob();
-      await uploadBytes(defaultImageRef, blob);
-      const url = await getDownloadURL(defaultImageRef);
+      const response = await fetch("/assets/images/defaultPicture.png");
+      const blob = await response.blob();
+      const imageRef = ref(
+        storage,
+        `profilePictures/${id}_defaultUserPicture.png`
+      );
+      await uploadBytes(imageRef, blob);
+      const url = await getDownloadURL(imageRef);
       setImage(url);
+       setIsImageFilled(true);
+      
     } catch (error) {
-      console.error("Error uploading default images:", error);
+      console.error("Error uploading default image:", error);
     }
   };
 
   const handleNextButton = async () => {
-    if (!userName) setIsUserNameEmpty(true);
+    if (!userName) {
+      setIsUserNameEmpty(true);
+      return;
+    }
     if (!name) setName("N/A");
     if (!location) setLocation("N/A");
     if (!bikeType) setBikeType("N/A");
-    else setIsFirstQuestionsComplete(true);
+
+    setIsFirstQuestionsComplete(true);
   };
+
   const handleSubmitButton = async () => {
     if (userId) {
-      console.log(userToken);
       if (image) {
         const UserInfoObj: UserProfileTypes = {
           UserName: userName,
@@ -87,11 +100,9 @@ const AboutYouPage = () => {
         };
         try {
           const sendProfileData = await UserProfileSetup(UserInfoObj);
-          push("/pages/profile");
           if (sendProfileData) {
-            console.log("success");
             push("/home");
-          } else console.log("failed");
+          }
         } catch (error) {
           console.error(error);
         }
@@ -111,18 +122,25 @@ const AboutYouPage = () => {
     }
     return null;
   };
-  useEffect(() => {
+
+useEffect(() => {
+  requestIdleCallback(() => {
     const userToken_ID = GetLocalStorage();
     if (userToken_ID) {
       setUserID(userToken_ID.id);
-      setUserToken(userToken_ID.token);
     } else {
-      push("pages/Login");
+      push("/pages/Login");
     }
-  }, []);
+  });
+}, []);
+  useEffect(() => {
+  if (userId > 0) {
+    uploadDefaultPicture(userId);
+  }
+}, [userId]);
 
   return (
-    <div className="text-white h-screen flex flex-col justify-center items-center">
+    <div className="text-white h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-800 to-black">
       <header className="w-full h-[10%] flex flex-col items-center justify-center gap-5 lg:gap-7 lg:mt-0">
         <h1 className="text-4xl">
           Tell Us About <span className="text-[#506FFD]">Yourself</span>
@@ -267,7 +285,7 @@ const AboutYouPage = () => {
           >
             <PrimaryButton
               buttonText="submit"
-              isBackgroundDark={false}
+              isBackgroundDark={true}
               onClick={() => {
                 handleSubmitButton();
               }}

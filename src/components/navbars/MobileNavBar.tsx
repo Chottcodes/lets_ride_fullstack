@@ -2,17 +2,19 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { GetUserProfile } from "../utils/DataServices";
+import { Home, MapPin, Image as GalleryIcon,} from "lucide-react";
+import { useProfilePicture } from "@/hooks/useProfilePicture";
 
 const MobileNavBar = () => {
   const [isHomeOn, setIsHomeOn] = useState<boolean>(true);
   const [isLocationOn, setIsLocationOn] = useState<boolean>(false);
   const [isGalleryOn, setIsGalleryOn] = useState<boolean>(false);
   const [isProfileOn, setIsProfileOn] = useState<boolean>(false);
-  const [haveProfilePicture, setHaveProfilePicture] = useState<boolean>(false);
-  const [userPicture, setUserPicture] = useState<string>("");
+
 
   const pathname = usePathname();
+
+  const profilePicture = useProfilePicture();
 
   const { push } = useRouter();
 
@@ -35,7 +37,7 @@ const MobileNavBar = () => {
     setIsLocationOn(false);
     setIsGalleryOn(true);
     setIsProfileOn(false);
-    push("/home/map");
+    push("/home/gallery");
   };
   const handleProfileButton = () => {
     setIsHomeOn(false);
@@ -44,20 +46,6 @@ const MobileNavBar = () => {
     setIsProfileOn(true);
     push("/home/profile");
   };
-  useEffect(() => {
-    const getProfilePicture = async () => {
-      if (typeof window !== "undefined") {
-        const getFromLocalStorage = localStorage.getItem("ID");
-        if (getFromLocalStorage) {
-          const id = Number(getFromLocalStorage);
-          const userData = await GetUserProfile(id);
-          setUserPicture(userData.profilePicture);
-          setHaveProfilePicture(true);
-        }
-      }
-    };
-    getProfilePicture();
-  }, []);
   useEffect(() => {
     if (pathname === "/home") {
       setIsHomeOn(true);
@@ -82,65 +70,39 @@ const MobileNavBar = () => {
     }
   }, [pathname]);
   return (
-    <nav className="w-[80%] h-[10%] lg:hidden flex justify-between items-center">
-      <button onClick={handleHomeButton}>
-        <Image
-          className="h-[25px] w-[25px]"
-          src={
-            isHomeOn
-              ? "/assets/images/home(2).png"
-              : "/assets/images/home(1).png"
-          }
-          width={100}
-          height={100}
-          alt="Home Icon"
-        />
-      </button>
-      <button onClick={handleLocationButton}>
-        <Image
-          className="h-[25px] w-[25px]"
-          src={
-            isLocationOn
-              ? "/assets/images/location(1).png"
-              : "/assets/images/location.png"
-          }
-          width={100}
-          height={100}
-          alt="Location Icon"
-        />
-      </button>
-      <button onClick={handleGalleryButton}>
-        <Image
-          className="h-[25px] w-[25px]"
-          src={
-            isGalleryOn
-              ? "/assets/images/gallery(1).png"
-              : "/assets/images/gallery.png"
-          }
-          width={100}
-          height={100}
-          alt="Gallery Icon"
-        />
-      </button>
-      <button
-        onClick={handleProfileButton}
-        className={`${
-          isProfileOn ? "border-2 border-blue-700" : "border-none"
-        } rounded-full overflow-hidden`}
-      >
-        <Image
-          className="h-[30px] w-[30px]"
-          src={
-            haveProfilePicture && userPicture
-              ? userPicture
-              : "/assets/images/defaultUserPicture.png"
-          }
-          width={900}
-          height={900}
-          alt="Profile Icon"
-        />
-      </button>
-    </nav>
+   <nav
+  className="fixed bottom-0 left-0 right-0 w-full lg:hidden flex justify-between items-center px-6 bg-black z-50"
+  style={{
+    paddingBottom: "env(safe-area-inset-bottom)",
+    paddingTop: "12px",
+    height: "calc(60px + env(safe-area-inset-bottom))",
+  }}
+>
+  <button onClick={handleHomeButton}>
+    <Home className={`${isHomeOn ? "text-blue-700" : "text-white"}`} />
+  </button>
+  <button onClick={handleLocationButton}>
+    <MapPin className={`${isLocationOn ? "text-blue-700" : "text-white"}`} />
+  </button>
+  <button onClick={handleGalleryButton}>
+    <GalleryIcon className={`${isGalleryOn ? "text-blue-700" : "text-white"}`} />
+  </button>
+  <button
+    onClick={handleProfileButton}
+    className={`${
+      isProfileOn ? "border-2 border-blue-700" : "border-none"
+    } rounded-full overflow-hidden`}
+  >
+    <Image
+      className="h-[30px] w-[30px]"
+      src={profilePicture ?? "/assets/images/defaultPicture.png"}
+      width={30}
+      height={30}
+      alt="Profile Icon"
+    />
+  </button>
+</nav>
+
   );
 };
 
