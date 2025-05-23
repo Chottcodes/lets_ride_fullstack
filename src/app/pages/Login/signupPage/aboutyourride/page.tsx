@@ -41,42 +41,35 @@ const AboutYourRidePage = () => {
           <h1>Riding Experience Level</h1>
           <DropDownInputComponent
             onChange={handleBeginnerChange}
-            titleOne="Beginner (6 months or less)"
-            optionOne="Beginner"
-            titleTwo="Intermediate (6 months to 2 years)"
-            optionTwo="Intermediate"
-            titleThree=" Advanced (2 years or more)"
-            optionThree="Advanced"
-            titleFour={null}
-            optionFour={null}
+            options={[
+              { label: "Beginner (6 months or less)", value: "Beginner" },
+              { label: "Intermediate (6 months to 2 years)", value: "Intermediate" },
+              { label: "Advanced (2 years or more)", value: "Advanced" }
+            ]}
           />
         </section>
         <section className="w-full h-[10%] gap-5 flex flex-col justify-center text-xl">
           <h1>Riding Preferences</h1>
           <DropDownInputComponent
             onChange={handlePreferencesChange}
-            titleOne="Cruising"
-            optionOne="Cruising"
-            titleTwo="Long Distance"
-            optionTwo="Long Distance"
-            titleThree="Off Road"
-            optionThree="Off Road"
-            titleFour="Track Riding/Fast Riding"
-            optionFour="Track Riding"
+            options={[
+              { label: "Cruising", value: "Cruising" },
+              { label: "Long Distance", value: "Long Distance" },
+              { label: "Off Road", value: "Off Road" },
+              { label: "Track Riding/Fast Riding", value: "Track Riding" }
+            ]}
           />
         </section>
         <section className="w-full h-[15%] gap-5 flex flex-col justify-center text-xl">
           <h1>How often do you ride?</h1>
           <DropDownInputComponent
             onChange={handleRidingFrequencyChange}
-            titleOne="A few times a year"
-            optionOne="Rarely"
-            titleTwo="A few times a month"
-            optionTwo="Occasionally"
-            titleThree="Every week"
-            optionThree="Regularly"
-            titleFour="Daily"
-            optionFour="Daily"
+            options={[
+              { label: "A few times a year", value: "Rarely" },
+              { label: "A few times a month", value: "Occasionally" },
+              { label: "Every week", value: "Regularly" },
+              { label: "Daily", value: "Daily" }
+            ]}
           />
         </section>
       </main>

@@ -83,25 +83,46 @@ export const UserProfileSetup = async (user: UserProfileTypes) => {
 export const EditUserProfile = async(user: UserProfileTypes) => {
     console.log("Attempting to edit profile with data:", JSON.stringify(user, null, 2));
     try {
+        // Add Id field to the request
+        const requestBody = {
+            Id: user.UserId, // Using UserId as Id since that's what we have
+            ...user
+        };
+
         const res = await fetch(url + "RideTables/EditProfile",
             {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(requestBody)
             }
         );
         
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error(`EditUserProfile failed with status ${res.status}:`, errorText);
+        // Log the raw response
+        console.log("Response status:", res.status);
+        console.log("Response headers:", Object.fromEntries(res.headers.entries()));
+        
+        let responseText;
+        try {
+            responseText = await res.text();
+            console.log("Raw response body:", responseText);
+            
+            if (!res.ok) {
+                console.error(`EditUserProfile failed with status ${res.status}:`, responseText);
+                return null;
+            }
+            
+            // Try to parse the response as JSON if it's not empty
+            const data = responseText ? JSON.parse(responseText) : null;
+            console.log("EditUserProfile success response:", data);
+            return data;
+        } catch (parseError) {
+            console.error("Failed to parse response:", parseError);
+            console.error("Raw response was:", responseText);
             return null;
         }
-        
-        const data = await res.json();
-        console.log("EditUserProfile success response:", data);
-        return data;
     } catch (error) {
         console.error("Network or fetch error in EditUserProfile:", error);
         return null;

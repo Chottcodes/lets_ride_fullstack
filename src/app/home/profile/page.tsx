@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   EditUserProfile,
   GetRoute,
+  getUserPostData,
   GetUserProfile,
 } from "@/components/utils/DataServices";
 import { GetRoutes, RouteGetForCardTypes } from "@/components/utils/Interface";
@@ -48,6 +49,46 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
 
+  const fetchUserData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await GetUserProfile(userId);
+      const {
+        bikeType,
+        location,
+        profilePicture,
+        rideConsistency,
+        ridingExperience,
+        ridingPreference,
+        userName,
+        name,
+        page,
+        pageSize,
+        id: profileId,
+      } = data;
+
+      setUserData({
+        name: name || "Rider",
+        username: userName || "Guest",
+        profilePicture:
+          profilePicture || "/assets/images/default-profile.png",
+        bikeType: bikeType || "Not specified",
+        ridingFrequency: rideConsistency || "Not specified",
+        location: location || "Not specified",
+        ridePreference: ridingPreference || "Not specified",
+        experienceLevel: ridingExperience || "Not specified",
+        userId: userId,
+        profileId: profileId,
+        page: 0,
+        pageSize: 0,
+      });
+    } catch (err) {
+      console.error("Failed to fetch user data:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const id = GetLocalStorageId();
     if (!id) {
@@ -57,48 +98,8 @@ const ProfilePage = () => {
       setUserId(id);
     }
 
-    const fetchUserData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await GetUserProfile(id);
-        const {
-          bikeType,
-          location,
-          profilePicture,
-          rideConsistency,
-          ridingExperience,
-          ridingPreference,
-          userName,
-          name,
-          page,
-          pageSize,
-          id: profileId,
-        } = data;
-
-        setUserData({
-          name: name || "Rider",
-          username: userName || "Guest",
-          profilePicture:
-            profilePicture || "/assets/images/default-profile.png",
-          bikeType: bikeType || "Not specified",
-          ridingFrequency: rideConsistency || "Not specified",
-          location: location || "Not specified",
-          ridePreference: ridingPreference || "Not specified",
-          experienceLevel: ridingExperience || "Not specified",
-          userId: id,
-          profileId: profileId,
-          page: 0,
-          pageSize: 0,
-        });
-      } catch (err) {
-        console.error("Failed to fetch user data:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchUserData();
-  }, [push]);
+  }, [push, userId]);
 
   useEffect(() => {
     if (userData.userId) {
@@ -164,30 +165,30 @@ const ProfilePage = () => {
     try {
       const updatedProfile: UserProfileTypes = {
         UserId: userData.userId,
-        UserName: userData.username,
-        Name: userData.name,
-        Location: field === "Location" ? newValue : userData.location,
-        BikeType: field === "BikeType" ? newValue : userData.bikeType,
-        RidingExperience: field === "RidingExperience" ? newValue : userData.experienceLevel,
-        RidingPreference: field === "RidingPreference" ? newValue : userData.ridePreference,
-        RideConsistency: field === "RideConsistency" ? newValue : userData.ridingFrequency,
-        ProfilePicture: userData.profilePicture
+        UserName: userData.username || null,
+        Name: userData.name || null,
+        Location: field === "Location" ? newValue : (userData.location === "Not specified" ? null : userData.location),
+        BikeType: field === "BikeType" ? newValue : (userData.bikeType === "Not specified" ? null : userData.bikeType),
+        RidingExperience: field === "RidingExperience" ? newValue : (userData.experienceLevel === "Not specified" ? null : userData.experienceLevel),
+        RidingPreference: field === "RidingPreference" ? newValue : (userData.ridePreference === "Not specified" ? null : userData.ridePreference),
+        RideConsistency: field === "RideConsistency" ? newValue : (userData.ridingFrequency === "Not specified" ? null : userData.ridingFrequency),
+        ProfilePicture: userData.profilePicture || null
       };
 
       console.log("Sending updated profile:", updatedProfile);
       const response = await EditUserProfile(updatedProfile);
       
       if (response) {
-        setUserData(prev => ({
-          ...prev,
-          [field === "RideConsistency" ? "ridingFrequency" : field.toLowerCase()]: newValue
-        }));
-        console.log("Profile updated successfully");
+        // After successful update, fetch fresh data from server
+        await fetchUserData();
+        console.log("Profile updated successfully:", response);
       } else {
         console.error("Failed to update profile - server returned null");
+        await fetchUserData(); // Refresh data even on error to ensure UI is in sync
       }
     } catch (error) {
       console.error("Failed to update profile:", error);
+      await fetchUserData(); // Refresh data on error to ensure UI is in sync
     }
 
     setIsEditing(false);
@@ -199,60 +200,44 @@ const ProfilePage = () => {
     switch (key) {
       case "Bike Type":
         return {
-          titleOne: "Sport Bike",
-          optionOne: "Sport Bike",
-          titleTwo: "Cruiser",
-          optionTwo: "Cruiser",
-          titleThree: "Adventure",
-          optionThree: "Adventure",
-          titleFour: "Other",
-          optionFour: "Other"
+          options: [
+            { label: "Mountain Bike", value: "Mountain Bike" },
+            { label: "Road Bike", value: "Road Bike" },
+            { label: "Hybrid Bike", value: "Hybrid Bike" },
+            { label: "Electric Bike", value: "Electric Bike" }
+          ]
         };
       case "Ride Frequency":
         return {
-          titleOne: "A few times a year",
-          optionOne: "Rarely",
-          titleTwo: "A few times a month",
-          optionTwo: "Occasionally",
-          titleThree: "Every week",
-          optionThree: "Regularly",
-          titleFour: "Daily",
-          optionFour: "Daily"
+          options: [
+            { label: "Rarely", value: "Rarely" },
+            { label: "Occasionally", value: "Occasionally" },
+            { label: "Regularly", value: "Regularly" },
+            { label: "Daily", value: "Daily" }
+          ]
         };
       case "Riding Preferences":
         return {
-          titleOne: "Cruising",
-          optionOne: "Cruising",
-          titleTwo: "Long Distance",
-          optionTwo: "Long Distance",
-          titleThree: "Off Road",
-          optionThree: "Off Road",
-          titleFour: "Track Riding/Fast Riding",
-          optionFour: "Track Riding"
+          options: [
+            { label: "Cruising", value: "Cruising" },
+            { label: "Long Distance", value: "Long Distance" },
+            { label: "Off Road", value: "Off Road" },
+            { label: "Track Riding/Fast Riding", value: "Track Riding" }
+          ]
         };
       case "Experience Level":
         return {
-          titleOne: "Beginner (6 months or less)",
-          optionOne: "Beginner",
-          titleTwo: "Intermediate (6 months to 2 years)",
-          optionTwo: "Intermediate",
-          titleThree: "Advanced (2 years or more)",
-          optionThree: "Advanced",
-          titleFour: null,
-          optionFour: null
+          options: [
+            { label: "Beginner (6 months or less)", value: "Beginner" },
+            { label: "Intermediate (6 months to 2 years)", value: "Intermediate" },
+            { label: "Advanced (2 years or more)", value: "Advanced" }
+          ]
         };
       default:
         return {
-          titleOne: "",
-          optionOne: "",
-          titleTwo: "",
-          optionTwo: "",
-          titleThree: "",
-          optionThree: "",
-          titleFour: null,
-          optionFour: null
+          options: []
         };
-    };
+    }
   };
 
   const profileItems = [
@@ -404,7 +389,7 @@ const ProfilePage = () => {
               >
                 <div className="flex items-start gap-4">
                   <div className="bg-gray-700 p-2 rounded-lg">{item.icon}</div>
-                  <div>
+                  <div className="flex flex-col items-baseline">
                     <h3 className="text-gray-400 text-sm mb-1">{item.label}</h3>
                     <p className="font-medium">{item.value}</p>
                   </div>
@@ -416,19 +401,31 @@ const ProfilePage = () => {
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-[90%] max-w-md">
                   <h3 className="text-xl font-semibold mb-4">Edit {editKey}</h3>
-                  {editKey === "Location" ? (
-                    <input
-                      type="text"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      className="w-full bg-gray-700 text-white p-2 rounded mb-4"
-                      placeholder="Enter location"
-                    />
+                  {(editKey === "Location" || editKey === "Bike Type") ? (
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => {
+                          // Limit input to 30 characters
+                          if (e.target.value.length <= 25) {
+                            setEditValue(e.target.value);
+                          }
+                        }}
+                        maxLength={25}
+                        className="w-full bg-gray-700 text-white p-2 rounded mb-1"
+                        placeholder={`Enter ${editKey.toLowerCase()}`}
+                      />
+                      <p className="text-sm text-gray-400">
+                        {editValue.length}/25 characters
+                      </p>
+                    </div>
                   ) : (
                     <div className="mb-4">
                       <DropDownInputComponent
-                        {...getDropdownOptions(editKey)}
+                        options={getDropdownOptions(editKey).options}
                         onChange={(e) => setEditValue(e.target.value)}
+                        placeholder={`Select ${editKey}`}
                       />
                     </div>
                   )}
