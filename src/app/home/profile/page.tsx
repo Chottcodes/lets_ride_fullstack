@@ -60,15 +60,11 @@ const ProfilePage = () => {
   const [scrolled] = useState<boolean>(false);
   const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    console.log(userId);
-    console.log(userRoutes);
-  }, [userId, userRoutes]);
-
-  const fetchUserData = useCallback(async () => {
+  const fetchAllData = useCallback(async (id: number) => {
     try {
       setIsLoading(true);
-      const data = await GetUserProfile(userId);
+      // Fetch user profile
+      const data = await GetUserProfile(id);
       const {
         bikeType,
         location,
@@ -90,65 +86,55 @@ const ProfilePage = () => {
         location: location || "Not specified",
         ridePreference: ridingPreference || "Not specified",
         experienceLevel: ridingExperience || "Not specified",
-        userId: userId,
+        userId: id,
         page: 0,
         pageSize: 0,
       });
+
+      // Fetch routes, gallery posts, and videos in parallel
+      const [routes, gallery, videos] = await Promise.all([
+        GetRoute(id, page, pageSize),
+        GetGalleryPosts(id, 1, 100),
+        GetVideo(id, 1, 100)
+      ]);
+
+      setUserRoutes(routes);
+      setUserGalleryPost(gallery);
+      setUserVideoPost(videos);
+
+      // Set liked routes
+      const likedIds = routes
+        .filter((route: GetRoutes) => route.isLikedByCurrentUser)
+        .map((route: GetRoutes) => route.id);
+      setLikedRoutes(new Set<number>(likedIds));
     } catch (err) {
-      console.error("Failed to fetch user data:", err);
+      console.error("Failed to fetch data:", err);
     } finally {
       setIsLoading(false);
     }
-  }, [userId]);
+  }, [page, pageSize]);
 
   useEffect(() => {
     const id = GetLocalStorageId();
     if (!id) {
       push("/pages/Login/loginPage");
       return;
-    } else {
-      setUserId(id);
     }
+    
+    setUserId(id);
+    fetchAllData(id);
 
-    fetchUserData();
-  }, [push, userId, fetchUserData]);
+    // Add event listener for focus
+    const handleFocus = () => {
+      fetchAllData(id);
+    };
 
-  useEffect(() => {
-    if (userId) {
-      const fetchRoutes = async () => {
-        try {
-          const routes = await GetRoute(userId, page, pageSize);
-          setUserRoutes(routes);
+    window.addEventListener('focus', handleFocus);
 
-          const likedIds = routes
-            .filter((route: GetRoutes) => route.isLikedByCurrentUser)
-            .map((route: GetRoutes) => route.id);
-          setLikedRoutes(new Set<number>(likedIds));
-        } catch (err) {
-          console.error("Failed to fetch routes:", err);
-        }
-      };
-      const fetchGalleryPost = async () => {
-        try {
-          const gallery = await GetGalleryPosts(userId, 1, 100);
-          setUserGalleryPost(gallery);
-        } catch (error) {
-          console.error("Failed to fetch Gallery:", error);
-        }
-      };
-      const fetchVideoPost = async () => {
-        try {
-          const gallery = await GetVideo(userId, 1, 100);
-          setUserVideoPost(gallery);
-        } catch (error) {
-          console.error("Failed to fetch Gallery:", error);
-        }
-      };
-      fetchRoutes();
-      fetchGalleryPost();
-      fetchVideoPost();
-    }
-  }, [userId]);
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [push, fetchAllData]);
 
   const handleLogOut = () => {
     localStorage.clear();
@@ -206,15 +192,15 @@ const ProfilePage = () => {
       
       if (response) {
         // After successful update, fetch fresh data from server
-        await fetchUserData();
+        await fetchAllData(userData.userId);
         console.log("Profile updated successfully:", response);
       } else {
         console.error("Failed to update profile - server returned null");
-        await fetchUserData(); // Refresh data even on error to ensure UI is in sync
+        await fetchAllData(userData.userId); // Refresh data even on error to ensure UI is in sync
       }
     } catch (error) {
       console.error("Failed to update profile:", error);
-      await fetchUserData(); // Refresh data on error to ensure UI is in sync
+      await fetchAllData(userData.userId); // Refresh data on error to ensure UI is in sync
     }
 
     setIsEditing(false);
