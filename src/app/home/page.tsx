@@ -103,14 +103,14 @@ const Page = () => {
         if (getId) setUserId(getId);
 
         // Fetch routes
-        const routesRes = await GetRoute(userId,1,4);
+        const routesRes = await GetRoute(getId,1,4);
         const sortedRoutes = routesRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );
         setRoutes(sortedRoutes);
 
         // Fetch gallery posts
-        const galleryRes = await GetGalleryPosts(userId,1,3);
+        const galleryRes = await GetGalleryPosts(getId,1,3);
        
         const sortedGallery = galleryRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
@@ -119,7 +119,7 @@ const Page = () => {
         setUserCardsDataArr(sortedGallery);
 
         // Fetch videos
-        const videoRes = await GetVideo(userId,1,3);
+        const videoRes = await GetVideo(getId,1,3);
         const sortedVideos = videoRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );

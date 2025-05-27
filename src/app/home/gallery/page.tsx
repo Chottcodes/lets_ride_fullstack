@@ -36,12 +36,12 @@ const Page = () => {
     const getId = GetLocalStorageId();
     if(getId) setUserId(getId);
     const fetchPosts = async () => {
-      const res = await GetGalleryPosts(userId,1,100);
+      const res = await GetGalleryPosts(getId,1,100);
       setUserCardsDataArr(res || []);
     };
     
     const fetchVideos = async () => {
-      const res = await GetVideo(userId,1,100);
+      const res = await GetVideo(getId,1,100);
       setUserVideoData(res || []);
     };
    
@@ -53,6 +53,7 @@ const Page = () => {
   useEffect(() => {
     if (isImagePosted) {
       const fetchPosts = async () => {
+        
         const res = await GetGalleryPosts(userId,1,100);
         setUserCardsDataArr(res || []);
       };
