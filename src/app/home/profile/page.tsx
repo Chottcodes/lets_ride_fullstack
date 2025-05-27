@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -11,6 +11,7 @@ import {
 import {
   GetRoutes,
   IUserCardType,
+  VideoGet,
  
 } from "@/components/utils/Interface";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
@@ -23,6 +24,8 @@ import {
   LogOut,
   Pencil,
 } from "lucide-react";
+import UserCards from "@/components/ui/UserCards";
+import VideoComponet from "@/components/VideoComponet";
 
 const ProfilePage = () => {
   const { push } = useRouter();
@@ -43,7 +46,7 @@ const ProfilePage = () => {
 
   const [userRoutes, setUserRoutes] = useState<GetRoutes[]>([]);
   const [userGalleryPost, setUserGalleryPost] = useState<IUserCardType[]>([]);
-  const [userVideoPost, setUserVideoPost] = useState([]);
+  const [userVideoPost, setUserVideoPost] = useState<VideoGet[]>([]);
   const [userId, setUserId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
@@ -140,10 +143,13 @@ const ProfilePage = () => {
       ? userRoutes.filter(
           (route) =>
             route.isPrivate === false && route.creatorName === userData.username
-        )
+        ) 
       : activeTab === "likes"
       ? userRoutes.filter((route) => route.isLikedByCurrentUser=== true)
       : [];
+      const filteredGalleryPosts = activeTab === 'post' ? userGalleryPost.filter((post)=> post.creatorName === userData.username): activeTab === 'likes' ? userGalleryPost.filter((post)=> post.isLikedByCurrentUser === true): [];
+      const filteredVideoPosts = activeTab === 'post' ? userVideoPost.filter((post)=> post.creatorName === userData.username): activeTab === 'likes' ? userVideoPost.filter((post)=> post.isLikedByCurrentUser === true): [];
+      // const filteredVideoPosts = userVideoPost.filter((post)=> post.=== userData.username);
 
   // Profile data items for consistent rendering
   const profileItems = [
@@ -299,11 +305,23 @@ const ProfilePage = () => {
             ))}
           </div>
         ) : filteredRoutes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredRoutes.map((route) => (
-              <UserRoutesCard key={route.id} {...route} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredRoutes.map((route) => (
+                <UserRoutesCard key={route.id} {...route} />
+              ))}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredGalleryPosts.map((post) => (
+                <UserCards key={post.id} {...post}  />
+              ))}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredVideoPosts.map((video) => (
+                <VideoComponet  {...video}  />
+              ))}
+            </div>
+          </>
         ) : (
           <div className="text-center py-16">
             <div className="inline-block p-4 bg-gray-800 rounded-full mb-4">

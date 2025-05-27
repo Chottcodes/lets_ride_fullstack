@@ -105,9 +105,9 @@ const MapPage = () => {
       }}
     >
       {/* Header with Navigation Tabs */}
-      <header className="bg-gray-700 shadow-md w-full py-3 px-4 flex-shrink-0 min-h-0">
+      <header className="bg-gray-800 shadow-md w-full py-3 px-4 flex-shrink-0 min-h-0">
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-white">Route Explorer</h1>
+          <h1 className="text-xl font-bold text-white">Route <span className="text-blue-600">Explorer</span></h1>
 
           <div className="flex gap-2 sm:gap-4">
             <button

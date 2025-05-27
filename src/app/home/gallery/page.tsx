@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 import UserCards from "@/components/ui/UserCards";
-import { IUserCardType, Likes, VideoGet } from "@/components/utils/Interface";
+import { IUserCardType, VideoGet } from "@/components/utils/Interface";
 import { GetGalleryPosts, GetVideo } from "@/components/utils/DataServices";
 import VideoComponet from "@/components/VideoComponet";
-import VideoModal from "@/components/VideoModal";
+
 
 // New components
 
@@ -19,32 +19,30 @@ import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 
 const Page = () => {
   const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
-  const [ userId, setUserId] = useState<number>(0);
+  const [userId, setUserId] = useState<number>(0);
   const [userVideoData, setUserVideoData] = useState<VideoGet[]>([]);
-  const [likesCount, setLikesCount] = useState<number>();
+
   const [isImagePosted, setIsImagePosted] = useState<boolean>(false);
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  const [videoId, setVideoId] = useState<number>();
-  const [videoLikes, setVideoLikes] = useState<Likes[]>([]);
+
   const [showPostModal, setShowPostModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState("photos");
-  
+
   const router = useRouter();
 
   // Fetch data on initial load
   useEffect(() => {
     const getId = GetLocalStorageId();
-    if(getId) setUserId(getId);
+    if (getId) setUserId(getId);
     const fetchPosts = async () => {
-      const res = await GetGalleryPosts(getId,1,100);
+      const res = await GetGalleryPosts(getId, 1, 100);
       setUserCardsDataArr(res || []);
     };
-    
+
     const fetchVideos = async () => {
-      const res = await GetVideo(getId,1,100);
+      const res = await GetVideo(getId, 1, 100);
       setUserVideoData(res || []);
     };
-   
+
     fetchVideos();
     fetchPosts();
   }, []);
@@ -53,16 +51,15 @@ const Page = () => {
   useEffect(() => {
     if (isImagePosted) {
       const fetchPosts = async () => {
-        
-        const res = await GetGalleryPosts(userId,1,100);
+        const res = await GetGalleryPosts(userId, 1, 100);
         setUserCardsDataArr(res || []);
       };
-      
+
       const fetchVideos = async () => {
-        const res = await GetVideo(userId,1,100);
+        const res = await GetVideo(userId, 1, 100);
         setUserVideoData(res || []);
       };
-      
+
       fetchVideos();
       fetchPosts();
       setIsImagePosted(false);
@@ -75,9 +72,8 @@ const Page = () => {
 
   const variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    visible: { opacity: 1, y: 0 },
   };
-
 
   // If user is not logged in, show pop up, "Please Login in order to post in the gallery."
 
@@ -86,7 +82,10 @@ const Page = () => {
       {/* Header with motorcycle-themed logo */}
 
       <header className="w-full py-4 px-6 flex items-center justify-between bg-gray-800/25 backdrop-blur-sm sticky top-0 z-10 ">
-        <div className="flex items-center gap-3" onClick={() => router.push("/home")}>
+        <div
+          className="flex items-center gap-3"
+          onClick={() => router.push("/home")}
+        >
           <Image
             src="/assets/images/Logo.png"
             alt="Motorcycle Logo"
@@ -94,39 +93,48 @@ const Page = () => {
             height={40}
             className="w-10 h-10 object-contain"
           />
-          <h1 className="text-xl font-bold tracking-wider hidden sm:block">MOTO<span className="text-blue-500">GALLERY</span></h1>
+          <h1 className="text-xl font-bold tracking-wider hidden sm:block">
+            MOTO<span className="text-blue-500">GALLERY</span>
+          </h1>
         </div>
       </header>
 
       {/* Tab navigation */}
       <div className="flex border-b border-zinc-800 mx-4 mt-4 relative">
-        <button 
+        <button
           onClick={() => setActiveTab("photos")}
-          className={`px-6 py-3 font-medium transition-all ${activeTab === "photos" ? "border-b-2 border-blue-500 text-white" : "text-zinc-400 hover:text-white"}`}
+          className={`px-6 py-3 font-medium transition-all ${
+            activeTab === "photos"
+              ? "border-b-2 border-blue-500 text-white"
+              : "text-zinc-400 hover:text-white"
+          }`}
         >
           Photos
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab("videos")}
-          className={`px-6 py-3 font-medium transition-all ${activeTab === "videos" ? "border-b-2 border-blue-500 text-white" : "text-zinc-400 hover:text-white"}`}
+          className={`px-6 py-3 font-medium transition-all ${
+            activeTab === "videos"
+              ? "border-b-2 border-blue-500 text-white"
+              : "text-zinc-400 hover:text-white"
+          }`}
         >
           Videos
         </button>
-         {userCardsDataArr !== null && (
-            <div className=" absolute end-0 pr-5">
-
-              <OpenPostModal
-                isPosted={(value: boolean) => setIsImagePosted(value)}
-              />
-            </div>
-          )}
+        {userCardsDataArr !== null && (
+          <div className=" absolute end-0 pr-5">
+            <OpenPostModal
+              isPosted={(value: boolean) => setIsImagePosted(value)}
+            />
+          </div>
+        )}
       </div>
 
       {/* Main content */}
       <main className="px-4 py-6">
         {/* Photos Section */}
         {activeTab === "photos" && (
-          <motion.div 
+          <motion.div
             initial="hidden"
             animate="visible"
             variants={variants}
@@ -139,14 +147,10 @@ const Page = () => {
                 <ChevronRight size={20} className="ml-1 text-blue-500" />
               </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {userCardsDataArr.map((card, index) => (
-                <motion.div
-                  key={index}
-                  variants={variants}
-                  className="h-full"
-                >
+                <motion.div key={index} variants={variants} className="h-full">
                   <UserCards {...card} />
                 </motion.div>
               ))}
@@ -156,7 +160,7 @@ const Page = () => {
 
         {/* Videos Section */}
         {activeTab === "videos" && (
-          <motion.div 
+          <motion.div
             initial="hidden"
             animate="visible"
             variants={variants}
@@ -168,19 +172,13 @@ const Page = () => {
                 <ChevronRight size={20} className="ml-1 text-blue-500" />
               </h2>
             </div>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {userVideoData.map((video, index) => (
                 <motion.div
                   key={index}
                   variants={variants}
                   className="h-full aspect-video bg-zinc-800 rounded-lg overflow-hidden"
-                  // onClick={() => {
-                  //   setSelectedVideo(video.videoUrl);
-                  //   setVideoId(video.id);
-                  //   setLikesCount(video.likes.length);
-                  //   setVideoLikes(video.likes);
-                  // }}
                 >
                   <VideoComponet {...video} />
                 </motion.div>
@@ -191,15 +189,6 @@ const Page = () => {
       </main>
 
       {/* Video Modal */}
-      {selectedVideo && (
-        <VideoModal
-          videoUrl={selectedVideo}
-          videoId={videoId || 0}
-          videoLikes={likesCount || 0}
-          videoLikeArr={videoLikes}
-          onClose={() => setSelectedVideo(null)}
-        />
-      )}
 
       {/* Add Content Modal */}
       {showPostModal && (
@@ -210,7 +199,7 @@ const Page = () => {
             <div className="mt-4">
               {userCardsDataArr !== null && (
                 <div className="w-full">
-                  <button 
+                  <button
                     className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-lg font-medium"
                     onClick={() => {
                       // This would trigger your existing modal
@@ -221,7 +210,7 @@ const Page = () => {
                   >
                     Continue
                   </button>
-                  
+
                   {/* Hidden button to trigger your existing modal */}
                   <div className="hidden">
                     <button id="openPostModalButton">
@@ -232,8 +221,8 @@ const Page = () => {
                   </div>
                 </div>
               )}
-              
-              <button 
+
+              <button
                 className="w-full mt-2 border border-zinc-700 py-3 rounded-lg font-medium"
                 onClick={() => setShowPostModal(false)}
               >
