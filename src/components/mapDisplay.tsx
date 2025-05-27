@@ -10,7 +10,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import PrimaryButton from "./buttons/PrimaryButton";
 import { GetProfileById, PostRoute } from "./utils/DataServices";
-import {  RoutePostTypes } from "./utils/Interface";
+import { RoutePostTypes } from "./utils/Interface";
 
 const MapDisplay = () => {
   const [latitude, setLatitude] = useState<number>(37.7749);
@@ -86,10 +86,8 @@ const MapDisplay = () => {
                       properties: {},
                       geometry: {
                         type: "LineString",
-                        
                         coordinates: updatedPath,
                       },
-                      
                     });
                   }
 
@@ -173,12 +171,11 @@ const MapDisplay = () => {
             latitude: lat,
             longitude: lng,
           })),
-
         };
         const response = await PostRoute(routeData);
         if (response) {
           alert("Route posted successfully!");
-          setStoppedRecording(false)
+          setStoppedRecording(false);
         } else {
           alert("Failed to post route.");
         }
@@ -206,6 +203,7 @@ const MapDisplay = () => {
       `Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`
     );
   };
+
   const getUserProfile = async (userId: number) => {
     if (userId !== undefined) {
       const res = await GetProfileById(userId);
@@ -255,7 +253,7 @@ const MapDisplay = () => {
           "line-cap": "round",
         },
         paint: {
-         "line-color": "#FF3B30",
+          "line-color": "#FF3B30",
           "line-width": 4,
         },
       });
@@ -328,112 +326,186 @@ const MapDisplay = () => {
   useEffect(() => {
     if (userId) {
       getUserProfile(userId);
-    }  
+    }
   }, [userId]);
 
   return (
-    <div className="w-full h-full relative flex justify-center items-center text-white">
+    <div className="w-full h-full relative flex justify-center items-center text-white overflow-hidden">
+      {/* Map Container */}
       <div
-        className={`${stopedRecording ? "hidden" : "block"} w-full h-full`}
-        ref={mapContainerRef}
-      />
-      <section
         className={`${
           stopedRecording ? "hidden" : "block"
-        } w-full h-[12%] absolute bottom-0 flex justify-center items-start`}
+        } w-full h-full relative`}
+        ref={mapContainerRef}
       >
-        <button
-          className={`${
-            isRecording ? "hidden" : "block"
-          } rounded-full h-15 w-15 lg:hidden`}
-          onClick={startRecord}
-        >
-          <Image
-            className="w-full h-full"
-            src={"/assets/images/record.png"}
-            width={1000}
-            height={1000}
-            alt={"Record Button"}
-          />
-        </button>
-        <button
-          className={`${
-            isRecording ? "block bg-red-500 " : "hidden"
-          } rounded-full h-15 w-15`}
-          onClick={handleStopButton}
-        >
-          <Image
-            className="w-full h-full"
-            src={"/assets/images/stop.png"}
-            width={1000}
-            height={1000}
-            alt={"Record Button"}
-          />
-        </button>
-      </section>
-      <div
-        className={`${
-          startCountDown ? "block" : "hidden"
-        } w-[60%] h-[50%] bg-[#2B2B2B]/80 rounded-2xl absolute text-5xl text-white flex justify-center items-center`}
-      >
-        <p>{countDown}</p>
+        {/* Modern overlay gradient for better button visibility */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/40 via-black/20 to-transparent pointer-events-none z-10" />
       </div>
+
+      {/* Recording Controls - Mobile Only */}
       <section
         className={`${
-          stopedRecording ? "block" : "hidden"
-        } h-full w-full flex justify-center items-center`}
+          stopedRecording ? "hidden" : "flex"
+        } absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 md:hidden`}
       >
-        <div className="h-full w-[90%] overflow-y-auto">
-          <div className="h-[45%] w-full bg-black ">
-            <RouteImageInput
-              onChange={handleImagePost}
-              isFileUploaded={isImageFilled}
-              imageURL={image}
-            />
+        {/* Start Recording Button */}
+        <button
+          className={`${
+            isRecording ? "hidden" : "flex"
+          } items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-2xl hover:bg-white/20 transition-all duration-300 active:scale-95`}
+          onClick={startRecord}
+        >
+          <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
+            <div className="w-6 h-6 bg-white rounded-full" />
           </div>
-          <div className="h-[60%] flex flex-col justify-start items-center gap-2">
-            <div className="h-[15%] w-full  flex justify-center items-center">
-              <input
-                className="w-[90%] h-[90%] bg-gray-600 rounded-lg pl-4"
-                type="text"
-                onChange={(e) => setCityName(e.target.value)}
-                placeholder="City Name of Route"
-              />
+        </button>
+
+        {/* Stop Recording Button */}
+        <button
+          className={`${
+            isRecording
+              ? "flex animate-pulse"
+              : "hidden"
+          } items-center justify-center w-20 h-20 bg-red-500/20 backdrop-blur-md rounded-full border border-red-500/30 shadow-2xl hover:bg-red-500/30 transition-all duration-300 active:scale-95`}
+          onClick={handleStopButton}
+        >
+          <div className="w-8 h-8 bg-red-500 rounded-sm shadow-lg" />
+        </button>
+      </section>
+
+      {/* Countdown Overlay */}
+      <div
+        className={`${
+          startCountDown ? "flex" : "hidden"
+        } absolute inset-0 bg-black/70 backdrop-blur-sm z-30 items-center justify-center`}
+      >
+        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl">
+          <div className="text-8xl font-bold text-white text-center animate-pulse">
+            {countDown}
+          </div>
+          <div className="text-xl text-white/80 text-center mt-4">
+            Starting recording...
+          </div>
+        </div>
+      </div>
+
+      {/* Route Details Form */}
+      <section
+        className={`${
+          stopedRecording ? "flex" : "hidden"
+        } absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-20 flex-col`}
+      >
+        {/* Header */}
+        <div className="flex-shrink-0 px-4 py-6 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              Share Your Route
+            </h2>
+            <p className="text-gray-300 text-sm sm:text-base">
+              Add details to make your route discoverable
+            </p>
+          </div>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-6">
+          <div className="max-w-2xl mx-auto space-y-6">
+            
+            {/* Image Upload Section */}
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+              <div className="aspect-video relative">
+                <RouteImageInput
+                  onChange={handleImagePost}
+                  isFileUploaded={isImageFilled}
+                  imageURL={image}
+                />
+              </div>
             </div>
-            <div className="h-[15%] w-full  flex justify-center items-center">
-              <input
-                className="w-[90%] h-[90%] bg-gray-600 rounded-lg pl-4"
-                type="text"
-                onChange={(e) => setRouteName(e.target.value)}
-                placeholder="Route Name"
-              />
+
+            {/* Form Fields */}
+            <div className="space-y-4">
+              
+              {/* City Name */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300 block">
+                  City
+                </label>
+                <input
+                  className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
+                  type="text"
+                  onChange={(e) => setCityName(e.target.value)}
+                  placeholder="Enter city name"
+                  value={cityName}
+                />
+              </div>
+
+              {/* Route Name */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300 block">
+                  Route Name
+                </label>
+                <input
+                  className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
+                  type="text"
+                  onChange={(e) => setRouteName(e.target.value)}
+                  placeholder="Give your route a name"
+                  value={routeName}
+                />
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300 block">
+                  Description
+                </label>
+                <textarea
+                  className="w-full h-24 sm:h-32 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 resize-none"
+                  onChange={(e) => setRouteDescription(e.target.value)}
+                  value={routeDescription}
+                  placeholder="Describe your route, highlights, difficulty level..."
+                />
+              </div>
+
+              {/* Privacy Toggle */}
+              <div className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+                <div className="flex-1">
+                  <div className="font-medium text-white text-sm sm:text-base">
+                    Route Visibility
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-400 mt-1">
+                    {isPrivate 
+                      ? "Only you can see this route" 
+                      : "Everyone can discover this route"
+                    }
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className={`text-sm ${isPrivate ? 'text-gray-400' : 'text-white font-medium'}`}>
+                    Public
+                  </span>
+                  <Switch
+                    id="private-switch"
+                    checked={isPrivate}
+                    onCheckedChange={setIsPrivate}
+                    className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500"
+                  />
+                  <span className={`text-sm ${isPrivate ? 'text-white font-medium' : 'text-gray-400'}`}>
+                    Private
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="h-[30%] w-full flex justify-center items-center">
-              <textarea
-                className="w-[90%] h-[90%] bg-gray-600 rounded-lg pl-4"
-                onChange={(e) => setRouteDescription(e.target.value)}
-                value={routeDescription}
-                placeholder="Description"
-              />
-            </div>
-            <div className="h-[10%] w-[90%] flex justify-end items-center gap-2">
-              <label htmlFor="private-switch">
-                {isPrivate ? "Private" : "Public"}
-              </label>
-              <Switch
-                id="private-switch"
-                checked={isPrivate}
-                onCheckedChange={setIsPrivate}
-                className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-300"
-              />
-            </div>
-            <div className="w-[50%] h-[15%]">
-              <PrimaryButton
-                buttonText={"Post"}
-                isBackgroundDark={false}
-                onClick={handlePostRoute}
-              />
-            </div>
+          </div>
+        </div>
+
+        {/* Bottom Action Area */}
+        <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 bg-gradient-to-t from-black/20 to-transparent">
+          <div className="max-w-2xl mx-auto">
+            <PrimaryButton
+              buttonText="Share Route"
+              isBackgroundDark={false}
+              onClick={handlePostRoute}
+            />
           </div>
         </div>
       </section>

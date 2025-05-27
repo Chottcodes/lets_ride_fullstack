@@ -2,11 +2,15 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { GetRoute, GetUserProfile } from "@/components/utils/DataServices";
+import {
+  GetGalleryPosts,
+  GetRoute,
+  GetUserProfile,
+} from "@/components/utils/DataServices";
 import {
   GetRoutes,
-  RouteGetForCardTypes,
-
+  IUserCardType,
+ 
 } from "@/components/utils/Interface";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import { GetLocalStorageId } from "@/components/utils/helperFunctions";
@@ -35,18 +39,22 @@ const ProfilePage = () => {
   });
 
   const [activeTab, setActiveTab] = useState("profile");
-  const [likedRoutes, setLikedRoutes] = useState(new Set());
+
   const [userRoutes, setUserRoutes] = useState<GetRoutes[]>([]);
+  const [userGalleryPost, setUserGalleryPost] = useState<IUserCardType[]>([]);
   const [userId, setUserId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
-
+  useEffect(() => {
+    console.log(userId);
+    console.log(userRoutes);
+  }, [userId, userRoutes]);
   useEffect(() => {
     const id = GetLocalStorageId();
     if (!id) {
       push("/pages/Login/loginPage");
       return;
-    }else{
+    } else {
       setUserId(id);
     }
 
@@ -88,28 +96,27 @@ const ProfilePage = () => {
   }, [push]);
 
   useEffect(() => {
-    if (userData.userId) {
+    if (userId) {
       const fetchRoutes = async () => {
         try {
-          const routes = await GetRoute(userId);
+          console.log(userId);
+          const routes = await GetRoute(userId, 1, 100);
           setUserRoutes(routes);
-
-          const liked = new Set();
-          routes.forEach((route:RouteGetForCardTypes) => {
-            route.likes?.forEach((like:{userId:number,isDeleted:boolean}) => {
-              if (like.userId === userData.userId && !like.isDeleted) {
-                liked.add(route.id);
-              }
-            });
-          });
-          setLikedRoutes(liked);
         } catch (err) {
           console.error("Failed to fetch routes:", err);
         }
       };
+      const fetchGalleryPost = async () => {
+        try {
+          const gallery = await GetGalleryPosts(userId, 1, 100);
+          setUserGalleryPost(gallery);
+        } catch (error) {
+          console.error("Failed to fetch Gallery:", error);
+        }
+      };
       fetchRoutes();
     }
-  }, [userData.userId]);
+  }, [userId]);
 
   const handleLogOut = () => {
     localStorage.clear();
@@ -118,9 +125,12 @@ const ProfilePage = () => {
 
   const filteredRoutes =
     activeTab === "post"
-      ? userRoutes.filter((route) => route.isPrivate === false && route.creatorName === userData.username)
+      ? userRoutes.filter(
+          (route) =>
+            route.isPrivate === false && route.creatorName === userData.username
+        )
       : activeTab === "likes"
-      ? userRoutes.filter((route) => likedRoutes.has(route.id))
+      ? userRoutes.filter((route) => route.isLikedByCurrentUser=== true)
       : [];
 
   // Profile data items for consistent rendering

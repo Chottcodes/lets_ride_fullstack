@@ -28,7 +28,7 @@ const UserCardsPost = (props: IUserCardType) => {
   const [likeCount, setLikeCount] = useState<number>(props.likeCount || 0);
   const [showLoginTooltip, setShowLoginTooltip] = useState<boolean>(false);
 
-  // Initialize user data
+  
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
     if (storedId) setUserId(Number(storedId));
