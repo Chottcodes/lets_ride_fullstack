@@ -7,7 +7,7 @@ import { ChevronRight, ChevronLeft} from "lucide-react";
 import UserCards from "@/components/ui/UserCards";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import VideoComponent from "@/components/VideoComponet";
-import VideoModal from "@/components/VideoModal";
+
 import { useRouter } from "next/navigation";
 
 import {
@@ -87,11 +87,9 @@ const Page = () => {
   const [userVideoData, setUserVideoData] = useState<VideoGet[]>([]);
   const [routes, setRoutes] = useState<GetRoutes[]>([]);
   const [userId, setUserId] = useState(0);
-  const [likesCount, setLikesCount] = useState<number>();
+  
   const [isImagePosted, setIsImagePosted] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState<string>();
-  const [videoId, setVideoId] = useState<number>();
-  const [videoLikes, setVideoLikes] = useState([]);
+ 
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -273,16 +271,8 @@ const Page = () => {
         </main>
       )}
 
-      {/* Video Modal */}
-      {selectedVideo && (
-        <VideoModal
-          videoUrl={selectedVideo}
-          videoId={videoId ?? 0}
-          videoLikes={likesCount ?? 0}
-          videoLikeArr={videoLikes}
-          onClose={() => setSelectedVideo('')}
-        />
-      )}
+     
+      
     </div>
   );
 };

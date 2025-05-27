@@ -424,6 +424,7 @@ export const GetVideo = async (userId: number, page:number, pageSize:number) => 
     }
 
     const data = await res.json();
+    console.log("Fetched videos:", data);
     return data;
   } catch (err) {
     console.error("Network error in GetVideo:", err);
