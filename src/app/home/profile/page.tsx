@@ -6,6 +6,7 @@ import {
   GetGalleryPosts,
   GetRoute,
   GetUserProfile,
+  GetVideo,
 } from "@/components/utils/DataServices";
 import {
   GetRoutes,
@@ -42,6 +43,7 @@ const ProfilePage = () => {
 
   const [userRoutes, setUserRoutes] = useState<GetRoutes[]>([]);
   const [userGalleryPost, setUserGalleryPost] = useState<IUserCardType[]>([]);
+  const [userVideoPost, setUserVideoPost] = useState([]);
   const [userId, setUserId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
@@ -114,7 +116,17 @@ const ProfilePage = () => {
           console.error("Failed to fetch Gallery:", error);
         }
       };
+      const fetchVideoPost = async () => {
+        try {
+          const gallery = await GetVideo(userId, 1, 100);
+          setUserVideoPost(gallery);
+        } catch (error) {
+          console.error("Failed to fetch Gallery:", error);
+        }
+      };
       fetchRoutes();
+      fetchGalleryPost();
+      fetchVideoPost();
     }
   }, [userId]);
 
