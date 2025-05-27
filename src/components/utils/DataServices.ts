@@ -191,16 +191,15 @@ export const GetProfileById = async (id:number) => {
 // ------------------- Gallery Page ---------------------------------
 export const GetGalleryPosts = async (userId: number, page:number, pageSize:number ) => {
   try {
-    const res = await fetch(
-      `${url}/RideTables/GetGallery/${userId}?page=${page}&pageSize=${pageSize}`
-    );
+    const res = await fetch(url + "RideTables/GetGallery/" + userId + "?page=" + page + "&pageSize=" + pageSize);
 
     if (!res.ok) {
       console.error("Error fetching gallery posts");
       return null;
     }
-
+    
     const data = await res.json();
+    console.log("Fetched gallery posts:", data);
     return data;
   } catch (err) {
     console.error("Network error in GetGalleryPosts:", err);
@@ -298,6 +297,7 @@ export const AddGalleryLike = async (Likes:LikesGalleryModel) => {
             return null;
         }
         const data = await res.json();
+        console.log("Gallery Like Added:", data);
         return data;
     }
 export const AddVideoLike = async (Likes:LikesVideoModel) => {

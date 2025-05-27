@@ -415,7 +415,7 @@ const UserRoutesCard = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (isLiked) {
+                    if (isLiked ) {
                       HandleRemoveRouteLike();
                     } else {
                       handleLike();
@@ -426,7 +426,7 @@ const UserRoutesCard = ({
                 >
                   <Heart
                     className={`transition-colors ${
-                      isLiked ? "text-blue-600" : "text-white"
+                      isLiked  ? "text-blue-600" : "text-white"
                     }`}
                   />
                   <span className="text-xs text-white">{likedCount}</span>

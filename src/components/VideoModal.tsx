@@ -171,18 +171,18 @@ const VideoModal = ({
             >
               <div className="w-[20%] h-[10%] flex gap-2">
                 <Image
-                  src={comment.user?.profilePicture || "/assets/images/defaultPicture.png"}
+                  src={comment.profilePictureUrl || "/assets/images/defaultPicture.png"}
                   width={500}
                   height={500}
                   alt={"profile"}
                   className="w-[25px] h-[25px] rounded-full"
                 />
-                <p className="text-sm">{comment.user.userName}</p>
+                <p className="text-sm">{comment.username}</p>
               </div>
               <p className="text-sm">{comment.commentText}</p>
               <p className="text-sm">
-                {comment.createdAt
-                  ? new Date(comment.createdAt).toLocaleDateString("en-CA")
+                {comment.dateCreated
+                  ? new Date(comment.dateCreated).toLocaleDateString("en-CA")
                   : "N/A"}
               </p>
             </div>

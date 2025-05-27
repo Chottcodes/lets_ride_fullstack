@@ -22,7 +22,7 @@ export default function HomeLayout({
         </main>
         
         {/* Mobile Navigation - will only show below lg screens */}
-        <div className="lg:hidden w-full h-[64px] bg-black flex justify-center items-center">
+        <div className="lg:hidden w-full bg-red-500  flex justify-center items-center">
           <MobileNavBar />
         </div>
       </div>

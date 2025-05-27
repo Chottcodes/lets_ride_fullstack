@@ -3,12 +3,18 @@ import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
-  EditUserProfile,
+  GetGalleryPosts,
   GetRoute,
-  getUserPostData,
   GetUserProfile,
+  GetVideo,
+  EditUserProfile,
 } from "@/components/utils/DataServices";
-import { GetRoutes, RouteGetForCardTypes } from "@/components/utils/Interface";
+import {
+  GetRoutes,
+  IUserCardType,
+  RouteGetForCardTypes,
+  UserProfileTypes
+} from "@/components/utils/Interface";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 import {
@@ -20,7 +26,6 @@ import {
   Pencil,
 } from "lucide-react";
 import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
-import { UserProfileTypes } from "@/components/utils/Interface";
 
 const ProfilePage = () => {
   const { push } = useRouter();
@@ -35,22 +40,28 @@ const ProfilePage = () => {
     ridePreference: "Not specified",
     experienceLevel: "Not specified",
     userId: 0,
-    profileId: 0,
     page: 0,
     pageSize: 0,
   });
 
   const [activeTab, setActiveTab] = useState("profile");
-  const [likedRoutes, setLikedRoutes] = useState(new Set());
+
   const [userRoutes, setUserRoutes] = useState<GetRoutes[]>([]);
+  const [userGalleryPost, setUserGalleryPost] = useState<IUserCardType[]>([]);
+  const [userVideoPost, setUserVideoPost] = useState([]);
   const [userId, setUserId] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
+  const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    console.log(userId);
+    console.log(userRoutes);
+  }, [userId, userRoutes]);
 
   const fetchUserData = useCallback(async () => {
-    if (!userId) return;
     try {
       setIsLoading(true);
       const data = await GetUserProfile(userId);
@@ -63,9 +74,6 @@ const ProfilePage = () => {
         ridingPreference,
         userName,
         name,
-        page,
-        pageSize,
-        id: profileId,
       } = data;
 
       setUserData({
@@ -79,7 +87,6 @@ const ProfilePage = () => {
         ridePreference: ridingPreference || "Not specified",
         experienceLevel: ridingExperience || "Not specified",
         userId: userId,
-        profileId: profileId,
         page: 0,
         pageSize: 0,
       });
@@ -103,30 +110,41 @@ const ProfilePage = () => {
   }, [push, userId, fetchUserData]);
 
   useEffect(() => {
-    if (userData.userId) {
+    if (userId) {
       const fetchRoutes = async () => {
         try {
           const routes = await GetRoute(userId, page, pageSize);
           setUserRoutes(routes);
 
-          const liked = new Set();
-          routes.forEach((route: RouteGetForCardTypes) => {
-            route.likes?.forEach(
-              (like: { userId: number; isDeleted: boolean }) => {
-                if (like.userId === userData.userId && !like.isDeleted) {
-                  liked.add(route.id);
-                }
-              }
-            );
-          });
-          setLikedRoutes(liked);
+          const likedIds = routes
+            .filter((route: GetRoutes) => route.isLikedByCurrentUser)
+            .map((route: GetRoutes) => route.id);
+          setLikedRoutes(new Set<number>(likedIds));
         } catch (err) {
           console.error("Failed to fetch routes:", err);
         }
       };
+      const fetchGalleryPost = async () => {
+        try {
+          const gallery = await GetGalleryPosts(userId, 1, 100);
+          setUserGalleryPost(gallery);
+        } catch (error) {
+          console.error("Failed to fetch Gallery:", error);
+        }
+      };
+      const fetchVideoPost = async () => {
+        try {
+          const gallery = await GetVideo(userId, 1, 100);
+          setUserVideoPost(gallery);
+        } catch (error) {
+          console.error("Failed to fetch Gallery:", error);
+        }
+      };
       fetchRoutes();
+      fetchGalleryPost();
+      fetchVideoPost();
     }
-  }, [userData.userId]);
+  }, [userId]);
 
   const handleLogOut = () => {
     localStorage.clear();
@@ -140,7 +158,7 @@ const ProfilePage = () => {
             route.isPrivate === false && route.creatorName === userData.username
         )
       : activeTab === "likes"
-      ? userRoutes.filter((route) => likedRoutes.has(route.id))
+      ? userRoutes.filter((route) => route.isLikedByCurrentUser=== true)
       : [];
 
   // ------------------ User preferences ------------------
