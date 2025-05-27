@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -49,7 +49,8 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
+    if (!userId) return;
     try {
       setIsLoading(true);
       const data = await GetUserProfile(userId);
@@ -87,7 +88,7 @@ const ProfilePage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     const id = GetLocalStorageId();
@@ -99,7 +100,7 @@ const ProfilePage = () => {
     }
 
     fetchUserData();
-  }, [push, userId]);
+  }, [push, userId, fetchUserData]);
 
   useEffect(() => {
     if (userData.userId) {

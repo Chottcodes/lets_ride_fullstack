@@ -1,41 +1,27 @@
 "use client";
 import React from "react";
+
 interface propTypes {
-  optionOne: string;
-  optionTwo: string;
-  optionThree: string;
-  optionFour: string | null;
-  titleOne: string;
-  titleTwo: string;
-  titleThree: string;
-  titleFour: string | null;
+  options: { label: string; value: string; }[];
   onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  placeholder: string;
 }
+
 const DropDownInputComponent = (props: propTypes) => {
-  const {
-    optionOne,
-    optionTwo,
-    optionThree,
-    optionFour,
-    titleOne,
-    titleTwo,
-    titleThree,
-    titleFour,
-    onChange,
-  } = props;
+  const { options, onChange, placeholder } = props;
+  
   return (
-    <div className="w-full h-full flex items-center ">
+    <div className="w-full h-full flex items-center">
       <select
         className="w-full bg-black text-white text-sm"
         onChange={onChange}
       >
-        <option value="">Select</option>
-        <option value={optionOne}>{titleOne}</option>
-        <option value={optionTwo}>{titleTwo}</option>
-        <option value={optionThree}>{titleThree}</option>
-        {optionFour && titleFour && (
-          <option value={optionFour}>{titleFour}</option>
-        )}
+        <option value="">{placeholder}</option>
+        {options.map((option, index) => (
+          <option key={index} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select> 
     </div>
   );
