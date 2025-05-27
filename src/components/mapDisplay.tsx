@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Image from "next/image";
+
 import { Switch } from "./ui/switch";
 import RouteImageInput from "./inputs/RouteImageInput";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";

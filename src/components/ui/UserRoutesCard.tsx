@@ -78,10 +78,10 @@ const UserRoutesCard = ({
     }
   }, [id, isLikedByCurrentUser, likeCount]);
 
-  const formattedDate = useMemo(
-    () => new Date(dateCreated).toLocaleDateString("en-CA"),
-    [dateCreated]
-  );
+  // const formattedDate = useMemo(
+  //   () => new Date(dateCreated).toLocaleDateString("en-CA"),
+  //   [dateCreated]
+  // );
 
   const trailCoordinates = useMemo(
     () =>
