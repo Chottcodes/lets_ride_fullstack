@@ -152,33 +152,24 @@ export const PostRoute = async (route:RoutePostTypes ) => {
     const data = await res.json();
     return data;
 }
+
 export const GetRoute = async (userId: number, page: number, pageSize: number) => {
-    try {
-        if (!userId || page < 1 || pageSize < 1) {
-            console.error("Invalid parameters:", { userId, page, pageSize });
-            return [];
-        }
-
-        const queryParams = new URLSearchParams({
-            userId: userId.toString(),
-            page: page.toString(),
-            pageSize: pageSize.toString(),
-        });
-
-        const res = await fetch(`${url}RideTables/GetRoutes?${queryParams}`);
-
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error(`GetRoute failed with status ${res.status}:`, errorText);
-            return [];
-        }
-
-        const data = await res.json();
-        return data;
-    } catch (err) {
-        console.error("Network or fetch error in GetRoute:", err);
-        return [];
+  try {
+   
+    const res = await fetch(url + "RideTables/GetRoutes/" + userId + "?page=" + page + "&pageSize=" + pageSize);
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error(`Failed to fetch routes (status: ${res.status}):`, errorText);
+      return [];
     }
+    const data = await res.json();
+    console.log("Fetched routes:", data);
+   
+    return data;
+  } catch (err) {
+    console.error("Network or fetch error in GetRoute:", err);
+    return [];
+  }
 };
 
 
