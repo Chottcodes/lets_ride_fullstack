@@ -7,8 +7,9 @@ import {
   GetRoute,
   getUserPostData,
   GetUserProfile,
+  GetGalleryPosts,
 } from "@/components/utils/DataServices";
-import { GetRoutes, RouteGetForCardTypes } from "@/components/utils/Interface";
+import { GetRoutes, RouteGetForCardTypes, IUserCardType } from "@/components/utils/Interface";
 import UserRoutesCard from "@/components/ui/UserRoutesCard";
 import { GetLocalStorageId } from "@/components/utils/helperFunctions";
 import {
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
 import { UserProfileTypes } from "@/components/utils/Interface";
+import UserCardsPost from "@/components/ui/UserCards";
 
 const ProfilePage = () => {
   const { push } = useRouter();
@@ -48,6 +50,7 @@ const ProfilePage = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
+  const [galleryPosts, setGalleryPosts] = useState<IUserCardType[]>([]);
 
   const fetchUserData = useCallback(async () => {
     if (!userId) return;
@@ -128,20 +131,38 @@ const ProfilePage = () => {
     }
   }, [userData.userId]);
 
+  useEffect(() => {
+    if (userData.userId) {
+      const fetchGalleryPosts = async () => {
+        try {
+          const posts = await GetGalleryPosts(userId, page, pageSize);
+          if (posts) {
+            setGalleryPosts(posts);
+          }
+        } catch (err) {
+          console.error("Failed to fetch gallery posts:", err);
+        }
+      };
+      fetchGalleryPosts();
+    }
+  }, [userData.userId, page, pageSize, userId]);
+
   const handleLogOut = () => {
     localStorage.clear();
     push("/pages/Login/loginPage");
   };
 
-  const filteredRoutes =
-    activeTab === "post"
-      ? userRoutes.filter(
-          (route) =>
-            route.isPrivate === false && route.creatorName === userData.username
-        )
-      : activeTab === "likes"
-      ? userRoutes.filter((route) => likedRoutes.has(route.id))
-      : [];
+  const filteredRoutes = activeTab === "post"
+    ? userRoutes.filter(route => route.creatorName === userData.username)
+    : activeTab === "likes"
+    ? userRoutes.filter(route => likedRoutes.has(route.id))
+    : [];
+
+  const filteredPosts = activeTab === "post"
+    ? galleryPosts.filter(post => post.creatorName === userData.username)
+    : activeTab === "likes"
+    ? galleryPosts.filter(post => post.isLikedByCurrentUser)
+    : [];
 
   // ------------------ User preferences ------------------
   const [isEditing, setIsEditing] = useState(false);
@@ -369,7 +390,7 @@ const ProfilePage = () => {
         </div>
       </nav>
 
-      {/* Main Content (Profile Item Cards) */}
+      {/* Main Content */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
@@ -452,10 +473,13 @@ const ProfilePage = () => {
               </div>
             )}
           </div>
-        ) : filteredRoutes.length > 0 ? (
+        ) : (filteredRoutes.length > 0 || filteredPosts.length > 0) ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredRoutes.map((route) => (
               <UserRoutesCard key={route.id} {...route} />
+            ))}
+            {filteredPosts.map((post) => (
+              <UserCardsPost key={post.id} {...post} />
             ))}
           </div>
         ) : (
@@ -468,32 +492,21 @@ const ProfilePage = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                {activeTab === "post" ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
             </div>
             <h3 className="text-xl font-medium text-gray-300 mb-2">
-              {activeTab === "post"
-                ? "No Routes Posted Yet"
-                : "No Liked Routes"}
+              {activeTab === "post" ? "No Content Yet" : "No Liked Content"}
             </h3>
             <p className="text-gray-500 max-w-md mx-auto">
               {activeTab === "post"
-                ? "Share your favorite rides with the community by creating your first route."
-                : "Discover and like routes to save them for future adventures."}
+                ? "Share your favorite moments and rides with the community."
+                : "Discover and like content to save it for later."}
             </p>
             {activeTab === "post" && (
               <button
@@ -516,8 +529,11 @@ const ProfilePage = () => {
                 </svg>
                 Create Route
               </button>
+              
+              
             )}
           </div>
+          
         )}
       </main>
 

@@ -1,4 +1,4 @@
-import { AddGalleryPost, CommentsModelGallery,  InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo, UserProfileReturnTypes } from "./Interface"
+import { AddGalleryPost, CommentsModelGallery,  InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo } from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -79,61 +79,10 @@ export const UserProfileSetup = async (user: UserProfileTypes) => {
         const data = await res.json();
         return data;
 }
-
-export const EditUserProfile = async(user: UserProfileTypes) => {
-    console.log("Attempting to edit profile with data:", JSON.stringify(user, null, 2));
-    try {
-        // Add Id field to the request
-        const requestBody = {
-            Id: user.UserId, // Using UserId as Id since that's what we have
-            ...user
-        };
-
-        const res = await fetch(url + "RideTables/EditProfile",
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify(requestBody)
-            }
-        );
-        
-        // Log the raw response
-        console.log("Response status:", res.status);
-        console.log("Response headers:", Object.fromEntries(res.headers.entries()));
-        
-        let responseText;
-        try {
-            responseText = await res.text();
-            console.log("Raw response body:", responseText);
-            
-            if (!res.ok) {
-                console.error(`EditUserProfile failed with status ${res.status}:`, responseText);
-                return null;
-            }
-            
-            // Try to parse the response as JSON if it's not empty
-            const data = responseText ? JSON.parse(responseText) : null;
-            console.log("EditUserProfile success response:", data);
-            return data;
-        } catch (parseError) {
-            console.error("Failed to parse response:", parseError);
-            console.error("Raw response was:", responseText);
-            return null;
-        }
-    } catch (error) {
-        console.error("Network or fetch error in EditUserProfile:", error);
-        return null;
-    }
-}
-
 export const GetUserProfile = async(UserId:number) =>
 {
-    const res = await fetch(url + `RideTables/GetProfile/${UserId}`);
+    const res = await fetch(url + `RideTables/GetProfile/${UserId}`)
     const data = await res.json();
-    console.log("GetUserProfile response:", data);
     return data;
 }
 export const PostRoute = async (route:RoutePostTypes ) => {
@@ -153,32 +102,25 @@ export const PostRoute = async (route:RoutePostTypes ) => {
     return data;
 }
 export const GetRoute = async (userId: number, page: number, pageSize: number) => {
-    try {
-        if (!userId || page < 1 || pageSize < 1) {
-            console.error("Invalid parameters:", { userId, page, pageSize });
-            return [];
-        }
+  try {
+    
 
-        const queryParams = new URLSearchParams({
-            userId: userId.toString(),
-            page: page.toString(),
-            pageSize: pageSize.toString(),
-        });
+    const res = await fetch(url + "RideTables/GetRoutes/" + userId + "?page=" + page + "&pageSize=" + pageSize);
 
-        const res = await fetch(`${url}RideTables/GetRoutes?${queryParams}`);
-
-        if (!res.ok) {
-            const errorText = await res.text();
-            console.error(`GetRoute failed with status ${res.status}:`, errorText);
-            return [];
-        }
-
-        const data = await res.json();
-        return data;
-    } catch (err) {
-        console.error("Network or fetch error in GetRoute:", err);
-        return [];
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error(`Failed to fetch routes (status: ${res.status}):`, errorText);
+      return [];
     }
+
+    const data = await res.json();
+    console.log("Fetched routes:", data);
+    
+    return data;
+  } catch (err) {
+    console.error("Network or fetch error in GetRoute:", err);
+    return [];
+  }
 };
 
 
@@ -191,16 +133,15 @@ export const GetProfileById = async (id:number) => {
 // ------------------- Gallery Page ---------------------------------
 export const GetGalleryPosts = async (userId: number, page:number, pageSize:number ) => {
   try {
-    const res = await fetch(
-      `${url}/RideTables/GetGallery/${userId}?page=${page}&pageSize=${pageSize}`
-    );
+    const res = await fetch(url + "RideTables/GetGallery/" + userId + "?page=" + page + "&pageSize=" + pageSize);
 
     if (!res.ok) {
       console.error("Error fetching gallery posts");
       return null;
     }
-
+    
     const data = await res.json();
+    console.log("Fetched gallery posts:", data);
     return data;
   } catch (err) {
     console.error("Network error in GetGalleryPosts:", err);
@@ -298,6 +239,7 @@ export const AddGalleryLike = async (Likes:LikesGalleryModel) => {
             return null;
         }
         const data = await res.json();
+        console.log("Gallery Like Added:", data);
         return data;
     }
 export const AddVideoLike = async (Likes:LikesVideoModel) => {
