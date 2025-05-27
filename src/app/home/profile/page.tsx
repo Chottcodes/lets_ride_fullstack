@@ -1,5 +1,5 @@
 "use client";
-import React, { act, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -318,7 +318,7 @@ const ProfilePage = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredVideoPosts.map((video) => (
-                <VideoComponet  {...video}  />
+                <VideoComponet key={video.id}  {...video}  />
               ))}
             </div>
           </>
