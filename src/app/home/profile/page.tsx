@@ -30,6 +30,8 @@ import {
 import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
 import UserCards from "@/components/ui/UserCards";
 import VideoComponet from "@/components/VideoComponet";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "@/lib/firebase";
 
 const ProfilePage = () => {
   const { push } = useRouter();
@@ -59,6 +61,8 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
   const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
+
+  const [isProfilePictureEditing, setIsProfilePictureEditing] = useState(false);
 
   const fetchAllData = useCallback(async (id: number) => {
     try {
@@ -281,6 +285,45 @@ const ProfilePage = () => {
     },
   ];
 
+  const handleProfilePictureChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // Create a reference to Firebase Storage
+      const imageRef = ref(storage, `profilePictures/${userData.userId}_${file.name}`);
+      
+      // Upload the file to Firebase Storage
+      const snapshot = await uploadBytes(imageRef, file);
+      
+      // Get the download URL
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      // Update the user profile with the new image URL
+      const updatedProfile: UserProfileTypes = {
+        UserId: userData.userId,
+        UserName: userData.username || null,
+        Name: userData.name || null,
+        Location: userData.location === "Not specified" ? null : userData.location,
+        BikeType: userData.bikeType === "Not specified" ? null : userData.bikeType,
+        RidingExperience: userData.experienceLevel === "Not specified" ? null : userData.experienceLevel,
+        RidingPreference: userData.ridePreference === "Not specified" ? null : userData.ridePreference,
+        RideConsistency: userData.ridingFrequency === "Not specified" ? null : userData.ridingFrequency,
+        ProfilePicture: downloadURL
+      };
+
+      const response = await EditUserProfile(updatedProfile);
+      
+      if (response) {
+        await fetchAllData(userData.userId);
+        console.log("Profile picture updated successfully");
+      }
+    } catch (err: any) {
+      console.error("Failed to update profile picture:", err);
+    }
+    setIsProfilePictureEditing(false);
+  };
+
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col">
       {/* Header - Transparent when at top, solid when scrolled */}
@@ -303,7 +346,7 @@ const ProfilePage = () => {
           <h1 className="text-xl font-bold">{`${userData.username}'s Profile`}</h1>
 
           <button
-            onClick={() => push("/pages/Profile/editProfile")}
+            onClick={() => setIsProfilePictureEditing(true)}
             className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-blue-400 transition"
           >
             <Pencil />
@@ -311,6 +354,29 @@ const ProfilePage = () => {
           </button>
         </div>
       </header>
+
+      {/* Profile Picture Edit Modal */}
+      {isProfilePictureEditing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-[90%] max-w-md">
+            <h3 className="text-xl font-semibold mb-4">Edit Profile Picture</h3>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleProfilePictureChange}
+              className="w-full bg-gray-700 text-white p-2 rounded mb-4"
+            />
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setIsProfilePictureEditing(false)}
+                className="px-4 py-2 text-gray-400 hover:text-white transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Profile Banner with Parallax Effect */}
       <section className="pt-20 relative overflow-hidden">
