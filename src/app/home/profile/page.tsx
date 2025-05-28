@@ -50,10 +50,7 @@ const ProfilePage = () => {
   const [userId, setUserId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
-  useEffect(() => {
-    console.log(userId);
-    console.log(userRoutes);
-  }, [userId, userRoutes]);
+ 
   useEffect(() => {
     const id = GetLocalStorageId();
     if (!id) {
