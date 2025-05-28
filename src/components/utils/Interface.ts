@@ -62,15 +62,15 @@ export interface IToken
 }
 
 export interface UserProfileTypes {
-    UserName:string
-    UserId:number
-    Name:string
-    Location:string
-    BikeType:string
-    RidingExperience:string
-    RidingPreference:string
-    RideConsistency:string
-    ProfilePicture:string
+    UserId: number;
+    UserName: string | null;
+    Name: string | null;
+    Location: string | null;
+    BikeType: string | null;
+    RidingExperience: string | null;
+    RidingPreference: string | null;
+    RideConsistency: string | null;
+    ProfilePicture: string | null;
 }
 export interface UserProfileReturnTypes {
     userName:string

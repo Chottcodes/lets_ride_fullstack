@@ -1,5 +1,5 @@
 "use client";
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -7,10 +7,13 @@ import {
   GetRoute,
   GetUserProfile,
   GetVideo,
+  EditUserProfile,
 } from "@/components/utils/DataServices";
 import {
   GetRoutes,
   IUserCardType,
+  RouteGetForCardTypes,
+  UserProfileTypes,
   VideoGet,
  
 } from "@/components/utils/Interface";
@@ -24,6 +27,7 @@ import {
   LogOut,
   Pencil,
 } from "lucide-react";
+import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
 import UserCards from "@/components/ui/UserCards";
 import VideoComponet from "@/components/VideoComponet";
 
@@ -40,6 +44,8 @@ const ProfilePage = () => {
     ridePreference: "Not specified",
     experienceLevel: "Not specified",
     userId: 0,
+    page: 0,
+    pageSize: 0,
   });
 
   const [activeTab, setActiveTab] = useState("profile");
@@ -48,9 +54,14 @@ const ProfilePage = () => {
   const [userGalleryPost, setUserGalleryPost] = useState<IUserCardType[]>([]);
   const [userVideoPost, setUserVideoPost] = useState<VideoGet[]>([]);
   const [userId, setUserId] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
- 
+  useEffect(() => {
+    console.log(userId);
+    console.log(userRoutes);
+  }, [userId, userRoutes]);
   useEffect(() => {
     const id = GetLocalStorageId();
     if (!id) {
@@ -75,60 +86,65 @@ const ProfilePage = () => {
           name,
         } = data;
 
-        setUserData({
-          name: name || "Rider",
-          username: userName || "Guest",
-          profilePicture:
-            profilePicture || "/assets/images/default-profile.png",
-          bikeType: bikeType || "Not specified",
-          ridingFrequency: rideConsistency || "Not specified",
-          location: location || "Not specified",
-          ridePreference: ridingPreference || "Not specified",
-          experienceLevel: ridingExperience || "Not specified",
-          userId: id,
-        });
-      } catch (err) {
-        console.error("Failed to fetch user data:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      setUserData({
+        name: name || "Rider",
+        username: userName || "Guest",
+        profilePicture:
+          profilePicture || "/assets/images/default-profile.png",
+        bikeType: bikeType || "Not specified",
+        ridingFrequency: rideConsistency || "Not specified",
+        location: location || "Not specified",
+        ridePreference: ridingPreference || "Not specified",
+        experienceLevel: ridingExperience || "Not specified",
+        userId: id,
+        page: 0,
+        pageSize: 0,
+      });
 
-    fetchUserData();
-  }, [push]);
+      // Fetch routes, gallery posts, and videos in parallel
+      const [routes, gallery, videos] = await Promise.all([
+        GetRoute(id, page, pageSize),
+        GetGalleryPosts(id, 1, 100),
+        GetVideo(id, 1, 100)
+      ]);
+
+      setUserRoutes(routes);
+      setUserGalleryPost(gallery);
+      setUserVideoPost(videos);
+
+      // Set liked routes
+      const likedIds = routes
+        .filter((route: GetRoutes) => route.isLikedByCurrentUser)
+        .map((route: GetRoutes) => route.id);
+      setLikedRoutes(new Set<number>(likedIds));
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, pageSize]);
 
   useEffect(() => {
-    if (userId) {
-      const fetchRoutes = async () => {
-        try {
-          console.log(userId);
-          const routes = await GetRoute(userId, 1, 100);
-          setUserRoutes(routes);
-        } catch (err) {
-          console.error("Failed to fetch routes:", err);
-        }
-      };
-      const fetchGalleryPost = async () => {
-        try {
-          const gallery = await GetGalleryPosts(userId, 1, 100);
-          setUserGalleryPost(gallery);
-        } catch (error) {
-          console.error("Failed to fetch Gallery:", error);
-        }
-      };
-      const fetchVideoPost = async () => {
-        try {
-          const gallery = await GetVideo(userId, 1, 100);
-          setUserVideoPost(gallery);
-        } catch (error) {
-          console.error("Failed to fetch Gallery:", error);
-        }
-      };
-      fetchRoutes();
-      fetchGalleryPost();
-      fetchVideoPost();
+    const id = GetLocalStorageId();
+    if (!id) {
+      push("/pages/Login/loginPage");
+      return;
     }
-  }, [userId]);
+    
+    setUserId(id);
+    fetchAllData(id);
+
+    // Add event listener for focus
+    const handleFocus = () => {
+      fetchAllData(id);
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [push, fetchAllData]);
 
   const handleLogOut = () => {
     localStorage.clear();
@@ -148,7 +164,104 @@ const ProfilePage = () => {
       const filteredVideoPosts = activeTab === 'post' ? userVideoPost.filter((post)=> post.creatorName === userData.username): activeTab === 'likes' ? userVideoPost.filter((post)=> post.isLikedByCurrentUser === true): [];
       // const filteredVideoPosts = userVideoPost.filter((post)=> post.=== userData.username);
 
-  // Profile data items for consistent rendering
+  // ------------------ User preferences ------------------
+  const [isEditing, setIsEditing] = useState(false);
+  const [editKey, setEditKey] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string>("");
+
+  const handleEditSubmit = async (newValue: string) => {
+    console.log("New value:", newValue);
+    if (!newValue || !editKey) return;
+
+    const fieldMappings: { [key: string]: string } = {
+      "Bike Type": "BikeType",
+      "Ride Frequency": "RideConsistency",
+      "Location": "Location",
+      "Riding Preferences": "RidingPreference",
+      "Experience Level": "RidingExperience"
+    };
+
+    const field = fieldMappings[editKey];
+    if (!field) return;
+
+    try {
+      const updatedProfile: UserProfileTypes = {
+        UserId: userData.userId,
+        UserName: userData.username || null,
+        Name: userData.name || null,
+        Location: field === "Location" ? newValue : (userData.location === "Not specified" ? null : userData.location),
+        BikeType: field === "BikeType" ? newValue : (userData.bikeType === "Not specified" ? null : userData.bikeType),
+        RidingExperience: field === "RidingExperience" ? newValue : (userData.experienceLevel === "Not specified" ? null : userData.experienceLevel),
+        RidingPreference: field === "RidingPreference" ? newValue : (userData.ridePreference === "Not specified" ? null : userData.ridePreference),
+        RideConsistency: field === "RideConsistency" ? newValue : (userData.ridingFrequency === "Not specified" ? null : userData.ridingFrequency),
+        ProfilePicture: userData.profilePicture || null
+      };
+
+      console.log("Sending updated profile:", updatedProfile);
+      const response = await EditUserProfile(updatedProfile);
+      
+      if (response) {
+        // After successful update, fetch fresh data from server
+        await fetchAllData(userData.userId);
+        console.log("Profile updated successfully:", response);
+      } else {
+        console.error("Failed to update profile - server returned null");
+        await fetchAllData(userData.userId); // Refresh data even on error to ensure UI is in sync
+      }
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      await fetchAllData(userData.userId); // Refresh data on error to ensure UI is in sync
+    }
+
+    setIsEditing(false);
+    setEditKey(null);
+    setEditValue("");
+  };
+
+  const getDropdownOptions = (key: string) => {
+    switch (key) {
+      case "Bike Type":
+        return {
+          options: [
+            { label: "Mountain Bike", value: "Mountain Bike" },
+            { label: "Road Bike", value: "Road Bike" },
+            { label: "Hybrid Bike", value: "Hybrid Bike" },
+            { label: "Electric Bike", value: "Electric Bike" }
+          ]
+        };
+      case "Ride Frequency":
+        return {
+          options: [
+            { label: "Rarely", value: "Rarely" },
+            { label: "Occasionally", value: "Occasionally" },
+            { label: "Regularly", value: "Regularly" },
+            { label: "Daily", value: "Daily" }
+          ]
+        };
+      case "Riding Preferences":
+        return {
+          options: [
+            { label: "Cruising", value: "Cruising" },
+            { label: "Long Distance", value: "Long Distance" },
+            { label: "Off Road", value: "Off Road" },
+            { label: "Track Riding/Fast Riding", value: "Track Riding" }
+          ]
+        };
+      case "Experience Level":
+        return {
+          options: [
+            { label: "Beginner (6 months or less)", value: "Beginner" },
+            { label: "Intermediate (6 months to 2 years)", value: "Intermediate" },
+            { label: "Advanced (2 years or more)", value: "Advanced" }
+          ]
+        };
+      default:
+        return {
+          options: []
+        };
+    }
+  };
+
   const profileItems = [
     {
       icon: <Bike />,
@@ -277,7 +390,7 @@ const ProfilePage = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
+      {/* Main Content (Profile Item Cards) */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
@@ -287,19 +400,78 @@ const ProfilePage = () => {
         ) : activeTab === "profile" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {profileItems.map((item, index) => (
-              <div
+              <button
                 key={index}
-                className="bg-gray-800 rounded-xl p-5 border border-gray-700 hover:border-blue-600 transition-all duration-300 shadow-md hover:shadow-blue-900/20"
+                onClick={() => {
+                  setIsEditing(true);
+                  setEditKey(item.label);
+                  setEditValue(item.value);
+                }}
+                className="bg-gray-800 rounded-xl p-5 border border-gray-700 hover:border-blue-600 transition-all duration-300 shadow-md hover:shadow-blue-900/20 cursor-pointer"
               >
                 <div className="flex items-start gap-4">
                   <div className="bg-gray-700 p-2 rounded-lg">{item.icon}</div>
-                  <div>
+                  <div className="flex flex-col items-baseline">
                     <h3 className="text-gray-400 text-sm mb-1">{item.label}</h3>
                     <p className="font-medium">{item.value}</p>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
+            {/* Open drop down here*/}
+            {isEditing && editKey && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-[90%] max-w-md">
+                  <h3 className="text-xl font-semibold mb-4">Edit {editKey}</h3>
+                  {(editKey === "Location" || editKey === "Bike Type") ? (
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => {
+                          // Limit input to 30 characters
+                          if (e.target.value.length <= 25) {
+                            setEditValue(e.target.value);
+                          }
+                        }}
+                        maxLength={25}
+                        className="w-full bg-gray-700 text-white p-2 rounded mb-1"
+                        placeholder={`Enter ${editKey.toLowerCase()}`}
+                      />
+                      <p className="text-sm text-gray-400">
+                        {editValue.length}/25 characters
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mb-4">
+                      <DropDownInputComponent
+                        options={getDropdownOptions(editKey).options}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        placeholder={`Select ${editKey}`}
+                      />
+                    </div>
+                  )}
+                  <div className="flex justify-end gap-4">
+                    <button
+                      onClick={() => {
+                        setIsEditing(false);
+                        setEditKey(null);
+                        setEditValue("");
+                      }}
+                      className="px-4 py-2 text-gray-400 hover:text-white transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleEditSubmit(editValue)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : filteredRoutes.length > 0 ? (
           <>
@@ -315,7 +487,7 @@ const ProfilePage = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredVideoPosts.map((video) => (
-                <VideoComponet key={video.id}  {...video}  />
+                <VideoComponet key={video.id} {...video}  />
               ))}
             </div>
           </>

@@ -158,8 +158,9 @@ const MapDisplay = () => {
 
   const handlePostRoute = async () => {
     try {
-      if (userId && image) {
-        const routeData: RoutePostTypes = {
+      if(userId && image){
+        
+        const routeData:RoutePostTypes = {
           CreatorId: userId,
           RouteName: routeName,
           RouteDescription: routeDescription,
@@ -218,7 +219,6 @@ const MapDisplay = () => {
         setUserID(Number(userId));
       }
     }
-
     if (!mapContainerRef.current || mapRef.current) return;
 
     const map = new mapboxgl.Map({
@@ -324,10 +324,14 @@ const MapDisplay = () => {
   }, [latitude, longitude]);
 
   useEffect(() => {
-    if (userId) {
-      getUserProfile(userId);
-    }
-  }, [userId]);
+    console.log(path);
+  }, [path]);
+  useEffect(() => {
+    console.log("City Name: ", cityName);
+    console.log("Route Name: ", routeName);
+    console.log("Route Description: ", routeDescription);
+    console.log("Is Private: ", isPrivate);
+  }, [cityName, routeName, routeDescription, isPrivate]);
 
   return (
     <div className="w-full h-full relative flex justify-center items-center text-white overflow-hidden">
