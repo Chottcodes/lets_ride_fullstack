@@ -1,7 +1,18 @@
+PROFILE PAGE:
 
-To Do:
+userLikedPosts are tied to userLikedRoutes
+    - Only displays posts WHEN a route is liked. For example, 
+    *I can like a post, but it will only display in the likes section when a user also has a liked route*
 
-Card Component:
+USER CARDS:
 
-Username and profile image from The about you interface applied to the cards components
-User Profile name for comments section instead of "User 1 etc." from about you components
+Cursor-pointer/Bold
+    - Add cursor-pointer and bold to Heart Icon, Comments Icon.
+
+
+VIDEO CARDS:
+    - Fix CSS for video cards
+
+FIX LOGO:
+
+    - Get black background for the LETS RIDE logo
