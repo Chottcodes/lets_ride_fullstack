@@ -6,15 +6,17 @@ interface propTypes {
   buttonText: string;
   isBackgroundDark: boolean;
   onClick?: () => void;
+  disabled?: boolean;
 }
 const PrimaryButton = (props: propTypes) => {
-  const { buttonText, isBackgroundDark, onClick } = props;
+  const { buttonText, isBackgroundDark, onClick,disabled } = props;
   return (
     <button
       className={`${
         isBackgroundDark ? "bg-black border-2 border-white hover:border-stone-400 " : "bg-[#5070fd] hover:bg-[#2e53fc] "
       } w-full h-full flex justify-center items-center text-center py-2 text-white text-2xl rounded-[.5rem] cursor-pointer`}
       onClick={onClick}
+      disabled={disabled}
     >
       <h1>{buttonText}</h1>
     </button>

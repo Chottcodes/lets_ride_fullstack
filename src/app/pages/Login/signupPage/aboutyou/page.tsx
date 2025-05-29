@@ -11,11 +11,14 @@ import { UserProfileTypes } from "@/components/utils/Interface";
 
 import { UserProfileSetup } from "@/components/utils/DataServices";
 import DropDownInputComp from "@/components/inputs/DropdownComp";
+import { uploadBytesResumable } from "firebase/storage";
 
 const AboutYouPage = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isUserNameEmpty, setIsUserNameEmpty] = useState<boolean>(false);
   const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
   const [isFirstQuestionsComplete, setIsFirstQuestionsComplete] =
     useState<boolean>(false);
   const [userId, setUserID] = useState<number>(0);
@@ -29,32 +32,41 @@ const AboutYouPage = () => {
   const [ridingFrequency, setRidingFrequency] = useState<string>("");
   const { push } = useRouter();
 
- const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0]; // Get the selected file
+  const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
 
-  if (!file) return; // Check if file exists and the form is ready
+    if (!file) return;
 
-  console.log("File to upload:", file); // Confirm the file
+    try {
+      setIsUploading(true);
 
-  try {
-    // Create a reference in Firebase Storage to upload the file
-    const imageRef = ref(storage, `profilePictures/${userId}_${file.name}`);
-    
-    // Upload the file to Firebase Storage
-    const snapshot = await uploadBytes(imageRef, file);
-    console.log("Uploaded file snapshot:", snapshot);
+      const imageRef = ref(storage, `profilePictures/${userId}_${file.name}`);
+      const uploadTask = uploadBytesResumable(imageRef, file);
 
-    // Get the download URL for the uploaded file
-    const url = await getDownloadURL(snapshot.ref);
-    console.log("Uploaded profile picture URL:", url);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress.toFixed(2) + "% done");
+        },
+        (error) => {
+          setIsUploading(false);
+          console.error("Upload error:", error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setImage(downloadURL);
+          setIsImageFilled(true);
+          setIsUploading(false);
+          console.log("File available at", downloadURL);
+        }
+      );
+    } catch (error) {
+      console.error("Unexpected error during upload:", error);
+    }
+  };
 
-    
-    setImage(url);
-    setIsImageFilled(true);
-  } catch (error) {
-    console.error("Error uploading file:", error);
-  }
-};
   const uploadDefaultPicture = async (id: number) => {
     try {
       const response = await fetch("/assets/images/defaultPicture.png");
@@ -66,8 +78,7 @@ const AboutYouPage = () => {
       await uploadBytes(imageRef, blob);
       const url = await getDownloadURL(imageRef);
       setImage(url);
-       setIsImageFilled(true);
-      
+      setIsImageFilled(true);
     } catch (error) {
       console.error("Error uploading default image:", error);
     }
@@ -124,34 +135,34 @@ const AboutYouPage = () => {
     return null;
   };
 
-useEffect(() => {
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => {
-      const userToken_ID = GetLocalStorage();
-      if (userToken_ID) {
-        setUserID(userToken_ID.id);
-      } else {
-        push("/pages/Login");
-      }
-    });
-  } else {
-    // fallback for unsupported browsers
-    setTimeout(() => {
-      const userToken_ID = GetLocalStorage();
-      if (userToken_ID) {
-        setUserID(userToken_ID.id);
-      } else {
-        push("/pages/Login");
-      }
-    }, 1);
-  }
-}, []);
+  useEffect(() => {
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(() => {
+        const userToken_ID = GetLocalStorage();
+        if (userToken_ID) {
+          setUserID(userToken_ID.id);
+        } else {
+          push("/pages/Login");
+        }
+      });
+    } else {
+      // fallback for unsupported browsers
+      setTimeout(() => {
+        const userToken_ID = GetLocalStorage();
+        if (userToken_ID) {
+          setUserID(userToken_ID.id);
+        } else {
+          push("/pages/Login");
+        }
+      }, 1);
+    }
+  }, []);
 
   useEffect(() => {
-  if (userId > 0) {
-    uploadDefaultPicture(userId);
-  }
-}, [userId]);
+    if (userId > 0) {
+      uploadDefaultPicture(userId);
+    }
+  }, [userId]);
 
   return (
     <div className="text-white h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-800 to-black">
@@ -174,6 +185,11 @@ useEffect(() => {
           />
         </div>
         <h5>Add Profile Pictures</h5>
+        {isUploading && (
+          <div className="text-sm text-gray-400 mt-2">
+            Uploading image, please wait...
+          </div>
+        )}
       </section>
       <main className="w-[100%] h-[80%] md:h-[60%]  lg:w-[35%] flex flex-col justify-center items-center transform-all duration-300  overflow-y-auto">
         <div
@@ -298,11 +314,12 @@ useEffect(() => {
             } h-[70%] w-[80%] md:h-[40%] md:w-[50%] lg:w-[60%]`}
           >
             <PrimaryButton
-              buttonText="submit"
+              buttonText={isUploading ? "Uploading..." : "Submit"}
               isBackgroundDark={true}
               onClick={() => {
-                handleSubmitButton();
+                if (!isUploading) handleSubmitButton();
               }}
+              disabled={isUploading}
             />
           </div>
         </footer>
