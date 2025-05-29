@@ -1,13 +1,15 @@
 "use client";
+// All commented out code is for adding image to routes. Don't forget to check the "RoutePostTypes" interface aswell!
+
 import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { Switch } from "./ui/switch";
-import RouteImageInput from "./inputs/RouteImageInput";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/lib/firebase";
+// import RouteImageInput from "./inputs/RouteImageInput";
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+// import { storage } from "@/lib/firebase";
 import PrimaryButton from "./buttons/PrimaryButton";
 import { GetProfileById, PostRoute } from "./utils/DataServices";
 import { RoutePostTypes } from "./utils/Interface";
@@ -21,12 +23,13 @@ const MapDisplay = () => {
   const [routeName, setRouteName] = useState<string>("");
   const [routeDescription, setRouteDescription] = useState<string>("");
 
-  const [image, setImage] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [stopedRecording, setStoppedRecording] = useState<boolean>(false);
   const [startCountDown, setStartCountDown] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
-  const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
+
+  // const [image, setImage] = useState<string | null>(null);
+  // const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
 
   //map ref and marker ref
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -120,45 +123,45 @@ const MapDisplay = () => {
     }
   };
 
-  const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  // const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
 
-    try {
-      if (file) {
-        const imageRef = ref(storage, `profilePicture/${userId}_${file?.name}`);
-        await uploadBytes(imageRef, file);
-        const url = await getDownloadURL(imageRef);
-        setImage(url);
-        setIsImageFilled(true);
-        console.log("Uploaded profile picture URL:", url);
-      } else {
-        uploadDefaultPicture();
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
+  //   try {
+  //     if (file) {
+  //       const imageRef = ref(storage, `profilePicture/${userId}_${file?.name}`);
+  //       await uploadBytes(imageRef, file);
+  //       const url = await getDownloadURL(imageRef);
+  //       // setImage(url);
+  //       // setIsImageFilled(true);
+  //       console.log("Uploaded profile picture URL:", url);
+  //     } else {
+  //       uploadDefaultPicture();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading file:", error);
+  //   }
+  // };
 
-  const uploadDefaultPicture = async () => {
-    const defaultImagePath = "/assets/images/MotoRouteDefault.png";
-    const defaultImageRef = ref(
-      storage,
-      `profilePictures/${userId}_${defaultImagePath}`
-    );
-    try {
-      const defaultImage = await fetch(defaultImagePath);
-      const blob = await defaultImage.blob();
-      await uploadBytes(defaultImageRef, blob);
-      const url = await getDownloadURL(defaultImageRef);
-      setImage(url);
-    } catch (error) {
-      console.error("Error uploading default images:", error);
-    }
-  };
+  // const uploadDefaultPicture = async () => {
+  //   const defaultImagePath = "/assets/images/MotoRouteDefault.png";
+  //   const defaultImageRef = ref(
+  //     storage,
+  //     `profilePictures/${userId}_${defaultImagePath}`
+  //   );
+  //   try {
+  //     const defaultImage = await fetch(defaultImagePath);
+  //     const blob = await defaultImage.blob();
+  //     await uploadBytes(defaultImageRef, blob);
+  //     const url = await getDownloadURL(defaultImageRef);
+  //     setImage(url);
+  //   } catch (error) {
+  //     console.error("Error uploading default images:", error);
+  //   }
+  // };
 
   const handlePostRoute = async () => {
     try {
-      if(userId && image){
+      if(userId){ //&& image inside the parameter here for adding image
         
         const routeData:RoutePostTypes = {
           CreatorId: userId,
@@ -167,7 +170,7 @@ const MapDisplay = () => {
           CityName: cityName,
           IsPrivate: isPrivate,
           IsDeleted: false,
-          ImageUrl: image,
+          // ImageUrl: image,
           PathCoordinates: path.map(([lng, lat]) => ({
             latitude: lat,
             longitude: lng,
@@ -416,7 +419,7 @@ const MapDisplay = () => {
           <div className="max-w-2xl mx-auto space-y-6">
             
             {/* Image Upload Section */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
+            {/* <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
               <div className="aspect-video relative">
                 <RouteImageInput
                   onChange={handleImagePost}
@@ -424,7 +427,7 @@ const MapDisplay = () => {
                   imageURL={image}
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Form Fields */}
             <div className="space-y-4">

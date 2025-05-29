@@ -155,7 +155,14 @@ const ProfilePage = () => {
       : activeTab === "likes"
       ? userRoutes.filter((route) => route.isLikedByCurrentUser=== true)
       : [];
-      const filteredGalleryPosts = activeTab === 'post' ? userGalleryPost.filter((post)=> post.creatorName === userData.username): activeTab === 'likes' ? userGalleryPost.filter((post)=> post.isLikedByCurrentUser === true): [];
+      const filteredGalleryPosts = activeTab === 'post' 
+        ? userGalleryPost.map(post => ({
+            ...post,
+            creatorId: userData.userId // Add creatorId for posts by the current user
+          })).filter((post)=> post.creatorName === userData.username)
+        : activeTab === 'likes' 
+        ? userGalleryPost.filter((post)=> post.isLikedByCurrentUser === true)
+        : [];
       const filteredVideoPosts = activeTab === 'post' ? userVideoPost.filter((post)=> post.creatorName === userData.username): activeTab === 'likes' ? userVideoPost.filter((post)=> post.isLikedByCurrentUser === true): [];
       // const filteredVideoPosts = userVideoPost.filter((post)=> post.=== userData.username);
 
@@ -356,7 +363,7 @@ const ProfilePage = () => {
       </header>
 
       {/* Profile Picture Edit Modal */}
-      {isProfilePictureEditing && (
+      {isProfilePictureEditing && ( 
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-[90%] max-w-md">
             <h3 className="text-xl font-semibold mb-4">Edit Profile Picture</h3>
@@ -424,7 +431,7 @@ const ProfilePage = () => {
       </section>
 
       {/* Tab Navigation */}
-      <nav className="sticky top-16 bg-gray-800 z-10 border-t border-b border-gray-700 shadow-lg">
+      <nav className="sticky top-0 bg-gray-800 z-10 border-t border-b border-gray-700 shadow-lg">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex justify-between">
             {["profile", "post", "likes"].map((tab) => (

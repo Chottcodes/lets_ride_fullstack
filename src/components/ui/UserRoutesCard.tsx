@@ -22,10 +22,11 @@ import {
   AddLike,
   GetRouteComment,
   RemoveRouteLike,
+  RemoveRoutePost,
 } from "../utils/DataServices";
 import { useProfilePicture } from "@/hooks/useProfilePicture";
 import { useRouter } from "next/navigation";
-import { Heart, MessageSquareMore } from "lucide-react";
+import { Heart, MessageSquareMore, Trash } from "lucide-react";
 
 const UserRoutesCard = ({
   id,
@@ -38,6 +39,7 @@ const UserRoutesCard = ({
   profilePicture,
   isLikedByCurrentUser,
   commentCount,
+  creatorId,
 }: GetRoutes) => {
   // State management
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -45,6 +47,7 @@ const UserRoutesCard = ({
   const [isCommentsOpen, setIsCommentsOpen] = useState<boolean>(false);
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
   const [showCToolTip, setShowCToolTip] = useState<boolean>(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
 
   const [commentText, setCommentText] = useState<string>("");
   const [userId, setUserId] = useState<number>(0);
@@ -236,9 +239,26 @@ const UserRoutesCard = ({
     };
   }, [isModalOpen, isImageOpen, toggleModal]);
 
+  const handleDeleteRoute = async () => {
+    try {
+      const response = await RemoveRoutePost(id);
+      if (response) {
+        // Close both modals
+        setShowDeleteConfirm(false);
+        setIsModalOpen(false);
+        // Refresh the page to show updated routes
+        window.location.reload();
+      } else {
+        console.error("Failed to delete route");
+      }
+    } catch (error) {
+      console.error("Error deleting route:", error);
+    }
+  };
+
   if (!isModalOpen) {
     return (
-      <article className="w-full h-full shadow-md rounded-lg border shadow-lg transition-all duration-300 hover:shadow-blue-500/30 border border-gray-800 hover:border-blue-500/50  flex flex-col overflow-hidden transition-all hover:shadow-lg bg-gray-900">
+      <article className="w-full h-full rounded-lg border shadow-lg transition-all duration-300 hover:shadow-blue-500/30 border-gray-800 hover:border-blue-500/50  flex flex-col overflow-hidden  hover:shadow-lg bg-gray-900">
         {/* Map Section */}
         <header className="h-50 w-full relative">
           <MapsUserCards
@@ -249,22 +269,36 @@ const UserRoutesCard = ({
         </header>
 
         {/* User info */}
-        <section className="p-3 flex items-center gap-3">
-          <Avatar className="h-5 w-5 rounded-full overflow-hidden">
-            <AvatarImage
-              src={
-                profilePicture
-                  ? profilePicture
-                  : "/assets/images/defaultPicture.png"
-              }
-              alt={`${creatorName}'s profile`}
-              className="object-cover w-full h-full"
-            />
-            <AvatarFallback className="bg-blue-700 text-white flex items-center justify-center">
-              {creatorName?.charAt(0)?.toUpperCase() || "U"}
-            </AvatarFallback>
-          </Avatar>
-          <p className="text-white text-sm font-medium">{creatorName}</p>
+        <section className="p-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Avatar className="h-5 w-5 rounded-full overflow-hidden">
+              <AvatarImage
+                src={
+                  profilePicture
+                    ? profilePicture
+                    : "/assets/images/defaultPicture.png"
+                }
+                alt={`${creatorName}'s profile`}
+                className="object-cover w-full h-full"
+              />
+              <AvatarFallback className="bg-blue-700 text-white flex items-center justify-center">
+                {creatorName?.charAt(0)?.toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <p className="text-white text-sm font-medium">{creatorName}</p>
+          </div>
+          {userId === creatorId && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteConfirm(true);
+              }}
+              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+              title="Delete route"
+            >
+              <Trash className="h-5 w-5" />
+            </button>
+          )}
         </section>
 
         {/* Route Info */}
@@ -362,12 +396,26 @@ const UserRoutesCard = ({
         className="w-full max-w-4xl h-[calc(100dvh-90px)] overflow-y-auto bg-gray-900 rounded-lg shadow-xl border border-blue-500  flex flex-col  md:pb-4"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header with back button */}
-        <header className="flex items-center p-3 border-b border-gray-800">
-          <BackButtonComponent onClick={() => toggleModal(false)} />
-          <h2 className="ml-4 text-white font-bold text-lg truncate">
-            {title}
-          </h2>
+        {/* Header with back button and delete option */}
+        <header className="flex items-center justify-between p-3 border-b border-gray-800">
+          <div className="flex items-center">
+            <BackButtonComponent onClick={() => toggleModal(false)} />
+            <h2 className="ml-4 text-white font-bold text-lg truncate">
+              {title}
+            </h2>
+          </div>
+          {userId === creatorId && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteConfirm(true);
+              }}
+              className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+              title="Delete route"
+            >
+              <Trash className="h-5 w-5" />
+            </button>
+          )}
         </header>
 
         {/* Content area */}
@@ -704,6 +752,32 @@ const UserRoutesCard = ({
               height={800}
               className="max-w-full max-h-full object-contain"
             /> */}
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-gray-900 rounded-lg p-6 max-w-sm w-full shadow-xl border border-gray-800">
+            <h3 className="text-xl font-semibold text-white mb-4">Delete Route?</h3>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to delete this route? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 text-gray-400 hover:text-white transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteRoute}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

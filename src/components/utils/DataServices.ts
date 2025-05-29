@@ -453,4 +453,38 @@ export const GetRouteComment = async(routeId:number)=>
         return data
 }
 
+// Delete Function for user's post
+export const RemoveGalleryPost = async (id:number) => {
+    const res = await fetch(url + `RideTables/RemoveGalleryPost/${id}`,
+    {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+     if(!res.ok)
+        {
+            console.log("Error");
+            return null;
+        }
+        const data = await res.json();
+    return data
+}
 
+export const RemoveRoutePost = async (id:number) => {
+    const res = await fetch(url + `RideTables/RemoveRoute/{id}`,
+        {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        }
+    )
+    if(!res.ok)
+    {
+        console.log('Error')
+        return null;
+    }
+    const data = await res.json();
+    return data;
+}

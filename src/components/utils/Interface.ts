@@ -7,16 +7,19 @@ export interface IUserCreate
     Answer:string
 }
 export interface IUserCardType {
+  creatorId: number;
     id: number;
    
     imageUrl: string;
    caption: string;
+   description: string;
    creatorName: string;
    profilePicture: string;
     dateCreated: string;
    likeCount:number
     commentCount:number
     isLikedByCurrentUser:boolean
+    
   }
   export interface LikeModel {
     userId: number;
@@ -86,7 +89,7 @@ export interface RoutePostTypes {
     CreatorId:number,
     RouteName:string
     RouteDescription:string
-    ImageUrl:string
+    // ImageUrl:string
     CityName:string
     IsPrivate:boolean
     IsDeleted:boolean
@@ -232,6 +235,7 @@ export interface GetRoutes {
   title: string;
   isPrivate: boolean;
   creatorName: string;
+  creatorId: number;
   likeCount:number;
   isLikedByCurrentUser:boolean;
   profilePicture: string | null;

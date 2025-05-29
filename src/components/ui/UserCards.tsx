@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Heart, MessageCircle, X, ZoomIn, ZoomOut, Info } from "lucide-react";
+import { Heart, MessageCircle, X, ZoomIn, ZoomOut, Info, Trash } from "lucide-react";
 import {
   CommentsModelGallery,
   GalleryComments,
@@ -13,6 +13,7 @@ import {
   AddGalleryLike,
   GetGalleryComments,
   RemoveGalleryLike,
+  RemoveGalleryPost,
 } from "../utils/DataServices";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,7 +28,7 @@ const UserCardsPost = (props: IUserCardType) => {
   const [comments, setComments] = useState<GalleryComments[]>([]);
   const [likeCount, setLikeCount] = useState<number>(props.likeCount || 0);
   const [showLoginTooltip, setShowLoginTooltip] = useState<boolean>(false);
-
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -108,6 +109,23 @@ const UserCardsPost = (props: IUserCardType) => {
     }
   };
 
+  const handleDeletePost = async () => {
+    try {
+      const response = await RemoveGalleryPost(props.id);
+      if (response) {
+        // Close both modals
+        setShowDeleteConfirm(false);
+        setIsModalOpen(false);
+        // Refresh the page to show updated posts
+        window.location.reload();
+      } else {
+        console.error("Failed to delete post");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
   const formatDate = (dateString:string) => {
     return new Date(dateString).toLocaleDateString("en-CA", {
       year: "numeric",
@@ -148,10 +166,43 @@ const UserCardsPost = (props: IUserCardType) => {
               </Avatar>
               <span className="text-sm font-medium text-gray-200">@{props.creatorName}</span>
             </div>
-            <span className="text-xs text-gray-400">{formatDate(props.dateCreated)}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400">{formatDate(props.dateCreated)}</span>
+              {userId === props.creatorId && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDeleteConfirm(true);
+                  }}
+                  className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                  title="Delete post"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
           
-          <p className="text-gray-300 mt-2 line-clamp-2 text-sm">{props.caption}</p>
+          {/* Caption and Description */}
+          <div className="mt-3">
+            {props.caption && (
+              <h3 className="text-base font-medium text-gray-200">{props.caption}</h3>
+            )}
+            {props.description && (
+              <p className="mt-1 text-sm text-gray-400">{props.description}</p>
+            )}
+          </div>
         </div>
         
         {/* Interaction Bar */}
@@ -213,18 +264,31 @@ const UserCardsPost = (props: IUserCardType) => {
             <div className={`relative ${isFullImage ? 'w-full h-screen' : 'max-h-[60vh]'} overflow-hidden`}>
               <button
                 onClick={() => setIsFullImage(!isFullImage)}
-                className="absolute right-12 top-4 z-50 bg-gray-800/70 rounded-full p-1 text-gray-200 hover:text-white hover:bg-gray-700/80 transition-colors"
+                className="absolute right-12 z-50 bg-gray-800/70 rounded-full p-1 text-gray-200 hover:text-blue-800 hover:bg-gray-700/80 transition-colors cursor-pointer"
                 aria-label={isFullImage ? "Zoom out" : "Zoom in"}
               >
-                {isFullImage ? <ZoomOut className="h-5 w-5" /> : <ZoomIn className="h-5 w-5" />}
+                {isFullImage ? <ZoomOut className="h-5 w-5 " /> : <ZoomIn className="h-5 w-5" />}
               </button>
-              
+
+            {/* Delete Button */}
+            {userId === props.creatorId && (
+              <button 
+                className="absolute right-12 top-10 z-50 bg-gray-800/70 rounded-full p-1 text-gray-200 hover:text-red-500 hover:bg-gray-700/80 transition-colors cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDeleteConfirm(true);
+                }}
+                title="Delete post">
+                <Trash className="w-5 h-5"></Trash>
+              </button>
+            )}
+            
               <div className={`relative ${isFullImage ? 'w-full h-screen' : 'w-full h-[60vh]'}`}>
                 <Image
                   src={props.imageUrl}
                   alt={props.caption || "Gallery image"}
                   fill
-                  className={`object-contain ${isFullImage ? 'object-contain cursor-zoom-out' : 'cursor-zoom-in'}`}
+                  className={`object-contain ${isFullImage ? 'object-contain ' : ''}`}
                   sizes="100vw"
                   priority
                 />
@@ -246,7 +310,15 @@ const UserCardsPost = (props: IUserCardType) => {
                     <span className="text-sm text-gray-400">{formatDate(props.dateCreated)}</span>
                   </div>
                   
-                  <p className="text-gray-300">{props.caption}</p>
+                  {/* Caption and Description */}
+                  <div className="space-y-2">
+                    {props.caption && (
+                      <h3 className="text-lg font-medium text-gray-200">{props.caption}</h3>
+                    )}
+                    {props.description && (
+                      <p className="text-gray-400">{props.description}</p>
+                    )}
+                  </div>
                 </div>
 
                 {/* Interaction Bar */}
@@ -371,6 +443,30 @@ const UserCardsPost = (props: IUserCardType) => {
                 )}
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="bg-gray-900 rounded-lg p-6 max-w-sm w-full shadow-xl border border-gray-800">
+            <h3 className="text-xl font-semibold text-white mb-4">Delete Post?</h3>
+            <p className="text-gray-300 mb-6">Are you sure you want to delete this post? This action cannot be undone.</p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 text-gray-400 hover:text-white transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeletePost}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-colors"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
