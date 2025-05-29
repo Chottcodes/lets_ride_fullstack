@@ -101,7 +101,7 @@ const Page = () => {
         if (getId) setUserId(getId);
 
         // Fetch routes
-        const routesRes = await GetRoute(getId,1,4);
+        const routesRes = await GetRoute(getId,1,3);
         const sortedRoutes = routesRes.sort(
           (a: { dateCreated: string; }, b: { dateCreated: string ; }) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime()
         );

@@ -9,7 +9,7 @@ import RouteImageInput from "./inputs/RouteImageInput";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import PrimaryButton from "./buttons/PrimaryButton";
-import { GetProfileById, PostRoute } from "./utils/DataServices";
+import {  PostRoute } from "./utils/DataServices";
 import { RoutePostTypes } from "./utils/Interface";
 
 const MapDisplay = () => {
@@ -205,12 +205,12 @@ const MapDisplay = () => {
     );
   };
 
-  const getUserProfile = async (userId: number) => {
-    if (userId !== undefined) {
-      const res = await GetProfileById(userId);
-      return res;
-    }
-  };
+  // const getUserProfile = async (userId: number) => {
+  //   if (userId !== undefined) {
+  //     const res = await GetProfileById(userId);
+  //     return res;
+  //   }
+  // };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
