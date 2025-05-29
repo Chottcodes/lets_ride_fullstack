@@ -12,7 +12,6 @@ import {
 import {
   GetRoutes,
   IUserCardType,
-  RouteGetForCardTypes,
   UserProfileTypes,
   VideoGet,
  
@@ -53,38 +52,27 @@ const ProfilePage = () => {
   const [userRoutes, setUserRoutes] = useState<GetRoutes[]>([]);
   const [userGalleryPost, setUserGalleryPost] = useState<IUserCardType[]>([]);
   const [userVideoPost, setUserVideoPost] = useState<VideoGet[]>([]);
-  const [userId, setUserId] = useState<number>(0);
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+
+ 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
-  useEffect(() => {
-    console.log(userId);
-    console.log(userRoutes);
-  }, [userId, userRoutes]);
-  useEffect(() => {
-    const id = GetLocalStorageId();
-    if (!id) {
-      push("/pages/Login/loginPage");
-      return;
-    } else {
-      setUserId(id);
-    }
+ 
+  const fetchAllData = useCallback(async (id: number) => {
+    try {
+      setIsLoading(true);
+      // Fetch user profile
+      const data = await GetUserProfile(id);
+      const {
+        bikeType,
+        location,
+        profilePicture,
+        rideConsistency,
+        ridingExperience,
+        ridingPreference,
+        userName,
+        name,
+      } = data;
 
-    const fetchUserData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await GetUserProfile(id);
-        const {
-          bikeType,
-          location,
-          profilePicture,
-          rideConsistency,
-          ridingExperience,
-          ridingPreference,
-          userName,
-          name,
-        } = data;
 
       setUserData({
         name: name || "Rider",
@@ -101,28 +89,26 @@ const ProfilePage = () => {
         pageSize: 0,
       });
 
+
       // Fetch routes, gallery posts, and videos in parallel
       const [routes, gallery, videos] = await Promise.all([
-        GetRoute(id, page, pageSize),
-        GetGalleryPosts(id, 1, 100),
-        GetVideo(id, 1, 100)
+        GetRoute(id, 1, 200),
+        GetGalleryPosts(id, 1, 200),
+        GetVideo(id, 1, 200)
       ]);
+
 
       setUserRoutes(routes);
       setUserGalleryPost(gallery);
       setUserVideoPost(videos);
 
-      // Set liked routes
-      const likedIds = routes
-        .filter((route: GetRoutes) => route.isLikedByCurrentUser)
-        .map((route: GetRoutes) => route.id);
-      setLikedRoutes(new Set<number>(likedIds));
+
     } catch (err) {
       console.error("Failed to fetch data:", err);
     } finally {
       setIsLoading(false);
     }
-  }, [page, pageSize]);
+  }, []);
 
   useEffect(() => {
     const id = GetLocalStorageId();
@@ -131,7 +117,6 @@ const ProfilePage = () => {
       return;
     }
     
-    setUserId(id);
     fetchAllData(id);
 
     // Add event listener for focus

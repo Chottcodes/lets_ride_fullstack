@@ -8,8 +8,9 @@ import InputComponent from "@/components/inputs/InputComponent";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import { UserProfileTypes } from "@/components/utils/Interface";
-import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
+
 import { UserProfileSetup } from "@/components/utils/DataServices";
+import DropDownInputComp from "@/components/inputs/DropdownComp";
 
 const AboutYouPage = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -215,7 +216,7 @@ useEffect(() => {
             className={` w-full lg:h-[10%] gap-5 flex flex-col justify-center  text-lg`}
           >
             <h1>Riding Experience Level</h1>
-            <DropDownInputComponent
+            <DropDownInputComp
               onChange={(e) => setRidingExperience(e.target.value)}
               titleOne="Beginner (6 months or less)"
               optionOne="Beginner"
@@ -231,7 +232,7 @@ useEffect(() => {
             className={` w-full h-[10%] gap-5 flex flex-col justify-center text-lg`}
           >
             <h1>Riding Preferences</h1>
-            <DropDownInputComponent
+            <DropDownInputComp
               onChange={(e) => setPreferences(e.target.value)}
               titleOne="Cruising"
               optionOne="Cruising"
@@ -247,7 +248,7 @@ useEffect(() => {
             className={` w-full h-[15%] gap-5 flex flex-col justify-center text-lg`}
           >
             <h1>How often do you ride?</h1>
-            <DropDownInputComponent
+            <DropDownInputComp
               onChange={(e) => setRidingFrequency(e.target.value)}
               titleOne="A few times a year"
               optionOne="Rarely"

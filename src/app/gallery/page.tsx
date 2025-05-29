@@ -1,72 +1,63 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
-import DesktopNavBar from "@/components/navbars/DesktopNavBar";
-import MobileNavBar from "@/components/navbars/MobileNavBar";
-import NavbarHeader from "@/components/ui/NavbarHeader";
-import UserCards from "@/components/ui/UserCards";
-import CardPostModal from "@/components/inputs/cardTestInput";
-import { IUserCardType } from "@/components/utils/Interface";
-import OpenPostModal from "@/components/inputs/cardTestInput";
+import React from "react";
+// import DesktopNavBar from "@/components/navbars/DesktopNavBar";
+// import MobileNavBar from "@/components/navbars/MobileNavBar";
+// import NavbarHeader from "@/components/ui/NavbarHeader";
+// import UserCards from "@/components/ui/UserCards";
 
-import cardData from "@/data/cardData.json";
-import cardRoute from "@/data/CardRoute.json";
-import UserRoutesCard from "@/components/ui/UserRoutesCard";
-import { getGalleryPosts, getUserPostData } from "@/components/utils/DataServices";
+// import { IUserCardType } from "@/components/utils/Interface";
+// import OpenPostModal from "@/components/inputs/cardTestInput";
+
+
+// import UserRoutesCard from "@/components/ui/UserRoutesCard";
+
 
 // const typedUserCards: IUserCardType[] = cardData;
 // const typedUserRoutes: IUserCardType[] = cardRoute;
 
 const Page = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userId, setUserId] = useState<number | null>(null);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [userId, setUserId] = useState<number | null>(null);
 
-  // Drag Scroll Wheel
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-
-  // For Push Fetch
-    const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
+//   // Drag Scroll Wheel
   
-  // Data population
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await getGalleryPosts();
-      const data = await res;
-      setUserCardsDataArr(data);
-    };
 
-    fetchPosts();
-  }, []);
+//   // For Push Fetch
+//     const [userCardsDataArr, setUserCardsDataArr] = useState<IUserCardType[]>([]);
+  
+//   // Data population
+//   useEffect(() => {
+//     const fetchPosts = async () => {
+//     //   const res = await getGalleryPosts();
+//       const data = await res;
+//       setUserCardsDataArr(data);
+//     };
+
+//     fetchPosts();
+//   }, []);
 
 
-  useEffect(() => {
-    const storedId = localStorage.getItem("ID");
-    if (storedId) setUserId(Number(storedId));
-  }, []);
+//   useEffect(() => {
+//     const storedId = localStorage.getItem("ID");
+//     if (storedId) setUserId(Number(storedId));
+//   }, []);
 
   return (
     <div className="">
-      <div className="sm:w-full md:w-20 lg:w-full w-full">
-        {/* Left Nav */}
+      {/* <div className="sm:w-full md:w-20 lg:w-full w-full">
+       
         <div className="fixed top-0 left-0 min-h-screen w-19">
           <DesktopNavBar
             
           />
-        </div>
+        </div> */}
 
         {/* Header */}
-        <NavbarHeader
-          isRoutes={false}
-          isYourLikes={true}
-          isMyPictures={false}
-          isMyRoutes={false}
-        />
+       
 
         {/* Modal Trigger  */}
-        <div className="flex justify-start ms-40 pb-10">
+        {/* <div className="flex justify-start ms-40 pb-10">
           
           {userId !== null && (
             <OpenPostModal
@@ -74,10 +65,10 @@ const Page = () => {
             onClose={() => setIsModalOpen(false)}
           />
           )}
-        </div>
+        </div> */}
 
         {/* Card Sections */}
-        <section className="mx-40 overflow-x-auto scroll-smooth scrollbar-hide mb-10">
+        {/* <section className="mx-40 overflow-x-auto scroll-smooth scrollbar-hide mb-10">
 
           <h1 className="text-[30px] pb-10 text-white">Recent Posted Routes</h1>
           <div className="overflow-x-auto custom-scrollbar mb-10">
@@ -102,17 +93,17 @@ const Page = () => {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* For Grid: grid grid-cols-1 2xl:grid-cols-3 lg:grid-cols-2 gap-4 place-items-center mb-10 mx-40 sm:mx-20 max-w-full no-shrink" */}
 
         {/* Bottom Mobile Nav */}
-        <div>
+        {/* <div>
           <MobileNavBar
             
           />
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </div>
   );
 };

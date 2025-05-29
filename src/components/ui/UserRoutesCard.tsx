@@ -27,6 +27,7 @@ import { useProfilePicture } from "@/hooks/useProfilePicture";
 import { useRouter } from "next/navigation";
 import { Heart, MessageSquareMore } from "lucide-react";
 
+
 const UserRoutesCard = ({
   id,
   title,
@@ -56,6 +57,8 @@ const UserRoutesCard = ({
   const isLiked = useMemo(() => likedRoutes.has(id), [likedRoutes, id]);
 
   const profilePictures = useProfilePicture();
+
+
 
   const getComments = async () => {
     try {
@@ -415,7 +418,7 @@ const UserRoutesCard = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (isLiked ) {
+                    if (isLiked) {
                       HandleRemoveRouteLike();
                     } else {
                       handleLike();
@@ -426,7 +429,7 @@ const UserRoutesCard = ({
                 >
                   <Heart
                     className={`transition-colors ${
-                      isLiked  ? "text-blue-600" : "text-white"
+                      isLiked ? "text-blue-600" : "text-white"
                     }`}
                   />
                   <span className="text-xs text-white">{likedCount}</span>
@@ -475,7 +478,7 @@ const UserRoutesCard = ({
 
             {/* Action button on mobile */}
             <div className="p-4 md:hidden">
-              <button className="w-full py-3 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors text-white font-medium">
+              <button onClick={()=>push(`/home/map/${id}`)} className="w-full py-3 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors text-white font-medium">
                 Lets Ride
               </button>
             </div>
@@ -655,7 +658,7 @@ const UserRoutesCard = ({
 
             {/* Desktop Action Button */}
             <div className="p-4 border-t border-gray-800 hidden md:block">
-              <button className="w-full py-3 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+              <button onClick={()=>push(`/home/map/${id}`)} className="w-full py-3 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 Lets Ride
               </button>
             </div>
