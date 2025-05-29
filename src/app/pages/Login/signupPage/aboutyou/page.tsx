@@ -125,15 +125,28 @@ const AboutYouPage = () => {
   };
 
 useEffect(() => {
-  requestIdleCallback(() => {
-    const userToken_ID = GetLocalStorage();
-    if (userToken_ID) {
-      setUserID(userToken_ID.id);
-    } else {
-      push("/pages/Login");
-    }
-  });
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      const userToken_ID = GetLocalStorage();
+      if (userToken_ID) {
+        setUserID(userToken_ID.id);
+      } else {
+        push("/pages/Login");
+      }
+    });
+  } else {
+    // fallback for unsupported browsers
+    setTimeout(() => {
+      const userToken_ID = GetLocalStorage();
+      if (userToken_ID) {
+        setUserID(userToken_ID.id);
+      } else {
+        push("/pages/Login");
+      }
+    }, 1);
+  }
 }, []);
+
   useEffect(() => {
   if (userId > 0) {
     uploadDefaultPicture(userId);
