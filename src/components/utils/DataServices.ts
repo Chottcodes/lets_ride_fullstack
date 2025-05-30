@@ -1,4 +1,4 @@
-import { AddGalleryPost, CommentsModelGallery,  InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo, UserProfileReturnTypes } from "./Interface"
+import { AddGalleryPost, CommentsModelGallery,  InputField, IUserCreate, IUserInfo, LikesGalleryModel, LikesRoutesModel, RoutePostTypes, UserProfileTypes, AddVideoTypes, LikesVideoModel, CommentsModelVideo} from "./Interface"
 const url = "https://rideapi-egexbda9bpfgh6c9.westus-01.azurewebsites.net/"
 // Account Creation
 export const createAccount = async (user:IUserCreate) =>{
@@ -133,7 +133,6 @@ export const GetUserProfile = async(UserId:number) =>
 {
     const res = await fetch(url + `RideTables/GetProfile/${UserId}`);
     const data = await res.json();
-    console.log("GetUserProfile response:", data);
     return data;
 }
 export const PostRoute = async (route:RoutePostTypes ) => {
@@ -163,7 +162,6 @@ export const GetRoute = async (userId: number, page: number, pageSize: number) =
       return [];
     }
     const data = await res.json();
-    console.log("Fetched routes:", data);
    
     return data;
   } catch (err) {
@@ -190,7 +188,6 @@ export const GetGalleryPosts = async (userId: number, page:number, pageSize:numb
     }
     
     const data = await res.json();
-    console.log("Fetched gallery posts:", data);
     return data;
   } catch (err) {
     console.error("Network error in GetGalleryPosts:", err);
@@ -415,7 +412,7 @@ export const GetVideo = async (userId: number, page:number, pageSize:number) => 
     }
 
     const data = await res.json();
-    console.log("Fetched videos:", data);
+   
     return data;
   } catch (err) {
     console.error("Network error in GetVideo:", err);
@@ -451,6 +448,20 @@ export const GetRouteComment = async(routeId:number)=>
         }
         const data = await res.json();
         return data
+}
+export const GetRouteCoordsByID = async (routeId: number) => {
+    try {
+        const res = await fetch(url + `RideTables/GetRouteCoordinates/${routeId}`);
+        if (!res.ok) {
+        console.error("Error fetching route coordinates");
+        return null;
+        }
+        const data = await res.json();
+        return data;
+    } catch (err) {
+        console.error("Network error in GetRouteCoordsByID:", err);
+        return null;
+    }
 }
 
 // Delete Function for user's post

@@ -117,7 +117,7 @@ const MobileNavBar = () => {
   return (
    <div className="lg:hidden">
   {/* Floating Profile Picture (always visible) */}
-  <div className="fixed bottom-6 right-6 z-50">
+  <div className="fixed bottom-6 right-6 z-20">
     <button
       onClick={handleProfileToggle}
       className={`transition-all duration-300 ease-out hover:scale-105 active:scale-95  ${

@@ -1,36 +1,11 @@
 "use client";
-import DropDownInputComponent from "@/components/buttons/DropDownInputComponent";
-import PrimaryButton from "@/components/buttons/PrimaryButton";
-import React, { useEffect, useState } from "react";
+
+import React from "react";
 
 const AboutYourRidePage = () => {
-  const [beginner, setBeginner] = useState("");
-  const [preferences, setPreferences] = useState("");
-  const [ridingFrequency, setRidingFrequency] = useState("");
-  const handleBeginnerChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setBeginner(event.target.value);
-  };
-  const handlePreferencesChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setPreferences(event.target.value);
-  };
-
-  const handleRidingFrequencyChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setRidingFrequency(event.target.value);
-  };
-  useEffect(() => {
-    console.log("beginner", beginner);
-    console.log('preferences',preferences)
-    console.log('Frequency',ridingFrequency)
-  }, [beginner,preferences,ridingFrequency]);
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-800 to-black">
-      <nav className="w-full  lg:h-[10%] flex flex-col items-center justify-center lg:gap-5 lg:mt-0">
+      {/* <nav className="w-full  lg:h-[10%] flex flex-col items-center justify-center lg:gap-5 lg:mt-0">
         <h1 className="text-4xl text-white">
           Tell Us About <span className="text-[#506FFD]">Your Ride</span>
         </h1>
@@ -77,7 +52,7 @@ const AboutYourRidePage = () => {
         <div className="w-full h-[45%]">
           <PrimaryButton buttonText="Next" isBackgroundDark={false} />
         </div> 
-      </footer>
+      </footer> */}
     </div>
   );
 };
