@@ -131,8 +131,11 @@ const MapDisplay = () => {
     return progressInterval;
   };
 
+  // Check if form is valid for submission
+  const isFormValid = userId && routeName.trim() && cityName.trim() && path.length > 0;
+
   const handlePostRoute = async () => {
-    if (!userId || !routeName.trim() || !cityName.trim() || path.length === 0) {
+    if (!isFormValid) {
       alert("Please fill in all required fields and ensure you have recorded a route.");
       return;
     }
@@ -504,7 +507,7 @@ const MapDisplay = () => {
                     />
                   </div>
                   <div className="text-xs text-gray-400">
-                    Please dont close this window while uploading
+                    Please don't close this window while uploading
                   </div>
                 </div>
               )}
@@ -519,7 +522,7 @@ const MapDisplay = () => {
               buttonText={isUploading ? "Uploading..." : "Share Route"}
               isBackgroundDark={false}
               onClick={handlePostRoute}
-              disabled={isUploading}
+              disabled={isUploading || !isFormValid}
             />
           </div>
         </div>
