@@ -335,12 +335,7 @@ const UserRoutesCard = ({
             className="text-xs text-gray-300"
             dateTime={new Date(dateCreated).toISOString()}
           >
-            <button 
-                className=" bg-gray-800/70 relative right-1 top-1 rounded-full p-1 text-gray-200 hover:text-red-500 hover:bg-gray-700/80 transition-colors cursor-pointer"
-                
-                title="Delete post">
-                <Trash className="w-5 h-5"></Trash>
-              </button>
+           
             {formatDate(dateCreated)}
           </time>
           
