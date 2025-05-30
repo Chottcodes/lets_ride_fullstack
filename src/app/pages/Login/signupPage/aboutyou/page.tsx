@@ -18,6 +18,11 @@ const AboutYouPage = () => {
   const [isUserNameEmpty, setIsUserNameEmpty] = useState<boolean>(false);
   const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  
+  // Upload progress states
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [isFirstQuestionsComplete, setIsFirstQuestionsComplete] =
     useState<boolean>(false);
@@ -32,43 +37,116 @@ const AboutYouPage = () => {
   const [ridingFrequency, setRidingFrequency] = useState<string>("");
   const { push } = useRouter();
 
+  // Image compression function
+  const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.8): Promise<File> => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      
+      img.onload = () => {
+        // Calculate new dimensions maintaining aspect ratio
+        let { width, height } = img;
+        if (width > height) {
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxWidth) {
+            width = (width * maxWidth) / height;
+            height = maxWidth;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const compressedFile = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            });
+            resolve(compressedFile);
+          } else {
+            resolve(file);
+          }
+        }, 'image/jpeg', quality);
+      };
+      
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
 
+    // Check file size (max 10MB for profile pictures)
+    const maxFileSize = 10 * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      alert("File size must be under 10MB.");
+      return;
+    }
+
     try {
       setIsUploading(true);
+      setUploadProgress(0);
+      setUploadStatus("Compressing image...");
 
-      const imageRef = ref(storage, `profilePictures/${userId}_${file.name}`);
-      const uploadTask = uploadBytesResumable(imageRef, file);
+      // Compress image for faster upload
+      const compressedFile = file.type.startsWith("image/") 
+        ? await compressImage(file, 800, 0.8)
+        : file;
+
+      setUploadStatus("Preparing upload...");
+
+      const imageRef = ref(storage, `profilePictures/${userId}_${Date.now()}_${compressedFile.name}`);
+      const uploadTask = uploadBytesResumable(imageRef, compressedFile);
 
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(Math.round(progress));
+          setUploadStatus(`Uploading... ${Math.round(progress)}%`);
           console.log("Upload is " + progress.toFixed(2) + "% done");
         },
         (error) => {
           setIsUploading(false);
+          setUploadProgress(0);
+          setUploadStatus("Upload failed");
           console.error("Upload error:", error);
+          setTimeout(() => setUploadStatus(""), 3000);
         },
         async () => {
+          setUploadStatus("Processing...");
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           setImage(downloadURL);
           setIsImageFilled(true);
           setIsUploading(false);
+          setUploadProgress(100);
+          setUploadStatus("Upload complete!");
           console.log("File available at", downloadURL);
+          setTimeout(() => setUploadStatus(""), 2000);
         }
       );
     } catch (error) {
       console.error("Unexpected error during upload:", error);
+      setIsUploading(false);
+      setUploadProgress(0);
+      setUploadStatus("Upload failed");
+      setTimeout(() => setUploadStatus(""), 3000);
     }
   };
 
   const uploadDefaultPicture = async (id: number) => {
     try {
+      setUploadStatus("Loading default image...");
       const response = await fetch("/assets/images/defaultPicture.png");
       const blob = await response.blob();
       const imageRef = ref(
@@ -79,8 +157,11 @@ const AboutYouPage = () => {
       const url = await getDownloadURL(imageRef);
       setImage(url);
       setIsImageFilled(true);
+      setUploadStatus("");
     } catch (error) {
       console.error("Error uploading default image:", error);
+      setUploadStatus("Failed to load default image");
+      setTimeout(() => setUploadStatus(""), 3000);
     }
   };
 
@@ -97,30 +178,39 @@ const AboutYouPage = () => {
   };
 
   const handleSubmitButton = async () => {
-    if (userId) {
-      if (image) {
-        const UserInfoObj: UserProfileTypes = {
-          UserName: userName,
-          UserId: userId,
-          Name: name,
-          Location: location,
-          BikeType: bikeType,
-          RidingExperience: ridingExperience,
-          RidingPreference: preferences,
-          RideConsistency: ridingFrequency,
-          ProfilePicture: image,
-        };
-        try {
-          const sendProfileData = await UserProfileSetup(UserInfoObj);
-          if (sendProfileData) {
+    if (userId && image && !isUploading) {
+      setIsSubmitting(true);
+      setUploadStatus("Creating profile...");
+      
+      const UserInfoObj: UserProfileTypes = {
+        UserName: userName,
+        UserId: userId,
+        Name: name,
+        Location: location,
+        BikeType: bikeType,
+        RidingExperience: ridingExperience,
+        RidingPreference: preferences,
+        RideConsistency: ridingFrequency,
+        ProfilePicture: image,
+      };
+      
+      try {
+        const sendProfileData = await UserProfileSetup(UserInfoObj);
+        if (sendProfileData) {
+          setUploadStatus("Profile created successfully!");
+          setTimeout(() => {
             push("/home");
-          }
-        } catch (error) {
-          console.error(error);
+          }, 1000);
         }
+      } catch (error) {
+        console.error(error);
+        setUploadStatus("Failed to create profile");
+        setIsSubmitting(false);
+        setTimeout(() => setUploadStatus(""), 3000);
       }
     }
   };
+
   const GetLocalStorage = () => {
     const Token = localStorage.getItem("Token");
     const UserId = localStorage.getItem("ID");
@@ -172,6 +262,7 @@ const AboutYouPage = () => {
         </h1>
         <hr className="hidden lg:w-[20%] lg:block border-1" />
       </header>
+      
       <section
         className={`${
           isFirstQuestionsComplete ? "hidden" : "block"
@@ -185,12 +276,39 @@ const AboutYouPage = () => {
           />
         </div>
         <h5>Add Profile Pictures</h5>
-        {isUploading && (
-          <div className="text-sm text-gray-400 mt-2">
-            Uploading image, please wait...
+        
+        {/* Upload Progress Display */}
+        {(isUploading || uploadStatus) && (
+          <div className="w-64 max-w-[80%] mt-2">
+            {isUploading && (
+              <div className="mb-2">
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="text-blue-300">{uploadStatus}</span>
+                  <span className="text-blue-200">{uploadProgress}%</span>
+                </div>
+                <div className="w-full bg-gray-600 rounded-full h-2">
+                  <div
+                    className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+            {!isUploading && uploadStatus && (
+              <div className={`text-sm text-center ${
+                uploadStatus.includes('failed') || uploadStatus.includes('Failed') 
+                  ? 'text-red-400' 
+                  : uploadStatus.includes('complete') || uploadStatus.includes('success')
+                  ? 'text-green-400'
+                  : 'text-gray-400'
+              }`}>
+                {uploadStatus}
+              </div>
+            )}
           </div>
         )}
       </section>
+
       <main className="w-[100%] h-[80%] md:h-[60%]  lg:w-[35%] flex flex-col justify-center items-center transform-all duration-300  overflow-y-auto">
         <div
           className={`${
@@ -236,6 +354,7 @@ const AboutYouPage = () => {
             isFieldEmpty={false}
           />
         </div>
+        
         <div
           className={`${
             isFirstQuestionsComplete ? "block" : "hidden"
@@ -289,7 +408,20 @@ const AboutYouPage = () => {
               optionFour="Daily"
             />
           </section>
+          
+          {/* Profile Submission Progress */}
+          {isSubmitting && (
+            <div className="w-full mt-4">
+              <div className="bg-gray-800 rounded-lg p-4">
+                <div className="text-center text-blue-300 mb-2">{uploadStatus}</div>
+                <div className="w-full bg-gray-600 rounded-full h-2">
+                  <div className="bg-blue-500 h-2 rounded-full animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+        
         <footer
           className={`${
             isFirstQuestionsComplete
@@ -303,9 +435,10 @@ const AboutYouPage = () => {
             } h-[70%] w-[80%] md:h-[40%] md:w-[50%] lg:w-[60%]`}
           >
             <PrimaryButton
-              buttonText="Next"
+              buttonText={isUploading ? "Uploading..." : "Next"}
               isBackgroundDark={false}
               onClick={handleNextButton}
+              disabled={isUploading || !isImageFilled}
             />
           </div>
           <div
@@ -314,12 +447,16 @@ const AboutYouPage = () => {
             } h-[70%] w-[80%] md:h-[40%] md:w-[50%] lg:w-[60%]`}
           >
             <PrimaryButton
-              buttonText={isUploading ? "Uploading..." : "Submit"}
+              buttonText={
+                isSubmitting ? "Creating Profile..." : 
+                isUploading ? "Uploading..." : 
+                "Submit"
+              }
               isBackgroundDark={true}
               onClick={() => {
-                if (!isUploading) handleSubmitButton();
+                if (!isUploading && !isSubmitting) handleSubmitButton();
               }}
-              disabled={isUploading}
+              disabled={isUploading || isSubmitting || !isImageFilled}
             />
           </div>
         </footer>
