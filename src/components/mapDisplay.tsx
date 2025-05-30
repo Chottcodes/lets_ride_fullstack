@@ -5,11 +5,8 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { Switch } from "./ui/switch";
-import RouteImageInput from "./inputs/RouteImageInput";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "@/lib/firebase";
 import PrimaryButton from "./buttons/PrimaryButton";
-import {  PostRoute } from "./utils/DataServices";
+import { PostRoute } from "./utils/DataServices";
 import { RoutePostTypes } from "./utils/Interface";
 
 const MapDisplay = () => {
@@ -21,12 +18,12 @@ const MapDisplay = () => {
   const [routeName, setRouteName] = useState<string>("");
   const [routeDescription, setRouteDescription] = useState<string>("");
 
-  const [image, setImage] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [stopedRecording, setStoppedRecording] = useState<boolean>(false);
   const [startCountDown, setStartCountDown] = useState<boolean>(false);
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
-  const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
 
   //map ref and marker ref
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -120,69 +117,73 @@ const MapDisplay = () => {
     }
   };
 
-  const handleImagePost = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-
-    try {
-      if (file) {
-        const imageRef = ref(storage, `profilePicture/${userId}_${file?.name}`);
-        await uploadBytes(imageRef, file);
-        const url = await getDownloadURL(imageRef);
-        setImage(url);
-        setIsImageFilled(true);
-        console.log("Uploaded profile picture URL:", url);
-      } else {
-        uploadDefaultPicture();
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  };
-
-  const uploadDefaultPicture = async () => {
-    const defaultImagePath = "/assets/images/MotoRouteDefault.png";
-    const defaultImageRef = ref(
-      storage,
-      `profilePictures/${userId}_${defaultImagePath}`
-    );
-    try {
-      const defaultImage = await fetch(defaultImagePath);
-      const blob = await defaultImage.blob();
-      await uploadBytes(defaultImageRef, blob);
-      const url = await getDownloadURL(defaultImageRef);
-      setImage(url);
-    } catch (error) {
-      console.error("Error uploading default images:", error);
-    }
+  const simulateProgress = () => {
+    setUploadProgress(0);
+    const progressInterval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 95) {
+          clearInterval(progressInterval);
+          return 95; // Keep at 95% until actual completion
+        }
+        return prev + Math.random() * 15; // Random progress increments
+      });
+    }, 200);
+    return progressInterval;
   };
 
   const handlePostRoute = async () => {
+    if (!userId || !routeName.trim() || !cityName.trim() || path.length === 0) {
+      alert("Please fill in all required fields and ensure you have recorded a route.");
+      return;
+    }
+
+    setIsUploading(true);
+    const progressInterval = simulateProgress();
+
     try {
-      if(userId && image){
-        
-        const routeData:RoutePostTypes = {
-          CreatorId: userId,
-          RouteName: routeName,
-          RouteDescription: routeDescription,
-          CityName: cityName,
-          IsPrivate: isPrivate,
-          IsDeleted: false,
-          ImageUrl: image,
-          PathCoordinates: path.map(([lng, lat]) => ({
-            latitude: lat,
-            longitude: lng,
-          })),
-        };
-        const response = await PostRoute(routeData);
+      const routeData: RoutePostTypes = {
+        CreatorId: userId,
+        RouteName: routeName,
+        RouteDescription: routeDescription,
+        CityName: cityName,
+        IsPrivate: isPrivate,
+        IsDeleted: false,
+        ImageUrl: '',
+        PathCoordinates: path.map(([lng, lat]) => ({
+          latitude: lat,
+          longitude: lng,
+        })),
+      };
+
+      const response = await PostRoute(routeData);
+      
+      // Complete the progress bar
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
+      // Small delay to show 100% completion
+      setTimeout(() => {
         if (response) {
           alert("Route posted successfully!");
           setStoppedRecording(false);
+          // Reset form
+          setRouteName("");
+          setRouteDescription("");
+          setCityName("");
+          setIsPrivate(false);
+          setPath([]);
         } else {
           alert("Failed to post route.");
         }
-      }
+        setIsUploading(false);
+        setUploadProgress(0);
+      }, 500);
     } catch (error) {
+      clearInterval(progressInterval);
       console.error("Error posting route:", error);
+      alert("An error occurred while posting the route.");
+      setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -204,13 +205,6 @@ const MapDisplay = () => {
       `Error: ${error.message} Longitude: ${longitude}, Latitude: ${latitude}`
     );
   };
-
-  // const getUserProfile = async (userId: number) => {
-  //   if (userId !== undefined) {
-  //     const res = await GetProfileById(userId);
-  //     return res;
-  //   }
-  // };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -415,24 +409,13 @@ const MapDisplay = () => {
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-6">
           <div className="max-w-2xl mx-auto space-y-6">
             
-            {/* Image Upload Section */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden">
-              <div className="aspect-video relative">
-                <RouteImageInput
-                  onChange={handleImagePost}
-                  isFileUploaded={isImageFilled}
-                  imageURL={image}
-                />
-              </div>
-            </div>
-
             {/* Form Fields */}
             <div className="space-y-4">
               
               {/* City Name */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-300 block">
-                  City
+                  City <span className="text-red-400">*</span>
                 </label>
                 <input
                   className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
@@ -440,13 +423,14 @@ const MapDisplay = () => {
                   onChange={(e) => setCityName(e.target.value)}
                   placeholder="Enter city name"
                   value={cityName}
+                  disabled={isUploading}
                 />
               </div>
 
               {/* Route Name */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-300 block">
-                  Route Name
+                  Route Name <span className="text-red-400">*</span>
                 </label>
                 <input
                   className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
@@ -454,6 +438,7 @@ const MapDisplay = () => {
                   onChange={(e) => setRouteName(e.target.value)}
                   placeholder="Give your route a name"
                   value={routeName}
+                  disabled={isUploading}
                 />
               </div>
 
@@ -467,6 +452,7 @@ const MapDisplay = () => {
                   onChange={(e) => setRouteDescription(e.target.value)}
                   value={routeDescription}
                   placeholder="Describe your route, highlights, difficulty level..."
+                  disabled={isUploading}
                 />
               </div>
 
@@ -491,6 +477,7 @@ const MapDisplay = () => {
                     id="private-switch"
                     checked={isPrivate}
                     onCheckedChange={setIsPrivate}
+                    disabled={isUploading}
                     className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500"
                   />
                   <span className={`text-sm ${isPrivate ? 'text-white font-medium' : 'text-gray-400'}`}>
@@ -498,6 +485,29 @@ const MapDisplay = () => {
                   </span>
                 </div>
               </div>
+
+              {/* Upload Progress Bar */}
+              {isUploading && (
+                <div className="space-y-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-white">
+                      Uploading Route...
+                    </span>
+                    <span className="text-sm text-gray-300">
+                      {Math.round(uploadProgress)}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-blue-400 h-2 rounded-full transition-all duration-300 ease-out"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Please don't close this window while uploading
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -506,9 +516,10 @@ const MapDisplay = () => {
         <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 bg-gradient-to-t from-black/20 to-transparent">
           <div className="max-w-2xl mx-auto">
             <PrimaryButton
-              buttonText="Share Route"
+              buttonText={isUploading ? "Uploading..." : "Share Route"}
               isBackgroundDark={false}
               onClick={handlePostRoute}
+              disabled={isUploading}
             />
           </div>
         </div>
