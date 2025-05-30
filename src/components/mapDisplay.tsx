@@ -509,7 +509,7 @@ const MapDisplay = () => {
                     />
                   </div>
                   <div className="text-xs text-gray-400">
-                    Please don't close this window while uploading
+                    Please dont close this window while uploading
                   </div>
                 </div>
               )}
