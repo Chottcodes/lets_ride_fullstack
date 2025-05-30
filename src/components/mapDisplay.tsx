@@ -380,13 +380,13 @@ const MapDisplay = () => {
       <div
         className={`${
           startCountDown ? "flex" : "hidden"
-        } absolute inset-0 bg-black/70 backdrop-blur-sm z-30 items-center justify-center`}
+        } fixed inset-0 bg-black/70 backdrop-blur-sm z-30 items-center justify-center p-4`}
       >
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl">
-          <div className="text-8xl font-bold text-white text-center animate-pulse">
+        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 sm:p-12 border border-white/20 shadow-2xl max-w-xs sm:max-w-sm w-full">
+          <div className="text-6xl sm:text-8xl font-bold text-white text-center animate-pulse">
             {countDown}
           </div>
-          <div className="text-xl text-white/80 text-center mt-4">
+          <div className="text-lg sm:text-xl text-white/80 text-center mt-4">
             Starting recording...
           </div>
         </div>
@@ -396,12 +396,12 @@ const MapDisplay = () => {
       <section
         className={`${
           stopedRecording ? "flex" : "hidden"
-        } absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-20 flex-col`}
+        } fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 z-20 flex-col`}
       >
         {/* Header */}
-        <div className="flex-shrink-0 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex-shrink-0 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 safe-area-top">
           <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2">
               Share Your Route
             </h2>
             <p className="text-gray-300 text-sm sm:text-base">
@@ -411,8 +411,8 @@ const MapDisplay = () => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pb-6">
-          <div className="max-w-2xl mx-auto space-y-6">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 min-h-0">
+          <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 pb-4">
             
             {/* Form Fields */}
             <div className="space-y-4">
@@ -423,7 +423,7 @@ const MapDisplay = () => {
                   City <span className="text-red-400">*</span>
                 </label>
                 <input
-                  className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
+                  className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 text-base"
                   type="text"
                   onChange={(e) => setCityName(e.target.value)}
                   placeholder="Enter city name"
@@ -438,7 +438,7 @@ const MapDisplay = () => {
                   Route Name <span className="text-red-400">*</span>
                 </label>
                 <input
-                  className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200"
+                  className="w-full h-12 sm:h-14 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 text-base"
                   type="text"
                   onChange={(e) => setRouteName(e.target.value)}
                   placeholder="Give your route a name"
@@ -453,7 +453,7 @@ const MapDisplay = () => {
                   Description
                 </label>
                 <textarea
-                  className="w-full h-24 sm:h-32 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 resize-none"
+                  className="w-full h-20 sm:h-24 lg:h-32 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all duration-200 resize-none text-base"
                   onChange={(e) => setRouteDescription(e.target.value)}
                   value={routeDescription}
                   placeholder="Describe your route, highlights, difficulty level..."
@@ -463,7 +463,7 @@ const MapDisplay = () => {
 
               {/* Privacy Toggle */}
               <div className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0 pr-4">
                   <div className="font-medium text-white text-sm sm:text-base">
                     Route Visibility
                   </div>
@@ -474,8 +474,8 @@ const MapDisplay = () => {
                     }
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <span className={`text-sm ${isPrivate ? 'text-gray-400' : 'text-white font-medium'}`}>
+                <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+                  <span className={`text-xs sm:text-sm ${isPrivate ? 'text-gray-400' : 'text-white font-medium'}`}>
                     Public
                   </span>
                   <Switch
@@ -485,7 +485,7 @@ const MapDisplay = () => {
                     disabled={isUploading}
                     className="data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-gray-500"
                   />
-                  <span className={`text-sm ${isPrivate ? 'text-white font-medium' : 'text-gray-400'}`}>
+                  <span className={`text-xs sm:text-sm ${isPrivate ? 'text-white font-medium' : 'text-gray-400'}`}>
                     Private
                   </span>
                 </div>
@@ -509,7 +509,7 @@ const MapDisplay = () => {
                     />
                   </div>
                   <div className="text-xs text-gray-400">
-                    Please dont close this window while uploading
+                    Please don't close this window while uploading
                   </div>
                 </div>
               )}
@@ -518,7 +518,7 @@ const MapDisplay = () => {
         </div>
 
         {/* Bottom Action Area */}
-        <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 bg-gradient-to-t from-black/20 to-transparent">
+        <div className="flex-shrink-0 p-4 sm:p-6 lg:p-8 bg-gradient-to-t from-black/20 to-transparent safe-area-bottom">
           <div className="max-w-2xl mx-auto">
             <PrimaryButton
               buttonText={isUploading ? "Uploading..." : "Share Route"}
