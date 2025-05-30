@@ -28,13 +28,12 @@ const LoginSectionPage = () => {
     } else {
       const userData = { email: email, password: password };
       try {
-        const response:IToken = await logIn(userData);
+        const response: IToken = await logIn(userData);
         const { id, token } = response.result;
         if (token) {
           if (typeof window !== "undefined") {
             localStorage.setItem("Token", token);
             localStorage.setItem("ID", id.toString());
-           
           }
           push("/home");
         } else {
@@ -48,80 +47,77 @@ const LoginSectionPage = () => {
       }
     }
   };
+
   return (
-    <div className=" h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-800 to-black  ">
-      <main className="w-full h-[90%] md:h-[60%]  lg:h-[80%] flex flex-col justify-center items-center text-white transform-all duration-300 ">
-        <header className=" h-[20%] w-[50%] gap-2 text-3xl lg:h-[40%] lg:w-[20%]   flex flex-col justify-center items-center lg:gap-3 transform-all duration-300 ">
-          <h1>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-800 to-black px-4 py-8">
+      <main className="w-full max-w-sm md:max-w-md lg:max-w-lg flex flex-col justify-center items-center text-white space-y-8 md:space-y-12">
+        
+        {/* Header Section */}
+        <header className="text-center space-y-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl">
             Lets<span className="text-[#5070fd] tracking-widest"> Ride</span>
           </h1>
-          <hr className="w-[70%]" />
-          <h1 className="tracking-widest">Login</h1>
+          <hr className="w-32 md:w-40 mx-auto" />
+          <h1 className="text-xl md:text-2xl tracking-widest">Login</h1>
         </header>
-        <section className="w-[70%] h-[34%]  md:h-[35%] md:w-[50%] lg:w-[20%] lg:h-[55%] flex flex-col transform-all duration-300 ">
-          <div className="w-full h-full flex flex-col gap-2 lg:gap-5">
-            <InputComponent
-              type="email"
-              input={email}
-              imageSourcePath="/assets/images/mail1.png"
-              inputTitle={emailTitle}
-              placeholderText="Enter Email"
-              handleInput={(e) => setEmail(e.target.value)}
-              isFieldEmpty={isFieldEmpty}
-            />
-            <PasswordInputComponent
-              passwordTitle={enterPasswordTitle}
-              placeHolderText="Enter Password"
-              isPasswordVisible={isPasswordVisible}
-              handleInput={(e) => setPassword(e.target.value)}
-              handleToggleFunction={handleToggleFunction}
-              input={password}
-              isFieldEmpty={isFieldEmpty}
-            />
-            <h1>
-              forgot{" "}
-              <button
-                onClick={() => push("/pages/Login/resetPage")}
-                className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer"
-              >
-                {" "}
-                password
-              </button>
-            </h1>
+
+        {/* Form Section */}
+        <section className="w-full space-y-4 md:space-y-6">
+          <InputComponent
+            type="email"
+            input={email}
+            imageSourcePath="/assets/images/mail1.png"
+            inputTitle={emailTitle}
+            placeholderText="Enter Email"
+            handleInput={(e) => setEmail(e.target.value)}
+            isFieldEmpty={isFieldEmpty}
+          />
+          
+          <PasswordInputComponent
+            passwordTitle={enterPasswordTitle}
+            placeHolderText="Enter Password"
+            isPasswordVisible={isPasswordVisible}
+            handleInput={(e) => setPassword(e.target.value)}
+            handleToggleFunction={handleToggleFunction}
+            input={password}
+            isFieldEmpty={isFieldEmpty}
+          />
+          
+          <div className="text-left">
+            <span className="text-sm md:text-base">forgot </span>
+            <button
+              onClick={() => push("/pages/Login/resetPage")}
+              className="text-[#506FFD] hover:text-[#2e53fc] cursor-pointer text-sm md:text-base"
+            >
+              password
+            </button>
           </div>
         </section>
-        <footer className="w-[70%] h-[25%] md:w-[50%] md:h-[30%] lg:w-[20%] lg:h-[35%] flex flex-col justify-center items-center ">
-          <div className="w-full h-[70%] md:h-full ">
-            <PrimaryButton
-              buttonText="Log In"
-              isBackgroundDark={true}
-              onClick={handleLogIn}
-            />
+
+        {/* Footer/Button Section */}
+        <footer className="w-full space-y-4 md:space-y-6">
+          <PrimaryButton
+            buttonText="Log In"
+            isBackgroundDark={true}
+            onClick={handleLogIn}
+          />
+          
+          {/* Divider */}
+          <div className="flex items-center space-x-4">
+            <hr className="flex-1" />
+            <span className="text-sm text-gray-300">Or</span>
+            <hr className="flex-1" />
           </div>
-          <br />
-          <div className=""></div>
-          <h1 className="inline-flex ">
-            {" "}
-            <span>
-              {" "}
-              <hr />{" "}
-            </span>{" "}
-            Or{" "}
-            <span>
-              <hr />
-            </span>
-          </h1>
-          <br />
-          <div className="w-full h-[70%] md:h-full">
-            <PrimaryButton
-              buttonText="Sign up"
-              isBackgroundDark={false}
-              onClick={() => push("/pages/Login/signupPage")}
-            />
-          </div>
+          
+          <PrimaryButton
+            buttonText="Sign up"
+            isBackgroundDark={false}
+            onClick={() => push("/pages/Login/signupPage")}
+          />
         </footer>
       </main>
     </div>
   );
 };
+
 export default LoginSectionPage;
