@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Lets Ride",
   description: "Lets Ride GPS App",
+  icons: {
+    icon:"/assets/images/LetsRide.ico",
+  },
 };
 export const viewport = {
   width: "device-width",
