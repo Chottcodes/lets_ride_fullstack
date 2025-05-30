@@ -459,7 +459,7 @@ const ProfilePage = () => {
               </div>
             )}
           </div>
-        ) : filteredRoutes.length > 0 ? (
+        ) : filteredRoutes ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredRoutes.map((route) => (
