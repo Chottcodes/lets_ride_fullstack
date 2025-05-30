@@ -243,3 +243,9 @@ export interface RouteComment {
     profilePictureUrl: string;
     dateCreated: string | Date;
 }
+export interface RouteCoordinate {
+  id: number;
+  routeId: number;
+  latitude: number;
+  longitude: number;
+}

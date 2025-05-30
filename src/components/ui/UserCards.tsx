@@ -17,6 +17,7 @@ import {
 } from "../utils/DataServices";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 const UserCardsPost = (props: IUserCardType) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -27,8 +28,10 @@ const UserCardsPost = (props: IUserCardType) => {
   const [userId, setUserId] = useState<number>(0);
   const [comments, setComments] = useState<GalleryComments[]>([]);
   const [likeCount, setLikeCount] = useState<number>(props.likeCount || 0);
-  const [showLoginTooltip, setShowLoginTooltip] = useState<boolean>(false);
+  const [showLikeTooltip, setShowLikeTooltip] = useState<boolean>(false);
+  const [showCommentTooltip, setShowCommentTooltip] = useState<boolean>(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
+  const router = useRouter();
   
   useEffect(() => {
     const storedId = localStorage.getItem("ID");
@@ -57,12 +60,37 @@ const UserCardsPost = (props: IUserCardType) => {
     }
   }, [isModalOpen, isCommentsOpen, props.id]);
 
-  const handleCommentSubmit = async () => {
-    if (!userId) {
-      setShowLoginTooltip(true);
-      setTimeout(() => setShowLoginTooltip(false), 3000);
-      return;
+  // Hide tooltips when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowLikeTooltip(false);
+      setShowCommentTooltip(false);
+    };
+
+    if (showLikeTooltip || showCommentTooltip) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
     }
+  }, [showLikeTooltip, showCommentTooltip]);
+
+  const showLoginTooltip = (type: 'like' | 'comment') => {
+    if (!userId) {
+      if (type === 'like') {
+        setShowLikeTooltip(true);
+        setShowCommentTooltip(false);
+        setTimeout(() => setShowLikeTooltip(false), 3000);
+      } else {
+        setShowCommentTooltip(true);
+        setShowLikeTooltip(false);
+        setTimeout(() => setShowCommentTooltip(false), 3000);
+      }
+      return true;
+    }
+    return false;
+  };
+
+  const handleCommentSubmit = async () => {
+    if (showLoginTooltip('comment')) return;
 
     if (userComment.trim()) {
       const commentObj: CommentsModelGallery = {
@@ -82,11 +110,7 @@ const UserCardsPost = (props: IUserCardType) => {
   };
 
   const handleLikeToggle = async () => {
-    if (!userId) {
-      setShowLoginTooltip(true);
-      setTimeout(() => setShowLoginTooltip(false), 3000);
-      return;
-    }
+    if (showLoginTooltip('like')) return;
 
     if (isLiked) {
       const success = await RemoveGalleryLike(userId, props.id);
@@ -126,12 +150,41 @@ const UserCardsPost = (props: IUserCardType) => {
     }
   };
 
-  const formatDate = (dateString:string) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-CA", {
       year: "numeric",
       month: "short",
       day: "numeric",
     });
+  };
+
+  const LoginTooltip = ({ show, type }: { show: boolean; type: 'like' | 'comment' }) => {
+    if (!show) return null;
+    
+    return (
+      <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded shadow-lg z-50 border border-gray-700">
+        <div className="flex items-start">
+          <Info className="h-4 w-4 mr-1 text-blue-400 flex-shrink-0 mt-0.5" />
+          <span>
+            Please{' '}
+            <span 
+              onClick={() => router.push('/pages/Login/loginPage')} 
+              className="text-blue-300 underline cursor-pointer hover:text-blue-200"
+            >
+              login
+            </span>
+            {' '}or{' '}
+            <span 
+              onClick={() => router.push('/pages/Login/signupPage')} 
+              className="text-blue-300 underline cursor-pointer hover:text-blue-200"
+            >
+              signup
+            </span>
+            {' '}to {type} this post
+          </span>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -224,11 +277,7 @@ const UserCardsPost = (props: IUserCardType) => {
                 <span className="text-sm text-gray-300">{likeCount}</span>
               </button>
               
-              {showLoginTooltip && userId === 0 && (
-                <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded shadow-lg z-50">
-                  Please login or signup to like this post
-                </div>
-              )}
+              <LoginTooltip show={showLikeTooltip} type="like" />
             </div>
             
             <button
@@ -339,12 +388,7 @@ const UserCardsPost = (props: IUserCardType) => {
                       <span className="text-gray-300">{likeCount}</span>
                     </button>
                     
-                    {showLoginTooltip && userId === 0 && (
-                      <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded shadow-lg z-50 flex items-center">
-                        <Info className="h-4 w-4 mr-1 text-blue-400" />
-                        Please login or signup to like this post
-                      </div>
-                    )}
+                    <LoginTooltip show={showLikeTooltip} type="like" />
                   </div>
                   
                   <button
@@ -418,12 +462,7 @@ const UserCardsPost = (props: IUserCardType) => {
                             }}
                           />
                           
-                          {showLoginTooltip && userId === 0 && (
-                            <div className="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 text-xs text-white rounded shadow-lg z-50 flex items-center">
-                              <Info className="h-4 w-4 mr-1 text-blue-400" />
-                              Please login or signup to comment
-                            </div>
-                          )}
+                          <LoginTooltip show={showCommentTooltip} type="comment" />
                         </div>
                         
                         <button

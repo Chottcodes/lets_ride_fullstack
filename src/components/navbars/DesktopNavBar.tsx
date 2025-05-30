@@ -27,7 +27,7 @@ const DesktopNavBar = () => {
       <Image
         onClick={() => router.push("/home")}
         className="w-[50px] h-[50px] object-contain cursor-pointer"
-        src="/assets/images/Logo.png"
+        src="/assets/images/LogoBg.png"
         alt="Logo"
         width={300}
         height={300}

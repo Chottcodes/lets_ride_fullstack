@@ -31,7 +31,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
     if (storedId) setUserId(Number(storedId));
   }, []);
 
-  // Image compression function for mobile optimization
+
   const compressImage = (file: File, maxWidth: number = 1200, quality: number = 0.8): Promise<File> => {
     return new Promise((resolve) => {
       const canvas = document.createElement('canvas');
@@ -39,7 +39,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
       const img = new Image();
       
       img.onload = () => {
-        // Calculate new dimensions
+      
         let { width, height } = img;
         if (width > height) {
           if (width > maxWidth) {
@@ -56,7 +56,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
         canvas.width = width;
         canvas.height = height;
         
-        // Draw and compress
+       
         ctx?.drawImage(img, 0, 0, width, height);
         canvas.toBlob((blob) => {
           if (blob) {
@@ -87,7 +87,7 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
 
     let processedFile = selectedFile;
     
-    // Compress images for mobile optimization
+    
     if (selectedFile.type.startsWith("image/") && !isVideo) {
       setUploadStatus("Compressing image...");
       processedFile = await compressImage(selectedFile);
@@ -119,10 +119,10 @@ const OpenPostModal: React.FC<OpenPostModalProps> = ({ isPosted }) => {
         ? ref(storage, `galleryvideos/${userId}_${Date.now()}_${file.name}`)
         : ref(storage, `gallerypicture/${userId}_${Date.now()}_${file.name}`);
 
-      // Use uploadBytesResumable for progress tracking
+      
       const uploadTask = uploadBytesResumable(uploadRef, file);
 
-      // Monitor upload progress
+    
       uploadTask.on('state_changed', 
         (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;

@@ -45,8 +45,7 @@ const AboutYourRidePage = () => {
               { label: "Beginner (6 months or less)", value: "Beginner" },
               { label: "Intermediate (6 months to 2 years)", value: "Intermediate" },
               { label: "Advanced (2 years or more)", value: "Advanced" }
-            ]}
-          />
+            ]} placeholder={""}          />
         </section>
         <section className="w-full h-[10%] gap-5 flex flex-col justify-center text-xl">
           <h1>Riding Preferences</h1>
@@ -57,8 +56,7 @@ const AboutYourRidePage = () => {
               { label: "Long Distance", value: "Long Distance" },
               { label: "Off Road", value: "Off Road" },
               { label: "Track Riding/Fast Riding", value: "Track Riding" }
-            ]}
-          />
+            ]} placeholder={""}          />
         </section>
         <section className="w-full h-[15%] gap-5 flex flex-col justify-center text-xl">
           <h1>How often do you ride?</h1>
@@ -69,8 +67,7 @@ const AboutYourRidePage = () => {
               { label: "A few times a month", value: "Occasionally" },
               { label: "Every week", value: "Regularly" },
               { label: "Daily", value: "Daily" }
-            ]}
-          />
+            ]} placeholder={""}          />
         </section>
       </main>
       <footer className="lg:w-[20%] lg:h-[15%] h-[20%] w-[80%] flex justify-start items-center">

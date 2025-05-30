@@ -483,7 +483,7 @@ export const RemoveGalleryPost = async (id:number) => {
 }
 
 export const RemoveRoutePost = async (id:number) => {
-    const res = await fetch(url + `RideTables/RemoveRoute/{id}`,
+    const res = await fetch(url + `RideTables/RemoveRoute/${id}`,
         {
             method: "DELETE",
             headers: {

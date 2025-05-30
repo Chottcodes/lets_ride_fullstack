@@ -58,7 +58,6 @@ const ProfilePage = () => {
  
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [scrolled] = useState<boolean>(false);
-  const [likedRoutes, setLikedRoutes] = useState<Set<number>>(new Set());
 
   const [isProfilePictureEditing, setIsProfilePictureEditing] = useState(false);
 
@@ -138,7 +137,7 @@ const ProfilePage = () => {
 
   const handleLogOut = () => {
     localStorage.clear();
-    push("/pages/Login/loginPage");
+    push("/home");
   };
 
   // test
@@ -321,8 +320,9 @@ const ProfilePage = () => {
         await fetchAllData(userData.userId);
         console.log("Profile picture updated successfully");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to update profile picture:", err);
+      console.error(err);
     }
     setIsProfilePictureEditing(false);
   };

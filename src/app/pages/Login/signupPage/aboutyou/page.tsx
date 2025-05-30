@@ -16,6 +16,9 @@ import { uploadBytesResumable } from "firebase/storage";
 const AboutYouPage = () => {
   const [image, setImage] = useState<string | null>(null);
   const [isUserNameEmpty, setIsUserNameEmpty] = useState<boolean>(false);
+  const [isNameEmpty, setIsNameEmpty] = useState<boolean>(false);
+  const [isLocationEmpty, setIsLocationEmpty] = useState<boolean>(false);
+  const [isBikeTypeEmpty, setIsBikeTypeEmpty] = useState<boolean>(false);
   const [isImageFilled, setIsImageFilled] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   
@@ -165,19 +168,58 @@ const AboutYouPage = () => {
     }
   };
 
-  const handleNextButton = async () => {
-    if (!userName) {
+  const validateFirstPageFields = () => {
+    let isValid = true;
+    
+    if (!userName.trim()) {
       setIsUserNameEmpty(true);
+      isValid = false;
+    } else {
+      setIsUserNameEmpty(false);
+    }
+    
+    if (!name.trim()) {
+      setIsNameEmpty(true);
+      isValid = false;
+    } else {
+      setIsNameEmpty(false);
+    }
+    
+    if (!location.trim()) {
+      setIsLocationEmpty(true);
+      isValid = false;
+    } else {
+      setIsLocationEmpty(false);
+    }
+    
+    if (!bikeType.trim()) {
+      setIsBikeTypeEmpty(true);
+      isValid = false;
+    } else {
+      setIsBikeTypeEmpty(false);
+    }
+    
+    return isValid;
+  };
+
+  const handleNextButton = async () => {
+    if (!validateFirstPageFields()) {
       return;
     }
-    if (!name) setName("N/A");
-    if (!location) setLocation("N/A");
-    if (!bikeType) setBikeType("N/A");
-
+    
     setIsFirstQuestionsComplete(true);
   };
 
+  const validateSecondPageFields = () => {
+    return ridingExperience && preferences && ridingFrequency;
+  };
+
   const handleSubmitButton = async () => {
+    if (!validateSecondPageFields()) {
+      alert("Please fill out all fields before submitting.");
+      return;
+    }
+    
     if (userId && image && !isUploading) {
       setIsSubmitting(true);
       setUploadStatus("Creating profile...");
@@ -254,6 +296,12 @@ const AboutYouPage = () => {
     }
   }, [userId]);
 
+  // Check if first page is complete
+  const isFirstPageComplete = userName.trim() && name.trim() && location.trim() && bikeType.trim() && isImageFilled && !isUploading;
+  
+  // Check if second page is complete
+  const isSecondPageComplete = ridingExperience && preferences && ridingFrequency && !isUploading && !isSubmitting;
+
   return (
     <div className="text-white h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-800 to-black">
       <header className="w-full h-[10%] flex flex-col items-center justify-center gap-5 lg:gap-7 lg:mt-0">
@@ -317,7 +365,7 @@ const AboutYouPage = () => {
         >
           <InputComponent
             inputTitle={
-              isUserNameEmpty ? "Required, please enter username" : "User Name"
+              isUserNameEmpty ? "Required, please enter username" : "User Name *"
             }
             imageSourcePath="/assets/images/user.png"
             placeholderText="Enter user name"
@@ -327,31 +375,37 @@ const AboutYouPage = () => {
             isFieldEmpty={isUserNameEmpty}
           />
           <InputComponent
-            inputTitle="Name"
+            inputTitle={
+              isNameEmpty ? "Required, please enter name" : "Name *"
+            }
             imageSourcePath="/assets/images/user.png"
             placeholderText="Enter name"
             type="string"
             input={name}
             handleInput={(e) => setName(e.target.value)}
-            isFieldEmpty={false}
+            isFieldEmpty={isNameEmpty}
           />
           <InputComponent
-            inputTitle="What city are you based"
+            inputTitle={
+              isLocationEmpty ? "Required, please enter city" : "What city are you based *"
+            }
             imageSourcePath="/assets/images/location.png"
             placeholderText="Enter your city"
             type="string"
             input={location}
             handleInput={(e) => setLocation(e.target.value)}
-            isFieldEmpty={false}
+            isFieldEmpty={isLocationEmpty}
           />
           <InputComponent
-            inputTitle="What brand of motorcycle do you ride?"
+            inputTitle={
+              isBikeTypeEmpty ? "Required, please enter bike brand" : "What brand of motorcycle do you ride? *"
+            }
             imageSourcePath="/assets/images/motorbike.png"
             placeholderText="Enter you bike brand"
             type="string"
             input={bikeType}
             handleInput={(e) => setBikeType(e.target.value)}
-            isFieldEmpty={false}
+            isFieldEmpty={isBikeTypeEmpty}
           />
         </div>
         
@@ -363,7 +417,7 @@ const AboutYouPage = () => {
           <section
             className={` w-full lg:h-[10%] gap-5 flex flex-col justify-center  text-lg`}
           >
-            <h1>Riding Experience Level</h1>
+            <h1>Riding Experience Level *</h1>
             <DropDownInputComp
               onChange={(e) => setRidingExperience(e.target.value)}
               titleOne="Beginner (6 months or less)"
@@ -379,7 +433,7 @@ const AboutYouPage = () => {
           <section
             className={` w-full h-[10%] gap-5 flex flex-col justify-center text-lg`}
           >
-            <h1>Riding Preferences</h1>
+            <h1>Riding Preferences *</h1>
             <DropDownInputComp
               onChange={(e) => setPreferences(e.target.value)}
               titleOne="Cruising"
@@ -395,7 +449,7 @@ const AboutYouPage = () => {
           <section
             className={` w-full h-[15%] gap-5 flex flex-col justify-center text-lg`}
           >
-            <h1>How often do you ride?</h1>
+            <h1>How often do you ride? *</h1>
             <DropDownInputComp
               onChange={(e) => setRidingFrequency(e.target.value)}
               titleOne="A few times a year"
@@ -438,7 +492,7 @@ const AboutYouPage = () => {
               buttonText={isUploading ? "Uploading..." : "Next"}
               isBackgroundDark={false}
               onClick={handleNextButton}
-              disabled={isUploading || !isImageFilled}
+              disabled={!isFirstPageComplete}
             />
           </div>
           <div
@@ -453,10 +507,8 @@ const AboutYouPage = () => {
                 "Submit"
               }
               isBackgroundDark={true}
-              onClick={() => {
-                if (!isUploading && !isSubmitting) handleSubmitButton();
-              }}
-              disabled={isUploading || isSubmitting || !isImageFilled}
+              onClick={handleSubmitButton}
+              disabled={!isSecondPageComplete}
             />
           </div>
         </footer>

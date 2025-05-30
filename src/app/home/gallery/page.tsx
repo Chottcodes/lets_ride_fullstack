@@ -87,7 +87,7 @@ const Page = () => {
           onClick={() => router.push("/home")}
         >
           <Image
-            src="/assets/images/Logo.png"
+            src="/assets/images/LogoBg.png"
             alt="Motorcycle Logo"
             width={40}
             height={40}
